@@ -1,0 +1,529 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head -->
+<head>
+
+        <!-- Required metadata tags -->
+        <meta charset="utf-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="HandheldFriendly" content="True" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+
+        <!-- Default metadata -->
+    <meta name="author" content="lao" />
+    <meta name="description" content="使用Python对dnspod进行DDNS更新" />
+    <meta name="keywords" content="dnspod, DDNS">
+<meta property="og:site_name" content="劳思杂记" />
+<meta property="og:title" content="dnspod DDNS 自动更新" />
+<meta property="og:description" content="使用Python对dnspod进行DDNS更新" />
+<meta property="og:locale" content="en_US" />
+<meta property="og:url" content="//blog.laolilin.com/posts/2016/10/dnspod_ddns_auto_update.html" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2016-10-15 12:05:00+08:00" />
+<meta property="article:modified_time" content="2016-10-28 17:01:00+08:00" />
+<meta property="article:author" content="//blog.laolilin.com/author/lao.html">
+<meta property="article:section" content="Tech" />
+	<meta property="article:tag" content="dnspod" />
+	<meta property="article:tag" content="DDNS" />
+	<meta property="og:image" content="//blog.laolilin.com/logo.png">
+
+        <!-- Site Claim -->
+
+
+        <!-- Title -->
+        <title>
+    dnspod DDNS 自动更新 &ndash; 劳思杂记
+        </title>
+
+        <!-- Icon -->
+        <link rel="shortcut icon" href="//blog.laolilin.com/static/favicon.png" type="image/x-icon">
+        <link rel="icon" href="//blog.laolilin.com/static/favicon.png" type="image/x-icon">
+
+        <!-- Search engine -->
+            <meta name="robots" content="index, follow" />
+
+        <!-- Feeds -->
+            <link href="//blog.laolilin.com/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="劳思杂记 Full Atom Feed" />
+
+            <link href="//blog.laolilin.com/feeds/all.rss.xml" type="application/rss+xml" rel="alternate" title="劳思杂记 Full RSS Feed" />
+
+
+
+            <link href="//blog.laolilin.com/feeds/tech.atom.xml" type="application/atom+xml" rel="alternate" title="劳思杂记 Categories Atom Feed" />
+
+
+
+
+        <!-- Styles -->
+        <!--
+        <link rel="stylesheet" href="https://ajax.aspnetcdn.com/ajax/bootstrap/4.3.1/css/bootstrap.min.css">
+        -->
+        <link rel="stylesheet" href="//blog.laolilin.com/theme/bootstrap/bootstrap.min.css">
+        <!--
+        <link rel="stylesheet" href="https://cdn.rawgit.com/afeld/bootstrap-toc/v1.0.1/dist/bootstrap-toc.min.css">
+        -->
+            <link rel="stylesheet" href="//blog.laolilin.com/theme/extra/bootstrap-toc.min.css">
+        <link rel="stylesheet" href="//blog.laolilin.com/theme/pygment/friendly.min.css">
+        <!--
+        <link rel="stylesheet" href="//blog.laolilin.com/theme/extra/admonition.min.css">
+        -->
+        <link rel="stylesheet" href="//blog.laolilin.com/theme/style.css">
+
+        <!-- Google Analytics -->
+<script>
+(function(i, s, o, g, r, a, m) { i['GoogleAnalyticsObject'] = r;
+    i[r] = i[r] || function() {
+        (i[r].q = i[r].q || []).push(arguments) }, i[r].l = 1 * new Date();
+    a = s.createElement(o), m = s.getElementsByTagName(o)[0];
+    a.async = 1;
+    a.src = g;
+    m.parentNode.insertBefore(a, m) })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
+ga('create', 'UA-181588-5', 'auto');
+ga('send', 'pageview');
+</script>
+        <!-- Google Global Site Tag -->
+
+        <!-- Google Tag Manager -->
+
+        <!-- Google Adsense -->
+
+        <!-- Heap Analytic -->
+
+        <!-- Piwik Tracking -->
+
+        <!-- Matomo Tracking -->
+
+</head>
+
+<!-- Body -->
+<body class="d-flex flex-column" data-spy="scroll" data-target="#toc" data-offset="0" style="position: relative;">
+    <!-- Top anchor -->
+    <a href="#" id="backToTop" style="display: none; z-index: 1;" title="Back to top"><span></span></a>
+
+    <!-- Google tag manager -->
+
+    <!-- Navigation -->
+    <nav class="flex-shrink-0 navbar navbar-expand-md navbar-expand-lg navbar-dark bg-dark text-light shadow-sm">
+        <!-- Logo -->
+        <a class="navbar-brand" href="//blog.laolilin.com">劳思杂记</a>
+
+        <!-- Collapse button -->
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarMenu" aria-controls="navbarMenu" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon small"></span>
+        </button>
+
+        <!-- Collapsible content -->
+        <div class="collapse navbar-collapse" id="navbarMenu">
+            <!-- Page links -->
+            <ul class="navbar-nav mr-auto text-center">
+                <li class="nav-item ">
+                    <a class="nav-link" href="//blog.laolilin.com">
+                        <svg class="nav-icon" xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24">
+                            <path d="M21 13v10h-6v-6h-6v6h-6v-10h-3l12-12 12 12h-3zm-1-5.907v-5.093h-3v2.093l3 3z" fill="currentColor"></path>
+                        </svg>
+                        Home <span class="sr-only">(current)</span>
+                    </a>
+                </li>
+                <li class="nav-item ">
+                    <a class="nav-link" href="//blog.laolilin.com/categories.html">
+                        <svg class="nav-icon" xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24">
+                            <path d="M16 6h-8v-6h8v6zm-8 12h-8v6h8v-6zm16 0h-8v6h8v-6zm-11-7v-3h-2v3h-8v5h2v-3h14v3h2v-5h-8z" fill="currentColor"></path>
+                        </svg>
+                        Categories
+                    </a>
+                </li>
+                <li class="nav-item ">
+                    <a class="nav-link" href="//blog.laolilin.com/tags.html">
+                        <svg class="nav-icon" xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24">
+                            <path d="M10.605 0h-10.605v10.609l13.391 13.391 10.609-10.604-13.395-13.396zm-4.191 6.414c-.781.781-2.046.781-2.829.001-.781-.783-.781-2.048 0-2.829.782-.782 2.048-.781 2.829-.001.782.782.781 2.047 0 2.829z" fill="currentColor"></path>
+                        </svg>
+                        Tags
+                    </a>
+                </li>
+                <li class="nav-item ">
+                    <a class="nav-link" href="//blog.laolilin.com/archives.html">
+                        <svg class="nav-icon" xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24">
+                            <path d="M1.8 9l-.8-4h22l-.8 4h-2.029l.39-2h-17.122l.414 2h-2.053zm18.575-6l.604-2h-17.979l.688 2h16.687zm3.625 8l-2 13h-20l-2-13h24zm-8 4c0-.552-.447-1-1-1h-6c-.553 0-1 .448-1 1s.447 1 1 1h6c.553 0 1-.448 1-1z" fill="currentColor"></path>
+                        </svg>
+                        Archives
+                    </a>
+                </li>
+                <li class="nav-item ">
+                    <a class="nav-link" href="//blog.laolilin.com/drafts.html">
+                        <svg class="nav-icon" xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24">
+                            <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" fill="currentColor"></path>
+                        </svg>
+                        Drafts
+                    </a>
+                </li>
+                <li class="nav-item ">
+                    <a class="nav-link" href="//blog.laolilin.com/pages/about.html">
+                        <svg class="nav-icon" xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24">
+                            <path d="M20.822 18.096c-3.439-.794-6.64-1.49-5.09-4.418 4.72-8.912 1.251-13.678-3.732-13.678-5.082 0-8.464 4.949-3.732 13.678 1.597 2.945-1.725 3.641-5.09 4.418-3.073.71-3.188 2.236-3.178 4.904l.004 1h23.99l.004-.969c.012-2.688-.092-4.222-3.176-4.935z" fill="currentColor"></path>
+                        </svg>
+                        About
+                    </a>
+                </li>
+            </ul>
+
+            <!-- Search form -->
+            <form class="form-inline text-center" action="//blog.laolilin.com/search.html">
+                <input class="form-control w-100 bg-dark text-light text-center border-0 p-2" type="text" name="q" pattern=".{3,}" title="At least 3 characters" required="" placeholder="Type here to search" aria-label="Search">
+            </form>
+
+            <!-- Social links -->
+            <ul class="navbar-nav text-center">
+                <li class="nav-item">
+                    <a class="nav-link" href="https://facebook.com/laolilin">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                            <title>Facebook</title>
+                            <path d="M12 0c-6.627 0-12 5.373-12 12s5.373 12 12 12 12-5.373 12-12-5.373-12-12-12zm3 8h-1.35c-.538 0-.65.221-.65.778v1.222h2l-.209 2h-1.791v7h-3v-7h-2v-2h2v-2.308c0-1.769.931-2.692 3.029-2.692h1.971v3z" fill="currentColor"></path>
+                        </svg>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="https://github.com/lll9p">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                            <title>Github</title>
+                            <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" fill="currentColor"></path>
+                        </svg>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="https://twitter.com/lll9p">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                            <title>Twitter</title>
+                            <path d="M12 0c-6.627 0-12 5.373-12 12s5.373 12 12 12 12-5.373 12-12-5.373-12-12-12zm6.066 9.645c.183 4.04-2.83 8.544-8.164 8.544-1.622 0-3.131-.476-4.402-1.291 1.524.18 3.045-.244 4.252-1.189-1.256-.023-2.317-.854-2.684-1.995.451.086.895.061 1.298-.049-1.381-.278-2.335-1.522-2.304-2.853.388.215.83.344 1.301.359-1.279-.855-1.641-2.544-.889-3.835 1.416 1.738 3.533 2.881 5.92 3.001-.419-1.796.944-3.527 2.799-3.527.825 0 1.572.349 2.096.907.654-.128 1.27-.368 1.824-.697-.215.671-.67 1.233-1.263 1.589.581-.07 1.135-.224 1.649-.453-.384.578-.87 1.084-1.433 1.489z" fill="currentColor"></path>
+                        </svg>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Full page -->
+    <div class="flex-shrink-0 flex-grow-1">
+
+        <!-- Header -->
+        <header class="bg-dark text-light shadow-sm pt-3 pb-2">
+	<div class="container">
+		<h3 id="dnspod_ddns_auto_update">dnspod DDNS 自动更新</h3>
+		<p style="font-size:larger;"><p class="first last">使用Python对dnspod进行DDNS更新</p>
+</p>
+        <div class="row mx-auto mt-3">
+            <div class="col-xs-12 col-sm-12 col-md-6 text-left" style="padding: 0">
+                <a href="//blog.laolilin.com/author/lao.html" class="card-link">lao</a>
+                <span class="card-link text-success">
+                    <span class="post-date" title="Post date">15 Oct 2016</span>
+                    <span class="text-info modified-date" title="Updated date">
+                            28 Oct 2016
+                    </span>
+                </span>
+                    <span class="card-link text-secondary" title="~294 words">2 mins</span>
+            </div>
+            <div class="col-xs-12 col-sm-12 col-md-6 text-right" style="padding: 0">
+                <a class="badge badge-success" href="//blog.laolilin.com/category/tech.html">tech</a>
+                    <a class="badge badge-info" href="//blog.laolilin.com/tag/dnspod.html">dnspod</a>
+                    <a class="badge badge-info" href="//blog.laolilin.com/tag/ddns.html">ddns</a>
+            </div>
+        </div>
+	</div>
+        </header>
+
+        <!-- Main -->
+        <main class="py-3">
+                <div class="container">
+                    <!-- Sharing -->
+
+                    <!-- Content -->
+    <!-- 2 columns layout -->
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-10">
+
+                <!-- Sharing -->
+
+                <!-- Article -->
+                <div class="section" id="id1">
+<h2>前言</h2>
+<p>由于把 <tt class="docutils literal">blog</tt> 托管在 <tt class="docutils literal">github pages</tt> 和 <tt class="docutils literal">coding pages</tt> ，再加上 <a class="reference external" href="//blog.laolilin.com/posts/2016/10/config_raspberry_pi.html">我的Raspberry pi</a> 也需要暴露于网络中，所以最好能及时更新域名的IP。</p>
+<p>利用 <a class="reference external" href="//www.dnspod.cn">DNSPOD</a> 的 <tt class="docutils literal">DDNS API</tt> ，我们可以轻松在 <tt class="docutils literal">Raspberry Pi</tt> 上实现这个需求。</p>
+</div>
+<div class="section" id="id2">
+<h2>代码实现</h2>
+<p>利用 <a class="reference external" href="//www.dnspod.cn">DNSPOD</a> 的 <tt class="docutils literal">API</tt> ，很容易写出自动更新的代码，需要注意的一点是， <tt class="docutils literal">API</tt> 不允许一小时五次都更新同一 <tt class="docutils literal">IP</tt> ，所以代码里考虑到这点，对比二者，如果相同则不进行操作。</p>
+<p><tt class="docutils literal">login_token</tt> 可以从 <a class="reference external" href="//www.dnspod.cn">DNSPOD</a> 获取，按格式把域名和ip填入 <tt class="docutils literal">data</tt> 。</p>
+<p>保存如下代码为 <tt class="docutils literal">/usr/local/sbin/ddns_update.py</tt> 。</p>
+<div class="highlight"><pre><span class="code-line"><span></span><span class="ch">#!/usr/bin/python</span></span>
+<span class="code-line"><span class="c1"># Author: lao</span></span>
+<span class="code-line"><span class="c1"># url: http://laolilin.com</span></span>
+<span class="code-line"><span class="kn">import</span> <span class="nn">socket</span></span>
+<span class="code-line"><span class="kn">import</span> <span class="nn">urllib.parse</span></span>
+<span class="code-line"><span class="kn">import</span> <span class="nn">urllib.request</span></span>
+<span class="code-line"><span class="kn">import</span> <span class="nn">json</span></span>
+<span class="code-line"></span>
+<span class="code-line"></span>
+<span class="code-line"><span class="k">def</span> <span class="nf">initReq</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">values</span><span class="p">):</span></span>
+<span class="code-line">    <span class="sd">'''</span></span>
+<span class="code-line"><span class="sd">    simple request data from url with values</span></span>
+<span class="code-line"><span class="sd">    '''</span></span>
+<span class="code-line">    <span class="n">data</span> <span class="o">=</span> <span class="n">urllib</span><span class="o">.</span><span class="n">parse</span><span class="o">.</span><span class="n">urlencode</span><span class="p">(</span><span class="n">values</span><span class="p">)</span><span class="o">.</span><span class="n">encode</span><span class="p">()</span></span>
+<span class="code-line">    <span class="n">req</span> <span class="o">=</span> <span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">Request</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span></span>
+<span class="code-line">    <span class="k">try</span><span class="p">:</span></span>
+<span class="code-line">        <span class="n">res</span> <span class="o">=</span> <span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">urlopen</span><span class="p">(</span><span class="n">req</span><span class="p">)</span></span>
+<span class="code-line">    <span class="k">except</span><span class="p">:</span></span>
+<span class="code-line">        <span class="k">raise</span></span>
+<span class="code-line">    <span class="k">return</span> <span class="n">res</span></span>
+<span class="code-line"></span>
+<span class="code-line"></span>
+<span class="code-line"><span class="k">def</span> <span class="nf">getIp</span><span class="p">():</span></span>
+<span class="code-line">    <span class="sd">'''</span></span>
+<span class="code-line"><span class="sd">    grab the ip of the machine</span></span>
+<span class="code-line"><span class="sd">    '''</span></span>
+<span class="code-line">    <span class="n">data</span> <span class="o">=</span> <span class="n">initReq</span><span class="p">(</span><span class="s1">'http://ip.taobao.com/service/getIpInfo2.php'</span><span class="p">,{</span><span class="s1">'ip'</span><span class="p">:</span><span class="s1">'myip'</span><span class="p">})</span></span>
+<span class="code-line">    <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">decode</span><span class="p">())[</span><span class="s1">'data'</span><span class="p">][</span><span class="s1">'ip'</span><span class="p">]</span></span>
+<span class="code-line"></span>
+<span class="code-line"></span>
+<span class="code-line"><span class="k">def</span> <span class="nf">updateData</span><span class="p">():</span></span>
+<span class="code-line">    <span class="sd">'''</span></span>
+<span class="code-line"><span class="sd">    update ip records of data, prepared for update it</span></span>
+<span class="code-line"><span class="sd">    '''</span></span>
+<span class="code-line">    <span class="n">res</span> <span class="o">=</span> <span class="n">initReq</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">DomainListUrl</span><span class="p">,</span> <span class="n">values</span><span class="o">=</span><span class="n">loginInfo</span><span class="p">)</span></span>
+<span class="code-line">    <span class="n">domainIDs</span> <span class="o">=</span> <span class="p">{</span><span class="n">i</span><span class="p">[</span><span class="s1">'name'</span><span class="p">]:</span> <span class="n">i</span><span class="p">[</span><span class="s1">'id'</span><span class="p">]</span></span>
+<span class="code-line">                 <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">decode</span><span class="p">())[</span><span class="s1">'domains'</span><span class="p">]}</span></span>
+<span class="code-line">    <span class="k">for</span> <span class="n">domain</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span></span>
+<span class="code-line">        <span class="n">domain</span><span class="p">[</span><span class="s1">'domainID'</span><span class="p">]</span> <span class="o">=</span> <span class="n">domainIDs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">domain</span><span class="p">[</span><span class="s1">'domain'</span><span class="p">])</span></span>
+<span class="code-line">        <span class="n">res</span> <span class="o">=</span> <span class="n">initReq</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">RecordListUrl</span><span class="p">,</span> <span class="n">values</span><span class="o">=</span><span class="p">{</span></span>
+<span class="code-line">            <span class="o">**</span><span class="n">loginInfo</span><span class="p">,</span> <span class="o">**</span><span class="p">{</span><span class="s1">'domain_id'</span><span class="p">:</span> <span class="n">domain</span><span class="p">[</span><span class="s1">'domainID'</span><span class="p">]}})</span></span>
+<span class="code-line">        <span class="n">subdomainInfo</span> <span class="o">=</span> <span class="p">{((</span><span class="n">i</span><span class="p">[</span><span class="s1">'name'</span><span class="p">],</span> <span class="n">i</span><span class="p">[</span><span class="s1">'line'</span><span class="p">])</span> <span class="k">if</span> <span class="n">i</span><span class="p">[</span><span class="s1">'type'</span><span class="p">]</span> <span class="o">==</span> <span class="s1">'A'</span> <span class="k">else</span> <span class="p">(</span><span class="s1">'invalid'</span><span class="p">,</span> <span class="s1">'invalid'</span><span class="p">)):</span></span>
+<span class="code-line">                         <span class="p">{</span><span class="s1">'IP'</span><span class="p">:</span> <span class="n">i</span><span class="p">[</span><span class="s1">'value'</span><span class="p">],</span> <span class="s1">'ID'</span><span class="p">:</span> <span class="n">i</span><span class="p">[</span><span class="s1">'id'</span><span class="p">]}</span></span>
+<span class="code-line">                         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">decode</span><span class="p">())[</span><span class="s1">'records'</span><span class="p">]}</span></span>
+<span class="code-line">        <span class="n">subdomains</span> <span class="o">=</span> <span class="n">domain</span><span class="p">[</span><span class="s1">'subdomains'</span><span class="p">]</span></span>
+<span class="code-line">        <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">subdomains</span><span class="p">:</span></span>
+<span class="code-line">            <span class="n">subdomains</span><span class="p">[</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">subdomainInfo</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">name</span><span class="p">))</span></span>
+<span class="code-line">            <span class="n">ipList</span> <span class="o">=</span> <span class="n">socket</span><span class="o">.</span><span class="n">gethostbyname_ex</span><span class="p">(</span><span class="n">subdomains</span><span class="p">[</span><span class="n">name</span><span class="p">][</span><span class="s1">'hostname'</span><span class="p">])</span></span>
+<span class="code-line">            <span class="n">subdomains</span><span class="p">[</span><span class="n">name</span><span class="p">][</span><span class="s1">'hostIP'</span><span class="p">]</span> <span class="o">=</span> <span class="n">ipList</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span></span>
+<span class="code-line"></span>
+<span class="code-line"></span>
+<span class="code-line"><span class="k">def</span> <span class="nf">main</span><span class="p">():</span></span>
+<span class="code-line">    <span class="n">updateData</span><span class="p">()</span></span>
+<span class="code-line">    <span class="n">httpData</span> <span class="o">=</span> <span class="p">[]</span></span>
+<span class="code-line">    <span class="k">for</span> <span class="n">domain</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span></span>
+<span class="code-line">        <span class="n">subdomains</span> <span class="o">=</span> <span class="n">domain</span><span class="p">[</span><span class="s1">'subdomains'</span><span class="p">]</span></span>
+<span class="code-line">        <span class="k">for</span> <span class="n">subdomain</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">subdomains</span><span class="o">.</span><span class="n">items</span><span class="p">():</span></span>
+<span class="code-line">            <span class="c1"># avoid update too frequenly</span></span>
+<span class="code-line">            <span class="k">if</span> <span class="n">_</span><span class="p">[</span><span class="s1">'IP'</span><span class="p">]</span> <span class="o">!=</span> <span class="n">_</span><span class="p">[</span><span class="s1">'hostIP'</span><span class="p">]:</span></span>
+<span class="code-line">                <span class="n">httpData</span><span class="o">.</span><span class="n">append</span><span class="p">(</span></span>
+<span class="code-line">                    <span class="p">{</span></span>
+<span class="code-line">                        <span class="o">**</span><span class="n">loginInfo</span><span class="p">,</span></span>
+<span class="code-line">                        <span class="o">**</span><span class="p">{</span></span>
+<span class="code-line">                            <span class="s1">'domain_id'</span><span class="p">:</span> <span class="n">domain</span><span class="p">[</span><span class="s1">'domainID'</span><span class="p">],</span></span>
+<span class="code-line">                            <span class="s1">'record_id'</span><span class="p">:</span> <span class="n">_</span><span class="p">[</span><span class="s1">'ID'</span><span class="p">],</span></span>
+<span class="code-line">                            <span class="s1">'record_line'</span><span class="p">:</span> <span class="n">subdomain</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span></span>
+<span class="code-line">                            <span class="s1">'sub_domain'</span><span class="p">:</span> <span class="n">subdomain</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span></span>
+<span class="code-line">                            <span class="s1">'value'</span><span class="p">:</span> <span class="n">_</span><span class="p">[</span><span class="s1">'hostIP'</span><span class="p">]</span></span>
+<span class="code-line">                        <span class="p">}</span></span>
+<span class="code-line">                    <span class="p">}</span></span>
+<span class="code-line">                <span class="p">)</span></span>
+<span class="code-line">            <span class="k">else</span><span class="p">:</span></span>
+<span class="code-line">                <span class="k">continue</span></span>
+<span class="code-line">    <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">httpData</span><span class="p">:</span></span>
+<span class="code-line">        <span class="k">try</span><span class="p">:</span></span>
+<span class="code-line">            <span class="n">initReq</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">RecordDdnsUrl</span><span class="p">,</span> <span class="n">values</span><span class="o">=</span><span class="n">item</span><span class="p">)</span></span>
+<span class="code-line">        <span class="k">except</span><span class="p">:</span></span>
+<span class="code-line">            <span class="k">pass</span></span>
+<span class="code-line"></span>
+<span class="code-line"><span class="n">DomainListUrl</span> <span class="o">=</span> <span class="s1">'https://dnsapi.cn/Domain.List'</span></span>
+<span class="code-line"><span class="n">RecordListUrl</span> <span class="o">=</span> <span class="s1">'https://dnsapi.cn/Record.List'</span></span>
+<span class="code-line"><span class="n">RecordDdnsUrl</span> <span class="o">=</span> <span class="s1">'https://dnsapi.cn/Record.Ddns'</span></span>
+<span class="code-line"><span class="n">loginInfo</span> <span class="o">=</span> <span class="p">{</span></span>
+<span class="code-line">    <span class="s1">'login_token'</span><span class="p">:</span> <span class="s1">'**your login token**'</span><span class="p">,</span></span>
+<span class="code-line">    <span class="s1">'format'</span><span class="p">:</span> <span class="s1">'json'</span></span>
+<span class="code-line"><span class="p">}</span></span>
+<span class="code-line"><span class="n">data</span> <span class="o">=</span> <span class="p">[</span></span>
+<span class="code-line">        <span class="p">{</span><span class="s1">'domain'</span><span class="p">:</span> <span class="s1">'laolilin.com'</span><span class="p">,</span></span>
+<span class="code-line">         <span class="s1">'domainID'</span><span class="p">:</span> <span class="s1">''</span><span class="p">,</span></span>
+<span class="code-line">         <span class="s1">'subdomains'</span><span class="p">:</span> <span class="p">{(</span><span class="s1">'blog'</span><span class="p">,</span> <span class="s1">'默认'</span><span class="p">):</span> <span class="p">{</span><span class="s1">'ID'</span><span class="p">:</span> <span class="s1">''</span><span class="p">,</span></span>
+<span class="code-line">                                      <span class="s1">'IP'</span><span class="p">:</span> <span class="s1">''</span><span class="p">,</span></span>
+<span class="code-line">                                      <span class="s1">'hostIP'</span><span class="p">:</span> <span class="s1">''</span><span class="p">,</span></span>
+<span class="code-line">                                      <span class="s1">'hostname'</span><span class="p">:</span> <span class="s1">'pages.coding.me'</span><span class="p">},</span></span>
+<span class="code-line">                        <span class="p">(</span><span class="s1">'blog'</span><span class="p">,</span> <span class="s1">'国外'</span><span class="p">):</span> <span class="p">{</span><span class="s1">'ID'</span><span class="p">:</span> <span class="s1">''</span><span class="p">,</span></span>
+<span class="code-line">                                      <span class="s1">'IP'</span><span class="p">:</span> <span class="s1">''</span><span class="p">,</span></span>
+<span class="code-line">                                      <span class="s1">'hostIP'</span><span class="p">:</span> <span class="s1">''</span><span class="p">,</span></span>
+<span class="code-line">                                      <span class="s1">'hostname'</span><span class="p">:</span> <span class="s1">'192.30.252.153'</span><span class="p">},</span></span>
+<span class="code-line">                        <span class="p">(</span><span class="s1">'pi'</span><span class="p">,</span> <span class="s1">'默认'</span><span class="p">):</span> <span class="p">{</span><span class="s1">'ID'</span><span class="p">:</span> <span class="s1">''</span><span class="p">,</span></span>
+<span class="code-line">                                      <span class="s1">'IP'</span><span class="p">:</span> <span class="s1">''</span><span class="p">,</span></span>
+<span class="code-line">                                      <span class="s1">'hostIP'</span><span class="p">:</span> <span class="s1">''</span><span class="p">,</span></span>
+<span class="code-line">                                      <span class="s1">'hostname'</span><span class="p">:</span> <span class="n">getIp</span><span class="p">()},</span></span>
+<span class="code-line">                        <span class="p">}</span></span>
+<span class="code-line">         <span class="p">},</span></span>
+<span class="code-line">        <span class="p">]</span></span>
+<span class="code-line"></span>
+<span class="code-line"></span>
+<span class="code-line"><span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">"__main__"</span><span class="p">:</span></span>
+<span class="code-line">    <span class="n">main</span><span class="p">()</span></span>
+</pre></div>
+</div>
+<div class="section" id="id3">
+<h2>自动更新</h2>
+<p>由于 <tt class="docutils literal">systemd</tt> 可以轻松实现自动运行脚本，故只需要一个 <tt class="docutils literal">timer</tt> 和一个 <tt class="docutils literal">service</tt> 。</p>
+<ol class="arabic">
+<li><p class="first">创建 <tt class="docutils literal">service</tt>
+<tt class="docutils literal">sudo touch <span class="pre">/usr/lib/systemd/system/ddns-update.service</span></tt> 先建立个空文件。
+再填入以下内容，意思是用 <tt class="docutils literal">root</tt> 运行 <tt class="docutils literal">ddns_update.py</tt> 。</p>
+<div class="highlight"><pre><span class="code-line"><span></span>[Unit]</span>
+<span class="code-line">Description=Update ip records</span>
+<span class="code-line">After=network.target</span>
+<span class="code-line"></span>
+<span class="code-line">[Service]</span>
+<span class="code-line">Type=simple</span>
+<span class="code-line">ExecStart=python /usr/local/sbin/ddns_update.py</span>
+<span class="code-line">User=root</span>
+<span class="code-line">Group=systemd-journal</span>
+</pre></div>
+</li>
+<li><p class="first">创建 <tt class="docutils literal">timer</tt>
+<tt class="docutils literal">timer</tt> 就是个定时器，和 <tt class="docutils literal">ddns_update.service</tt> 同名, <tt class="docutils literal">sudo touch <span class="pre">/usr/lib/systemd/system/ddns-update.timer</span></tt> 。
+再填入以下内容，启动后10秒开始执行，每30分钟运行一次。</p>
+<div class="highlight"><pre><span class="code-line"><span></span>[Unit]</span>
+<span class="code-line">Description=Update ip records.</span>
+<span class="code-line"></span>
+<span class="code-line">[Timer]</span>
+<span class="code-line">OnBootSec=0.1min</span>
+<span class="code-line">OnUnitActiveSec=30min</span>
+<span class="code-line">Unit=ddns-update.service</span>
+<span class="code-line"></span>
+<span class="code-line">[Install]</span>
+<span class="code-line">WantedBy=timers.target</span>
+</pre></div>
+</li>
+<li><p class="first">启用
+很简单，用 <tt class="docutils literal">sudo systemctl enable <span class="pre">ddns-update.timer</span></tt> 即可。</p>
+</li>
+</ol>
+</div>
+
+
+                <!-- Neighbors -->
+                    <br>
+                    <b>Read more:</b><br>
+<div class="pagination">
+    <a class="w-50" href="//blog.laolilin.com/posts/2016/10/config_raspberry_pi.html">
+&ll; Raspberry pi 配置
+    </a>
+    <a class="w-50 text-right" href="//blog.laolilin.com/posts/2016/11/implement_simplex_centroid_mix_design_by_python.html">
+        Python实现单形重心法混料设计 &gg;    </a>
+</div>
+                <!-- Google Adsense -->
+            </div>
+
+            <!-- Sidebar -->
+            <div class="col-md-2 d-none d-md-block small">
+                <div class="sticky-top">
+                    <!-- ToC -->
+                    <nav id="toc" data-toggle="toc" ></nav>
+
+                    <!-- Share post -->
+
+                    <!-- Google Adsense -->
+                </div>
+            </div>
+        </div>
+
+    <!-- Releated posts -->
+
+    <!-- Comments -->
+<section class="comments" id="comments">
+    <!-- <h2>Comments</h2> -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/blueimp-md5/2.10.0/js/md5.min.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+    <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+    <hr/>
+    <div id="gitalk-container"></div>
+    <script>
+        var gitalk = new Gitalk({
+            clientID: '32128e45765077b3152c',
+            clientSecret: '04b40e6a8191416fb3bcf87adb2cf7e2cb2be7d9',
+            repo: 'comments-blog.laolilin.com',
+            owner: 'laolilin',
+            admin: ['laolilin','lll9p'],
+            id: md5(location.pathname),      // Ensure uniqueness and length less than 50
+            distractionFreeMode: false,  // Facebook-like distraction free mode
+            createIssueManually: true,
+            proxy: 'https:/cloudflare-cors-anywhere.lll9p.workers.dev/?https://github.com/login/oauth/access_token',
+        })
+
+        gitalk.render('gitalk-container')
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="https://github.com/gitalk/gitalk" target="_blank">Comment system powered by
+            gitalk.</a></noscript>
+</section>                </div>
+        </main>
+
+    </div>
+
+    <!-- Footer -->
+    <footer class="flex-shrink-0 bg-dark text-light small py-1">
+        <div class="container text-center">
+                &copy; 2021 <a href="//blog.laolilin.com">劳思杂记</a> by <a href="//blog.laolilin.com/pages/about.html">Lao</a>, Build on: Wed Jul 14 08:58:35 CST 2021<br>
+            Powered by <a href="http://getpelican.com">Pelican</a>, <a href="http://python.org">Python</a>, <a href="https://getbootstrap.com">Bootstrap 4</a>,
+            <!-- Do not remove below license sentence -->
+            License: <a href="https://spdx.org/licenses/CC-BY-4.0.html">CC-BY-4.0</a>, based on <a href="https://github.com/vuquangtrong/simplify-theme">Simplify Bootstrap Theme</a>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <!--
+    <script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.4.1.min.js"></script>
+    -->
+    <script type="text/javascript" src="//blog.laolilin.com/theme/jquery/jquery-3.4.1.min.js"></script>
+    <!--
+    <script src="https://ajax.aspnetcdn.com/ajax/bootstrap/4.3.1/bootstrap.min.js"></script>
+    -->
+    <script type="text/javascript" src="//blog.laolilin.com/theme/bootstrap/bootstrap.min.js"></script>
+    <!--
+    <script src="https://cdn.rawgit.com/afeld/bootstrap-toc/v1.0.1/dist/bootstrap-toc.min.js"></script>
+    -->
+        <script type="text/javascript" src="//blog.laolilin.com/theme/extra/bootstrap-toc.min.js"></script>
+    <script type="text/javascript" src="//blog.laolilin.com/theme/style.js"></script>
+
+    <!-- Sharing -->
+    <!-- Baidu push -->
+        <script>
+        (function(){
+            var bp = document.createElement('script');
+            var curProtocol = window.location.protocol.split(':')[0];
+            if (curProtocol === 'https') {
+                bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+            }
+            else {
+                bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+            }
+            var s = document.getElementsByTagName("script")[0];
+            s.parentNode.insertBefore(bp, s);
+        })();
+        </script>
+    <!-- JSON LD -->
+<script type="application/ld+json">
+{
+    "@context": "http://schema.org",
+    "@type": "BlogPosting",
+    "name": "dnspod DDNS 自动更新",
+    "headline": "dnspod DDNS 自动更新",
+    "datePublished": "2016-10-15 12:05:00+08:00",
+    "dateModified": "2016-10-28 17:01:00+08:00",
+    "author": {
+        "@type": "Person",
+        "name": "lao",
+        "url": "//blog.laolilin.com/author/lao.html"
+    },
+    "image": "//blog.laolilin.com/logo.png",
+    "url": "//blog.laolilin.com/posts/2016/10/dnspod_ddns_auto_update.html",
+    "description": "使用Python对dnspod进行DDNS更新"
+}
+</script>
+    <!-- Disqus count -->
+</body>
+
+</html>

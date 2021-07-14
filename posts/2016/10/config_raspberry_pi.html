@@ -1,0 +1,887 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head -->
+<head>
+
+        <!-- Required metadata tags -->
+        <meta charset="utf-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="HandheldFriendly" content="True" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+
+        <!-- Default metadata -->
+    <meta name="author" content="lao" />
+    <meta name="description" content="Raspberry Pi 配置" />
+    <meta name="keywords" content="raspberry pi, resiliosync, 备份, 配置">
+<meta property="og:site_name" content="劳思杂记" />
+<meta property="og:title" content="Raspberry pi 配置" />
+<meta property="og:description" content="Raspberry Pi 配置" />
+<meta property="og:locale" content="en_US" />
+<meta property="og:url" content="//blog.laolilin.com/posts/2016/10/config_raspberry_pi.html" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2016-10-03 09:43:00+08:00" />
+<meta property="article:modified_time" content="2021-03-25 21:41:00+08:00" />
+<meta property="article:author" content="//blog.laolilin.com/author/lao.html">
+<meta property="article:section" content="Tech" />
+	<meta property="article:tag" content="raspberry pi" />
+	<meta property="article:tag" content="resiliosync" />
+	<meta property="article:tag" content="备份" />
+	<meta property="article:tag" content="配置" />
+	<meta property="og:image" content="//blog.laolilin.com/logo.png">
+
+        <!-- Site Claim -->
+
+
+        <!-- Title -->
+        <title>
+    Raspberry pi 配置 &ndash; 劳思杂记
+        </title>
+
+        <!-- Icon -->
+        <link rel="shortcut icon" href="//blog.laolilin.com/static/favicon.png" type="image/x-icon">
+        <link rel="icon" href="//blog.laolilin.com/static/favicon.png" type="image/x-icon">
+
+        <!-- Search engine -->
+            <meta name="robots" content="index, follow" />
+
+        <!-- Feeds -->
+            <link href="//blog.laolilin.com/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="劳思杂记 Full Atom Feed" />
+
+            <link href="//blog.laolilin.com/feeds/all.rss.xml" type="application/rss+xml" rel="alternate" title="劳思杂记 Full RSS Feed" />
+
+
+
+            <link href="//blog.laolilin.com/feeds/tech.atom.xml" type="application/atom+xml" rel="alternate" title="劳思杂记 Categories Atom Feed" />
+
+
+
+
+        <!-- Styles -->
+        <!--
+        <link rel="stylesheet" href="https://ajax.aspnetcdn.com/ajax/bootstrap/4.3.1/css/bootstrap.min.css">
+        -->
+        <link rel="stylesheet" href="//blog.laolilin.com/theme/bootstrap/bootstrap.min.css">
+        <!--
+        <link rel="stylesheet" href="https://cdn.rawgit.com/afeld/bootstrap-toc/v1.0.1/dist/bootstrap-toc.min.css">
+        -->
+            <link rel="stylesheet" href="//blog.laolilin.com/theme/extra/bootstrap-toc.min.css">
+        <link rel="stylesheet" href="//blog.laolilin.com/theme/pygment/friendly.min.css">
+        <!--
+        <link rel="stylesheet" href="//blog.laolilin.com/theme/extra/admonition.min.css">
+        -->
+        <link rel="stylesheet" href="//blog.laolilin.com/theme/style.css">
+
+        <!-- Google Analytics -->
+<script>
+(function(i, s, o, g, r, a, m) { i['GoogleAnalyticsObject'] = r;
+    i[r] = i[r] || function() {
+        (i[r].q = i[r].q || []).push(arguments) }, i[r].l = 1 * new Date();
+    a = s.createElement(o), m = s.getElementsByTagName(o)[0];
+    a.async = 1;
+    a.src = g;
+    m.parentNode.insertBefore(a, m) })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
+ga('create', 'UA-181588-5', 'auto');
+ga('send', 'pageview');
+</script>
+        <!-- Google Global Site Tag -->
+
+        <!-- Google Tag Manager -->
+
+        <!-- Google Adsense -->
+
+        <!-- Heap Analytic -->
+
+        <!-- Piwik Tracking -->
+
+        <!-- Matomo Tracking -->
+
+</head>
+
+<!-- Body -->
+<body class="d-flex flex-column" data-spy="scroll" data-target="#toc" data-offset="0" style="position: relative;">
+    <!-- Top anchor -->
+    <a href="#" id="backToTop" style="display: none; z-index: 1;" title="Back to top"><span></span></a>
+
+    <!-- Google tag manager -->
+
+    <!-- Navigation -->
+    <nav class="flex-shrink-0 navbar navbar-expand-md navbar-expand-lg navbar-dark bg-dark text-light shadow-sm">
+        <!-- Logo -->
+        <a class="navbar-brand" href="//blog.laolilin.com">劳思杂记</a>
+
+        <!-- Collapse button -->
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarMenu" aria-controls="navbarMenu" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon small"></span>
+        </button>
+
+        <!-- Collapsible content -->
+        <div class="collapse navbar-collapse" id="navbarMenu">
+            <!-- Page links -->
+            <ul class="navbar-nav mr-auto text-center">
+                <li class="nav-item ">
+                    <a class="nav-link" href="//blog.laolilin.com">
+                        <svg class="nav-icon" xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24">
+                            <path d="M21 13v10h-6v-6h-6v6h-6v-10h-3l12-12 12 12h-3zm-1-5.907v-5.093h-3v2.093l3 3z" fill="currentColor"></path>
+                        </svg>
+                        Home <span class="sr-only">(current)</span>
+                    </a>
+                </li>
+                <li class="nav-item ">
+                    <a class="nav-link" href="//blog.laolilin.com/categories.html">
+                        <svg class="nav-icon" xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24">
+                            <path d="M16 6h-8v-6h8v6zm-8 12h-8v6h8v-6zm16 0h-8v6h8v-6zm-11-7v-3h-2v3h-8v5h2v-3h14v3h2v-5h-8z" fill="currentColor"></path>
+                        </svg>
+                        Categories
+                    </a>
+                </li>
+                <li class="nav-item ">
+                    <a class="nav-link" href="//blog.laolilin.com/tags.html">
+                        <svg class="nav-icon" xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24">
+                            <path d="M10.605 0h-10.605v10.609l13.391 13.391 10.609-10.604-13.395-13.396zm-4.191 6.414c-.781.781-2.046.781-2.829.001-.781-.783-.781-2.048 0-2.829.782-.782 2.048-.781 2.829-.001.782.782.781 2.047 0 2.829z" fill="currentColor"></path>
+                        </svg>
+                        Tags
+                    </a>
+                </li>
+                <li class="nav-item ">
+                    <a class="nav-link" href="//blog.laolilin.com/archives.html">
+                        <svg class="nav-icon" xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24">
+                            <path d="M1.8 9l-.8-4h22l-.8 4h-2.029l.39-2h-17.122l.414 2h-2.053zm18.575-6l.604-2h-17.979l.688 2h16.687zm3.625 8l-2 13h-20l-2-13h24zm-8 4c0-.552-.447-1-1-1h-6c-.553 0-1 .448-1 1s.447 1 1 1h6c.553 0 1-.448 1-1z" fill="currentColor"></path>
+                        </svg>
+                        Archives
+                    </a>
+                </li>
+                <li class="nav-item ">
+                    <a class="nav-link" href="//blog.laolilin.com/drafts.html">
+                        <svg class="nav-icon" xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24">
+                            <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" fill="currentColor"></path>
+                        </svg>
+                        Drafts
+                    </a>
+                </li>
+                <li class="nav-item ">
+                    <a class="nav-link" href="//blog.laolilin.com/pages/about.html">
+                        <svg class="nav-icon" xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24">
+                            <path d="M20.822 18.096c-3.439-.794-6.64-1.49-5.09-4.418 4.72-8.912 1.251-13.678-3.732-13.678-5.082 0-8.464 4.949-3.732 13.678 1.597 2.945-1.725 3.641-5.09 4.418-3.073.71-3.188 2.236-3.178 4.904l.004 1h23.99l.004-.969c.012-2.688-.092-4.222-3.176-4.935z" fill="currentColor"></path>
+                        </svg>
+                        About
+                    </a>
+                </li>
+            </ul>
+
+            <!-- Search form -->
+            <form class="form-inline text-center" action="//blog.laolilin.com/search.html">
+                <input class="form-control w-100 bg-dark text-light text-center border-0 p-2" type="text" name="q" pattern=".{3,}" title="At least 3 characters" required="" placeholder="Type here to search" aria-label="Search">
+            </form>
+
+            <!-- Social links -->
+            <ul class="navbar-nav text-center">
+                <li class="nav-item">
+                    <a class="nav-link" href="https://facebook.com/laolilin">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                            <title>Facebook</title>
+                            <path d="M12 0c-6.627 0-12 5.373-12 12s5.373 12 12 12 12-5.373 12-12-5.373-12-12-12zm3 8h-1.35c-.538 0-.65.221-.65.778v1.222h2l-.209 2h-1.791v7h-3v-7h-2v-2h2v-2.308c0-1.769.931-2.692 3.029-2.692h1.971v3z" fill="currentColor"></path>
+                        </svg>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="https://github.com/lll9p">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                            <title>Github</title>
+                            <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" fill="currentColor"></path>
+                        </svg>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="https://twitter.com/lll9p">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                            <title>Twitter</title>
+                            <path d="M12 0c-6.627 0-12 5.373-12 12s5.373 12 12 12 12-5.373 12-12-5.373-12-12-12zm6.066 9.645c.183 4.04-2.83 8.544-8.164 8.544-1.622 0-3.131-.476-4.402-1.291 1.524.18 3.045-.244 4.252-1.189-1.256-.023-2.317-.854-2.684-1.995.451.086.895.061 1.298-.049-1.381-.278-2.335-1.522-2.304-2.853.388.215.83.344 1.301.359-1.279-.855-1.641-2.544-.889-3.835 1.416 1.738 3.533 2.881 5.92 3.001-.419-1.796.944-3.527 2.799-3.527.825 0 1.572.349 2.096.907.654-.128 1.27-.368 1.824-.697-.215.671-.67 1.233-1.263 1.589.581-.07 1.135-.224 1.649-.453-.384.578-.87 1.084-1.433 1.489z" fill="currentColor"></path>
+                        </svg>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Full page -->
+    <div class="flex-shrink-0 flex-grow-1">
+
+        <!-- Header -->
+        <header class="bg-dark text-light shadow-sm pt-3 pb-2">
+	<div class="container">
+		<h3 id="config_raspberry_pi">Raspberry pi 配置</h3>
+		<p style="font-size:larger;"><p class="first last">Raspberry Pi 配置</p>
+</p>
+        <div class="row mx-auto mt-3">
+            <div class="col-xs-12 col-sm-12 col-md-6 text-left" style="padding: 0">
+                <a href="//blog.laolilin.com/author/lao.html" class="card-link">lao</a>
+                <span class="card-link text-success">
+                    <span class="post-date" title="Post date">03 Oct 2016</span>
+                    <span class="text-info modified-date" title="Updated date">
+                            25 Mar 2021
+                    </span>
+                </span>
+                    <span class="card-link text-secondary" title="~1251 words">6 mins</span>
+            </div>
+            <div class="col-xs-12 col-sm-12 col-md-6 text-right" style="padding: 0">
+                <a class="badge badge-success" href="//blog.laolilin.com/category/tech.html">tech</a>
+                    <a class="badge badge-info" href="//blog.laolilin.com/tag/raspberry pi.html">raspberry pi</a>
+                    <a class="badge badge-info" href="//blog.laolilin.com/tag/resiliosync.html">resiliosync</a>
+                    <a class="badge badge-info" href="//blog.laolilin.com/tag/bei fen.html">备份</a>
+                    <a class="badge badge-info" href="//blog.laolilin.com/tag/pei zhi.html">配置</a>
+            </div>
+        </div>
+	</div>
+        </header>
+
+        <!-- Main -->
+        <main class="py-3">
+                <div class="container">
+                    <!-- Sharing -->
+
+                    <!-- Content -->
+    <!-- 2 columns layout -->
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-10">
+
+                <!-- Sharing -->
+
+                <!-- Article -->
+                <div class="section" id="id1">
+<h2>前言</h2>
+<p>Raspberry pi 是一个ARM开发板，我用的是 <a class="reference external" href="https://www.raspberrypi.org/products/raspberry-pi-2-model-b/">Raspberry pi 2 model B</a> 俗称2B版，4核ARM Cortex-A7 CPU（900MHZ），1GB内存。</p>
+<p>rpi2B带USB wifi时功耗仅1~5W，很适合用来搭要求不高的家庭长期服务系统，比如本文所述的 <a class="reference internal" href="#dnspod-ddns">dnspod DDNS自动更新</a> 、 <a class="reference internal" href="#id10">内网穿透</a> 、 <a class="reference internal" href="#hostapdwifi">hostapd配置wifi</a> 、 <a class="reference internal" href="#resiliosync-btsync">ResilioSync同步(原BTSync)</a> 、<a class="reference internal" href="#aria2">aria2 下载服务</a> 等，配置好了就不用再管了，做个小玩具挺好。</p>
+</div>
+<div class="section" id="id2">
+<h2>系统安装</h2>
+<p>系统我选 <a class="reference external" href="https://www.archlinux.org">Archlinux</a> ，毕竟pc和自己的服务器上长期使用 Archlinux ，再加上好用的滚动更新，有什么理由不在 rpi2B 上装个 Archlinux ？</p>
+<p>具体安装方法 <a class="reference external" href="https://archlinuxarm.org/platforms/armv7/broadcom/raspberry-pi-2">Archlinux ARM 安装指引</a> 进行安装，很简单，不赘述。默认用户名 <tt class="docutils literal">alarm</tt> ，密码同用户名。敢死队长 <tt class="docutils literal">root</tt> 密码为 <tt class="docutils literal">root</tt> 。</p>
+<p><em>系统安装不一定要在linux上，显然可以用VirtualBox里的Linux来安装，</em> <a class="reference internal" href="#id13">系统恢复</a> <em>也可以在里面进行恢复。</em></p>
+</div>
+<div class="section" id="id3">
+<h2>系统配置</h2>
+<p>安装完，登录前运行 <tt class="docutils literal">touch boot/ssh</tt> 并 <tt class="docutils literal">echo hdmi_force_hotplug=1 &gt;&gt; boot/config.txt</tt></p>
+<p>在 <cite>boot/boot.txt</cite> 修改 <cite>root</cite> 为 <cite>ro</cite> ，即只读模式，安装 <cite>uboot-tools</cite> 并执行 <tt class="docutils literal">./mkscr</tt> 。</p>
+<p>同样，在 <cite>etc/fstab</cite> 中也需要将boot分区变为ro <tt class="docutils literal"><span class="pre">defaults,ro,errors=remount-ro</span></tt></p>
+<p>安装树莓派专用内核 pacman -Syyu linux-raspberrypi4 raspberrypi-firmware</p>
+<p>修改etc/fstab 为0p1</p>
+<p>修改/boot/cmdline.txt 删除 kgdboc=ttyAMA0,115200
+修改/boot/config.txt 增加 hdmi_force_hotplug=1 enable_uart=1</p>
+<div class="section" id="id4">
+<h3>初次使用配置</h3>
+<p>初始账户和密码均为alarm</p>
+<p>ssh登录后先 <tt class="docutils literal">su</tt> 到 <cite>root</cite> ，然后</p>
+<p><tt class="docutils literal">vi /etc/ssh/sshd_config</tt></p>
+<p>加入一行: <tt class="docutils literal">PermitRootLogin yes</tt> ；</p>
+<p>重启 <cite>sshd</cite> <tt class="docutils literal">systemctl restart sshd</tt> ；</p>
+<p>从 <cite>sshd_config</cite> 删除 <tt class="docutils literal">PermitRootLogin yes</tt> ；</p>
+<p>修改 <cite>pacman</cite> 镜像 <tt class="docutils literal">vi /etc/pacman.d/mirrorlist</tt> ：</p>
+<p><tt class="docutils literal">Server = <span class="pre">http://mirrors.ustc.edu.cn/archlinuxarm/$arch/$repo</span></tt></p>
+</div>
+<div class="section" id="id5">
+<h3>改用户名</h3>
+<p>按个人习惯，先改掉默认的用户名。
+如果你直接用alarm登录，是无法修改用户名的，先用 <cite>root</cite> 登录。</p>
+<div class="highlight"><pre><span class="code-line"><span></span><span class="nv">new_user</span><span class="o">=</span>lao</span>
+<span class="code-line"><span class="c1"># change user name</span></span>
+<span class="code-line">usermod -l <span class="nv">$new_user</span> -d /home/<span class="nv">$new_user</span> -m alarm</span>
+<span class="code-line"><span class="c1"># chenge user group</span></span>
+<span class="code-line">groupmod -n <span class="nv">$new_user</span> alarm</span>
+</pre></div>
+<p>修改用户密码 <tt class="docutils literal">passwd lao</tt> 。</p>
+</div>
+<div class="section" id="sudo">
+<h3>安装 <cite>sudo</cite></h3>
+<p>先装个 <cite>sudo</cite> ，不能裸奔。</p>
+<div class="highlight"><pre><span class="code-line"><span></span>pacman -S sudo</span>
+<span class="code-line">visudo</span>
+<span class="code-line"><span class="c1"># uncomment the line "%wheel ALL=(ALL) ALL"</span></span>
+</pre></div>
+<div class="highlight"><pre><span class="code-line"><span></span>vi /etc/locale.gen</span>
+<span class="code-line"><span class="c1"># uncomment en_US.UTF-8 UTF-8</span></span>
+<span class="code-line">locale-gen</span>
+</pre></div>
+</div>
+<div class="section" id="id6">
+<h3>时间相关</h3>
+<div class="highlight"><pre><span class="code-line"><span></span>timedatectl set-ntp <span class="nb">true</span></span>
+<span class="code-line">rm /etc/localtime</span>
+<span class="code-line">ln -s /usr/share/zoneinfo/Asia/Shanghai /etc/localtime</span>
+</pre></div>
+<p>然后就可以重启了，最后要安装 <cite>lrzsz</cite> 和 <cite>tmux</cite> 。</p>
+</div>
+<div class="section" id="bash">
+<h3>配置bash</h3>
+<p>从TLDP上的 <a class="reference external" href="http://www.tldp.org/LDP/abs/html/sample-bashrc.html">.bashrc样例</a> 拿到配置好的 <tt class="docutils literal">.bashrc</tt> 即可。</p>
+<div class="highlight"><pre><span class="code-line"><span></span>wget https://gist.github.com/lll9p/a1df902cc68171bb6b3dca31891629c0/raw/4dfdd03af92335f17eec12e0b4b0cd3ce2584eaf/.bash .bashrc</span>
+</pre></div>
+<p>上面的配置很全面了，只需要加上自己的一些，如：</p>
+<div class="highlight"><pre><span class="code-line"><span></span><span class="c1"># If not running interactively, don't do anything</span></span>
+<span class="code-line"><span class="o">[[</span> <span class="nv">$-</span> !<span class="o">=</span> *i* <span class="o">]]</span> <span class="o">&amp;&amp;</span> <span class="k">return</span></span>
+<span class="code-line"><span class="nb">set</span> editing-mode vi</span>
+<span class="code-line"><span class="nb">set</span> -o vi</span>
+<span class="code-line"><span class="nb">export</span> <span class="nv">PATH</span><span class="o">+=</span>:/opt/vc/bin</span>
+<span class="code-line"><span class="nb">export</span> <span class="nv">LANG</span><span class="o">=</span>en_US.UTF-8</span>
+</pre></div>
+</div>
+<div class="section" id="id7">
+<h3>启动时检查硬盘</h3>
+<p>rpi不自带电池，系统所在的MicroSD卡又容易出现问题，所以每次开机都对硬盘自检是最好了。在 <cite>/boot/cmdline.txt</cite> 中设置系统启动时硬盘只读，进行磁盘检查之后再 <cite>mount</cite> 到 <cite>/</cite> 即可。</p>
+<ol class="arabic">
+<li><p class="first">在 <cite>/boot/cmdline.txt</cite> 中的 <cite>root=/dev/mmcblk0p2</cite> 后的 <cite>rw</cite> 改为 <cite>ro</cite> 。即：</p>
+<div class="highlight"><pre><span class="code-line"><span></span><span class="go">root=/dev/mmcblk0p2 ro rootwait console=ttyAMA0,115200 console=tty1 selinux=0 plymouth.enable=0 smsc95xx.turbo_mode=N dwc_otg.lpm_enable=0 kgdboc=ttyAMA0,115200 elevator=noop</span></span>
+</pre></div>
+</li>
+<li><p class="first">在 <cite>/etc/fstab</cite> 中，加一行：</p>
+<div class="highlight"><pre><span class="code-line"><span></span><span class="go">/dev/mmcblk0p2  /       ext4    remount,rw,defaults,noatime        0       1</span></span>
+</pre></div>
+</li>
+</ol>
+</div>
+<div class="section" id="id8">
+<h3>安装其他“必备软件”</h3>
+<div class="highlight"><pre><span class="code-line"><span></span><span class="go">sudo pacman -S --needed bash-completion bzip2 coreutils dhcpcd dkms dnsmasq dosfstools e2fsprogs findutils gawk gcc gcc-libs gzip hostapd less lrzsz p7zip rp-pppoe sudo sysfsutils tmux unzip vim watchdog wireless_tools wiringpi wpa_supplicant alsa-firmware alsa-utils aria2 cblas dkms dnsmasq hdf5 hdparm lapack moc rng-tools samba wget which wqy-zenhei mldonkey</span></span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id9">
+<h2>网络配置</h2>
+<p><a class="reference external" href="https://archlinuxarm.org/">ArchlinuxARM</a> 默认设好了 <cite>DHCP</cite> ，不需要额外配置，不过 <cite>wifi</cite> 之类的还是要自己设置的，由于我用的是 <cite>RTL8188EUS</cite> 芯片的USB网卡，自带驱动无法启动 <cite>hostapd</cite> ，所以还是需要进行一番安装与设置。</p>
+<div class="section" id="hostapdwifi">
+<h3>hostapd配置wifi</h3>
+<p>之前为了启用RTL8188EUS网卡（用 <tt class="docutils literal">lsusb</tt> 命令可以查看），需要下载 <a class="reference external" href="https://github.com/jenssegers/RTL8188-hostapd">jenssegers RTL8188-hostapd 驱动</a> 然后编译。</p>
+<p>别一个好办法是下载 <a class="reference external" href="https://github.com/lwfinger/rtl8188eu/tree/v4.1.8_9499">lwfinger RTL8188 驱动</a> ，然后用dkms管理编译和安装，这样可以直接使用Arch库里的hostapd，不过每次内核更新的时候就要再运行一次 <tt class="docutils literal">sudo dkms install 8188eu/1.0</tt> 。</p>
+<div class="highlight"><pre><span class="code-line"><span></span>wget https://github.com/lwfinger/rtl8188eu/archive/v4.1.8_9499.zip</span>
+<span class="code-line">unzip v4.1.8_9499.zip</span>
+<span class="code-line">sudo dkms add ./rtl8188eu</span>
+<span class="code-line">sudo dkms build 8188eu/1.0</span>
+<span class="code-line">sudo dkms install 8188eu/1.0</span>
+<span class="code-line">sudo touch <span class="se">\e</span>tc<span class="se">\m</span>odprobe.d<span class="se">\8</span>188eu.conf</span>
+<span class="code-line">sudo <span class="nb">echo</span> <span class="s2">"# r8188eu is staging, 8188eu is off-kernel \n blacklist r8188eu \n options 8188eu rtw_power_mgnt=0 rtw_enusbss=0"</span> &gt; <span class="se">\e</span>tc<span class="se">\m</span>odprobe.d<span class="se">\8</span>188eu.conf</span>
+</pre></div>
+<p>重启后完成驱动安装，接下来要配置 <tt class="docutils literal">hostapd</tt> ，可以直接下载 <a class="reference external" href="https://gist.github.com/lll9p/907acbb39c1f4a08f2e0b5aa7a80bede">我的 hostapd 配置</a> ，存为 <tt class="docutils literal">/etc/hostapd/hostapd.conf</tt> ，修改 <tt class="docutils literal">wpa_passphrase=PasswordOfLao</tt> 中的密码即完成 <tt class="docutils literal">hostapd</tt> 的安装与配置。</p>
+<p><strong>以下内容编译自</strong> <a class="reference external" href="https://linsir.org/post/Raspberry_Pi_Wifi_Router">Linsir的博客</a> 。</p>
+<ol class="arabic">
+<li><dl class="first docutils">
+<dt>dnsmasq</dt>
+<dd><p class="first">软AP( <tt class="docutils literal">hostapd</tt> )设置好后，我们还需要个DHCP服务器为设备分配IP地址。这里我们选用轻量级的dnsmasq,它还可以提示DNS缓存，非常给力。
+<tt class="docutils literal">pacman <span class="pre">-S</span> dnsmasq</tt> 后编辑 <tt class="docutils literal">/etc/dnsmasq.conf</tt> ，以下是简单的配置，具体的配置及解释请参考 <a class="reference external" href="https://gist.github.com/lll9p/2cdf7e27a663fd5c615d6fc49ca511a8">我的 dnsmasq 配置</a> 。</p>
+<div class="last"><div class="highlight"><pre><span class="code-line"><span></span># 无线网卡的设备名，同 hostapd.conf 保持一致</span>
+<span class="code-line">interface=wlan0</span>
+<span class="code-line"># 监听地址，同你想设置的网关地址</span>
+<span class="code-line">listen-address=192.168.0.1</span>
+<span class="code-line">bind-interfaces</span>
+<span class="code-line"># DHCP 分配  IP 的起止段和租约时间</span>
+<span class="code-line">dhcp-range=192.168.0.100,192.168.0.200,12h</span>
+<span class="code-line"># 推送给客户端的 DNS 服务器</span>
+<span class="code-line">dhcp-option=6,114.114.114.114,223.5.5.5</span>
+<span class="code-line">iptables</span>
+</pre></div>
+</div></dd>
+</dl>
+</li>
+<li><p class="first">设置流量转发</p>
+<div class="highlight"><pre><span class="code-line"><span></span><span class="gp"># </span>设置</span>
+<span class="code-line"><span class="go">sudo iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE</span></span>
+<span class="code-line"><span class="gp"># </span>保存</span>
+<span class="code-line"><span class="go">sudo iptables-save &gt; /etc/iptables/iptables.rules</span></span>
+</pre></div>
+</li>
+<li><dl class="first docutils">
+<dt>允许转发</dt>
+<dd><p class="first">需要启用内核的 IPv4 包转发功能，才能正常访问互联网。</p>
+<div class="last"><div class="highlight"><pre><span class="code-line"><span></span><span class="go">sudo echo "net.ipv4.ip_forward = 1" &gt;&gt; /etc/sysctl.d/99-sysctl.conf</span></span>
+<span class="code-line"><span class="go">sudo sysctl -p /etc/sysctl.d/99-sysctl.conf</span></span>
+</pre></div>
+</div></dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>测试</dt>
+<dd><p class="first">必须先为无线网卡设置好网关和子网掩码，这样 <tt class="docutils literal">hostapd</tt> 启用后，无线网络才能正确获取到IP地址。</p>
+<div class="highlight"><pre><span class="code-line"><span></span><span class="go">sudo ifconfig wlan0 192.168.0.1 netmask 255.255.255.0</span></span>
+<span class="code-line"><span class="go">sudo systemctl start iptables</span></span>
+<span class="code-line"><span class="go">sudo systemctl start hostapd</span></span>
+<span class="code-line"><span class="go">sudo systemctl start dnsmasq</span></span>
+</pre></div>
+<p class="last">现在就可以用手机或者笔记本连接，就能获得地址并能上网了。</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>开机启动</dt>
+<dd><p class="first">每次运行 <tt class="docutils literal">hostapd</tt> 之前，都必须运行命令来初始化无线网卡 <tt class="docutils literal">wlan0</tt>，很麻烦。如果我们要开机就激活无线网络，就要先用自带的 <tt class="docutils literal">netctl</tt> 来管理，配置 <tt class="docutils literal"><span class="pre">/etc/netctl/wireless-wpa-static</span></tt> ：</p>
+<div class="highlight"><pre><span class="code-line"><span></span>Interface=wlan0</span>
+<span class="code-line">Connection=ethernet</span>
+<span class="code-line">IP=static</span>
+<span class="code-line">Address='192.168.0.1/24'</span>
+<span class="code-line">#Gateway='192.168.0.1'</span>
+<span class="code-line">SkipNoCarrier=yes</span>
+<span class="code-line">ExecUpPost='iptables-restore &lt; /etc/iptables/iptables.rules &amp;&amp;echo 1 &gt;/proc/sys/net/ipv4/ip_forward'</span>
+</pre></div>
+<p>设置开机启动：</p>
+<div class="last"><div class="highlight"><pre><span class="code-line"><span></span><span class="go">sudo netctl enable wireless-wpa-static</span></span>
+<span class="code-line"><span class="go">sudo systemctl enable iptables hostapd dnsmasq</span></span>
+</pre></div>
+</div></dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>PPPOE</dt>
+<dd><p class="first">我的 <tt class="docutils literal">rpi</tt> 是连路由的，倒不用拨号，若是不用路由，就需要 <tt class="docutils literal">pppoe</tt> 拨号了。</p>
+<div class="last"><div class="highlight"><pre><span class="code-line"><span></span><span class="go">sudo pacman -S rp-pppoe</span></span>
+<span class="code-line"><span class="go">sudo pppoe-setup # 设置 拨号帐户、密码等</span></span>
+<span class="code-line"><span class="go">sudo systemctl enable adsl</span></span>
+</pre></div>
+</div></dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>iptables</dt>
+<dd><p class="first">我们需要再次配置 iptables，让网络流量得以穿透 PPPOE 隧道。</p>
+<div class="last"><div class="highlight"><pre><span class="code-line"><span></span><span class="go">sudo iptables -t nat -A POSTROUTING -o ppp0 -j MASQUERADE</span></span>
+<span class="code-line"><span class="go">sudo iptables-save &gt; /etc/iptables/iptables.rules</span></span>
+</pre></div>
+</div></dd>
+</dl>
+</li>
+</ol>
+<p>最后重启，一个无线路由器就成功了。Enjoy it.</p>
+</div>
+<div class="section" id="dnspod-ddns">
+<h3>dnspod DDNS自动更新</h3>
+<p>请参考 <a class="reference external" href="//blog.laolilin.com/posts/2016/10/dnspod_ddns_auto_update.html">ddns自动更新</a> 。</p>
+</div>
+<div class="section" id="id10">
+<h3>内网穿透</h3>
+<p>有时候公司内网需要在外访问，这时最好用的就是内网穿透工具了，这里推荐 <a class="reference external" href="https://github.com/fatedier/frp">frp</a> ，<a class="reference external" href="http://www.ngrok.com">ngrok</a> 也可用 。</p>
+<div class="section" id="frp">
+<h4>frp</h4>
+<p><a class="reference external" href="https://github.com/fatedier/frp">frp</a> 是一个开源的网罗穿透工具，下载 <cite>linux_arm</cite> 的release即可。</p>
+</div>
+<div class="section" id="ngrok">
+<h4>ngrok</h4>
+<p><a class="reference external" href="http://www.ngrok.com">ngrok</a> 是一个网络穿透的服务， <tt class="docutils literal">ngrok 2</tt> 是收费服务，而 <tt class="docutils literal">ngrok 1</tt> 则是开源的，我们可以使用 <tt class="docutils literal">ngrok 1</tt> 。</p>
+<p><tt class="docutils literal">ngrok</tt> 需要编译，过程如下：</p>
+<div class="highlight"><pre><span class="code-line"><span></span><span class="go">git clone https://github.com/inconshreveable/ngrok.git ngrok</span></span>
+<span class="code-line"><span class="go">cd ngrok</span></span>
+<span class="code-line"><span class="go">vim src/ngrok/log/logger.go</span></span>
+<span class="code-line"><span class="gp"># </span>第五行import中的 log 包，改为：log <span class="s2">"github.com/keepeye/log4go"</span></span>
+<span class="code-line"><span class="gp"># </span>为根域名生成证书</span>
+<span class="code-line"><span class="go">export NGROK_DOMAIN="laolilin.com"</span></span>
+<span class="code-line"><span class="go">openssl genrsa -out rootCA.key 2048</span></span>
+<span class="code-line"><span class="go">openssl req -x509 -new -nodes -key rootCA.key -subj "/CN=$NGROK_DOMAIN" -days 5000 -out rootCA.pem</span></span>
+<span class="code-line"><span class="go">openssl genrsa -out device.key 2048</span></span>
+<span class="code-line"><span class="go">openssl req -new -key device.key -subj "/CN=$NGROK_DOMAIN" -out device.csr</span></span>
+<span class="code-line"><span class="go">openssl x509 -req -in device.csr -CA rootCA.pem -CAkey rootCA.key -CAcreateserial -out device.crt -days 5000</span></span>
+<span class="code-line"><span class="go">yes | cp rootCA.pem assets/client/tls/ngrokroot.crt</span></span>
+<span class="code-line"><span class="go">yes | cp device.crt assets/server/tls/snakeoil.crt</span></span>
+<span class="code-line"><span class="go">yes | cp device.key assets/server/tls/snakeoil.key</span></span>
+<span class="code-line"><span class="gp"># </span>指定编译的环境变量: linux</span>
+<span class="code-line"><span class="go">GOOS=linux GOARCH=amd64</span></span>
+<span class="code-line"><span class="go">make release-server release-client</span></span>
+<span class="code-line"><span class="gp"># </span>Raspberry pi</span>
+<span class="code-line"><span class="go">GOOS=linux GOARCH=arm</span></span>
+<span class="code-line"><span class="go">make release-server release-client</span></span>
+<span class="code-line"><span class="gp"># </span>windows</span>
+<span class="code-line"><span class="go">GOOS=windows GOARCH=386</span></span>
+<span class="code-line"><span class="go">make release-server release-client</span></span>
+</pre></div>
+<dl class="docutils">
+<dt>编译完成后在 <tt class="docutils literal">./bin/</tt> 下找到 <tt class="docutils literal">ngrokd</tt> 及 <tt class="docutils literal">ngrok</tt> 。</dt>
+<dd><tt class="docutils literal">sudo cp <span class="pre">./bin/arm/{ngrokd,snakeoil.crt,snakeoil.key}</span> /usr/local/sbin/</tt> ，然后开一个专用的ngrok用户，及专用 <tt class="docutils literal">pid</tt> 文件。</dd>
+</dl>
+<div class="highlight"><pre><span class="code-line"><span></span><span class="c1"># add ngrok user without home dir and cannot login</span></span>
+<span class="code-line">sudo useradd --shell /bin/nologin --no-create-home --user-group ngrok</span>
+<span class="code-line"><span class="c1"># create an empty ngrok directory on /var/run using systemd or ngrok cannot create pid file</span></span>
+<span class="code-line">sudo <span class="nb">echo</span> <span class="s1">'d /var/run/rslsync 0755 ngrok ngrok'</span> &gt; /usr/lib/tmpfiles.d/ngrok.conf</span>
+</pre></div>
+<p>另存下面的代码为 <tt class="docutils literal"><span class="pre">/usr/lib/systemd/system/ngrok-server.service</span></tt> ，并启用之： <tt class="docutils literal">sudo systemctl enable <span class="pre">ngrok-server</span></tt>  。</p>
+<div class="highlight"><pre><span class="code-line"><span></span>[Service]</span>
+<span class="code-line">Type=simple</span>
+<span class="code-line">User=ngrok</span>
+<span class="code-line">Group=ngrok</span>
+<span class="code-line">ExecStart=/usr/local/sbin/ngrokd -log-level="ERROR" -tlsKey=/usr/local/sbin/snakeoil.key -tlsCrt=/usr/local/sbin/snakeoil.crt -domain=laolilin.com -httpAddr=:8888 -httpsAddr=:8081</span>
+<span class="code-line">PIDFile=/var/run/ngrok/ngrokd.pid</span>
+<span class="code-line">Restart=always</span>
+<span class="code-line"></span>
+<span class="code-line">[Install]</span>
+<span class="code-line">WantedBy=multi-user.target</span>
+</pre></div>
+<p>把以下内容存为 <tt class="docutils literal">ngrok.conf</tt> 。</p>
+<div class="highlight"><pre><span class="code-line"><span></span>server_addr: "rpi.laolilin.com:4443"</span>
+<span class="code-line">trust_host_root_certs: false</span>
+<span class="code-line">tunnels:</span>
+<span class="code-line">  jupyter:</span>
+<span class="code-line">    remote_port: 8889</span>
+<span class="code-line">    proto:</span>
+<span class="code-line">      tcp: "8889"</span>
+<span class="code-line">  rdp:</span>
+<span class="code-line">    remote_port: 9000</span>
+<span class="code-line">    proto:</span>
+<span class="code-line">      tcp: "3389"</span>
+</pre></div>
+<p>最后，在内网电脑上执行命令： <tt class="docutils literal">ngrok.exe <span class="pre">-config=ngrok.conf</span> start jupyter rdp</tt> （或放入 <tt class="docutils literal">计划任务</tt> 中），即可在外网访问内网的 <tt class="docutils literal">远程桌面</tt> 及 <tt class="docutils literal">jupyter notebook</tt> 。</p>
+</div>
+</div>
+</div>
+<div class="section" id="id11">
+<h2>系统备份与恢复</h2>
+<p>辛辛苦苦安装并配置好的系统因各种原因（比如 <a class="reference external" href="https://www.v2ex.com/t/309375">我删过/</a> ）丢失或损坏，如果此时有一份备份，那是最好不过的了。</p>
+<div class="section" id="id12">
+<h3>系统与配置备份</h3>
+<p>在这里我用 <tt class="docutils literal">tar</tt> 命令来按日备份系统，并排除掉一些动态的系统目录。</p>
+<p>当然了有时候并不用备份整个系统，只要备份修改过的配置文件即可，毕竟全系统备份很耗时。</p>
+<table border="1" class="docutils table table-striped">
+<colgroup>
+<col width="36%"/>
+<col width="29%"/>
+<col width="36%"/>
+</colgroup>
+<tbody valign="top">
+<tr><td>备份项目</td>
+<td>全系统</td>
+<td>仅配置</td>
+</tr>
+<tr><td>耗时</td>
+<td>2.5min</td>
+<td>20second</td>
+</tr>
+</tbody>
+</table>
+<p>在 <tt class="docutils literal">.bashrc</tt> 下加两句 <tt class="docutils literal">alias</tt> 即可。</p>
+<div class="highlight"><pre><span class="code-line"><span></span><span class="nb">alias</span> <span class="nv">backup_system</span><span class="o">=</span><span class="s2">"sudo tar --exclude=/{dev,lost+found,mnt,proc,run,sys,tmp,var/lib/pacman} --exclude=/home/python/{venv,PyNote,.cache,.viminfo,.theano,.ipython,.local} --exclude=/home/user/{.cache,.vimtmp,moc,.config/cmus} --exclude=/home/git/repos --xattrs -cpzf /mnt/MHDD/system_backup/backup-`date +%Y-%m-%d`.tgz /"</span></span>
+<span class="code-line"><span class="nb">alias</span> <span class="nv">backup_system_config</span><span class="o">=</span><span class="s2">"sudo tar --xattrs -cpzf /mnt/MHDD/system_backup/backup-config-`date +%Y-%m-%d`.tgz \</span></span>
+<span class="code-line"><span class="s2">    /boot/{cmdline.txt,config.txt} \</span></span>
+<span class="code-line"><span class="s2">    /etc/{conf.d/,hostapd/,iptables/,modprobe.d/,modules-load.d/,netctl/{pppoe,wireless-wpa-static},pacman.d/mirrorlist,ppp/{ip-up.d/01-dynamicIP.sh,chap-secrets,pap-secrets,pppoe.conf},rslsync/,ssh/,systemd/user/aria2.service,sysctl.d/,samba/,wpa_supplicant/,dhcpcd.conf,dhcpcd.duid,dnsmasq.conf,fstab,group,group-,gshadow,gshadow-,hostname,locale.gen,pacman.conf,passwd,passwd-,resolv.conf,shadow,shadow-,sudoers,watchdog.conf} \</span></span>
+<span class="code-line"><span class="s2">    /home/{user/{.config/aria2,.ssh,.vim,.bashrc,.toprc,.vimrc},git/{.ssh,.bashrc},python/{.config/matplotlib/,.jupyter/,.bashrc}} \</span></span>
+<span class="code-line"><span class="s2">    /root/{.gnupg/,.bashrc} \</span></span>
+<span class="code-line"><span class="s2">    /usr/{lib/{systemd/system/{hdparm.service,rslsync.service,ddns-update.service,ddns-update.timer,dnsmasq.service,hostapd.service,jupyter-notebook.service,ngrok-server.service,watchdog.service},tmpfiles.d/{rslsync.conf,jupyter.conf,ngrok.conf}},local/sbin/{ddns_dnspod.py,forward-ssh.sh,ngrokd,snakeoil.crt,snakeoil.key,start-jupyter-notebook}}"</span></span>
+</pre></div>
+</div>
+<div class="section" id="id13">
+<h3>系统恢复</h3>
+<p>解压很简单，只要一行即可，需要注意的是，若要还原整个系统，需要把 <tt class="docutils literal">/boot</tt> mount进“根目录里”。</p>
+<div class="highlight"><pre><span class="code-line"><span></span>mkdir boot root</span>
+<span class="code-line">sudo mount /dev/sdx1 root</span>
+<span class="code-line">sudo mount /dev/sdx2 root/boot</span>
+<span class="code-line">tar xvpfz backup.tgz -C root</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="resiliosync-btsync">
+<h2>ResilioSync同步(原BTSync)</h2>
+<p><a class="reference external" href="https://www.resilio.com/">ResilioSync</a> （以下简称rslsync），也就是改名前的BTSync，基于BitTorrent协议的文件分享系统。可以用pi+rslsync来做同步服务器，我把PC上的Dropbox文件夹放rslsync中同步，实现双重备份，经一年多的使用，挺稳定的。</p>
+<div class="section" id="resiliosync">
+<h3>下载resiliosync并解压</h3>
+<p>在Pi上插一个1.5T的移动硬盘，以下步骤可使用它来做Resiliosync的硬盘。</p>
+<div class="highlight"><pre><span class="code-line"><span></span><span class="c1"># download &amp; extract Resiliosync</span></span>
+<span class="code-line">wget https://download-cdn.resilio.com/stable/linux-armhf/resilio-sync_armhf.tar.gz</span>
+<span class="code-line">tar xvzf resilio-sync_armhf.tar.gz</span>
+<span class="code-line">sudo mv rslsync /usr/local/sbin</span>
+<span class="code-line"><span class="c1"># mount the mobile hard disk drive</span></span>
+<span class="code-line"><span class="c1"># replace sdx with your real device name</span></span>
+<span class="code-line">sudo mount /dev/sdx /mnt/MHDD</span>
+</pre></div>
+</div>
+<div class="section" id="rslsync">
+<h3>创建rslsync用户及相关配置</h3>
+<p>开一个专用的rslsync用户对于系统控制很有好处，可以将rslsync与其他用户隔离开来，下面的代码将创建一个 <strong>无家目录</strong> 且 <strong>不能登录</strong> 的 <tt class="docutils literal">rslsync</tt> 用户。</p>
+<div class="highlight"><pre><span class="code-line"><span></span><span class="c1"># add rslsync user without home dir and cannot login</span></span>
+<span class="code-line">sudo useradd --shell /bin/nologin --no-create-home --user-group rslsync</span>
+<span class="code-line"><span class="c1"># create an empty rslsync directory on /var/run using systemd or rslsync cannot create pid file</span></span>
+<span class="code-line"><span class="nb">echo</span> <span class="s1">'d /var/run/rslsync 0755 rslsync rslsync'</span> <span class="p">|</span> sudo tee /usr/lib/tmpfiles.d/rslsync.conf</span>
+<span class="code-line"><span class="c1"># make config file path and dump sample config to it</span></span>
+<span class="code-line">sudo mkdir /etc/rslsync/</span>
+<span class="code-line">rslsync --dump-sample-config <span class="p">|</span> sudo tee /etc/rslsync/config.json</span>
+</pre></div>
+<p>编辑 <tt class="docutils literal">config.json</tt> ,把 <tt class="docutils literal">"storage_path"</tt> 设成 <tt class="docutils literal"><span class="pre">"/mnt/MHDD/.sync"</span></tt> ，<tt class="docutils literal">"pid_file"</tt> 设为 <tt class="docutils literal">"/var/run/rslsync/rslsync.pid"</tt> 。
+开机启动rslsync，编辑 <tt class="docutils literal">/usr/lib/systemd/system/rslsync.service</tt> ，为方便其他用户能读写同步的文件，需要对rslsync的umask进行设置 <tt class="docutils literal">0002</tt> 。</p>
+<div class="highlight"><pre><span class="code-line"><span></span><span class="o">[</span>Unit<span class="o">]</span></span>
+<span class="code-line"><span class="nv">Description</span><span class="o">=</span>Resilio Sync</span>
+<span class="code-line"><span class="nv">After</span><span class="o">=</span>mnt-MHDD.mount</span>
+<span class="code-line"><span class="nv">After</span><span class="o">=</span>systemd-fsck@.service</span>
+<span class="code-line"></span>
+<span class="code-line"><span class="o">[</span>Service<span class="o">]</span></span>
+<span class="code-line"><span class="nv">Type</span><span class="o">=</span>forking</span>
+<span class="code-line"><span class="nv">User</span><span class="o">=</span>rslsync</span>
+<span class="code-line"><span class="nv">Group</span><span class="o">=</span>rslsync</span>
+<span class="code-line"><span class="nv">UMask</span><span class="o">=</span><span class="m">0002</span></span>
+<span class="code-line"><span class="nv">PIDFile</span><span class="o">=</span>/var/run/rslsync/rslsync.pid</span>
+<span class="code-line"><span class="nv">ExecStart</span><span class="o">=</span>/usr/local/sbin/rslsync --config /etc/rslsync/config.json</span>
+<span class="code-line"><span class="nv">Restart</span><span class="o">=</span>on-abort</span>
+<span class="code-line"></span>
+<span class="code-line"><span class="o">[</span>Install<span class="o">]</span></span>
+<span class="code-line"><span class="nv">WantedBy</span><span class="o">=</span>multi-user.target</span>
+</pre></div>
+<p>然后 <tt class="docutils literal">sudo systemctl enable rslsync</tt> 即可。</p>
+</div>
+</div>
+<div class="section" id="aria2">
+<h2>aria2 下载服务</h2>
+<ol class="arabic">
+<li><p class="first">安装 <tt class="docutils literal">aria2</tt> ：
+直接从 <tt class="docutils literal">pacman</tt> 安装即可，顺手创建配置文件。</p>
+<div class="highlight"><pre><span class="code-line"><span></span><span class="go">sudo pacman -S aria2</span></span>
+<span class="code-line"><span class="go">mkdir -p .config/aria2 &amp;&amp; cd $_</span></span>
+<span class="code-line"><span class="go">touch session.lock aria2.conf</span></span>
+</pre></div>
+<p>编辑 <tt class="docutils literal">aria2.conf</tt> ，输入以下配置，注意把 <cite>MYSECRET</cite> 改成自己的token，以后在 <a class="reference external" href="https://github.com/acgotaku/BaiduExporter">百度网盘导出</a> 及 <a class="reference external" href="https://github.com/binux/ThunderLixianExporter">迅雷离线导出</a> 里，设置jsonrpc为 <cite>http://token:MYSECRET@aria2server.com:6800/jsonrpc`</cite> 即可顺利使用。</p>
+<div class="highlight"><pre><span class="code-line"><span></span># 基本配置</span>
+<span class="code-line"># 下载目录</span>
+<span class="code-line">dir=/mnt/DISKOFLAO/Downloads</span>
+<span class="code-line"># 下载从这个文件中找到的urls, 需自己建立这个文件</span>
+<span class="code-line"># touch /home/pi/.aria2/aria2.session</span>
+<span class="code-line">input-file=/home/lao/.config/aria2/session.lock</span>
+<span class="code-line"># 最大同时下载任务数，默认 5</span>
+<span class="code-line">#max-concurrent-downloads=5</span>
+<span class="code-line"># 断点续传，只适用于 HTTP(S)/FTP</span>
+<span class="code-line">continue=true</span>
+<span class="code-line">log-level=error</span>
+<span class="code-line"># HTTP/FTP 配置</span>
+<span class="code-line"># 关闭连接如果下载速度等于或低于这个值，默认 0</span>
+<span class="code-line">#lowest-speed-limit=0</span>
+<span class="code-line"># 对于每个下载在同一个服务器上的连接数，默认 1</span>
+<span class="code-line">max-connection-per-server=5</span>
+<span class="code-line"># 每个文件最小分片大小，例如文件 20M，设置 size 为 10M, 则用2个连接下载，默认 20M</span>
+<span class="code-line">#min-split-size=10M</span>
+<span class="code-line"># 下载一个文件的连接数，默认 5</span>
+<span class="code-line">#split=5</span>
+<span class="code-line"># BT 特殊配置</span>
+<span class="code-line"># 启用本地节点查找，默认 false</span>
+<span class="code-line">bt-enable-lpd=true</span>
+<span class="code-line"># 指定最大文件数对于每个 bt 下载，默认 100</span>
+<span class="code-line">#bt-max-open-files=100</span>
+<span class="code-line"># 单种子最大连接数，默认 55</span>
+<span class="code-line">#bt-max-peers=55</span>
+<span class="code-line"># 设置最低的加密级别，可选全连接加密 arc4，默认是头加密 plain</span>
+<span class="code-line">#bt-min-crypto-level=plain</span>
+<span class="code-line"># 总是使用 obfuscation handshake，防迅雷必备，默认 false</span>
+<span class="code-line">bt-require-crypto=true</span>
+<span class="code-line"># 如果下载的是种子文件则自动解析并下载，默认 true</span>
+<span class="code-line">#follow-torrent=true</span>
+<span class="code-line"># 为 BT 下载设置 TCP 端口号，确保开放这些端口，默认 6881-6999</span>
+<span class="code-line">listen-port=65298</span>
+<span class="code-line">#Set UDP listening port used by DHT(IPv4, IPv6) and UDP tracker</span>
+<span class="code-line">dht-listen-port=65298</span>
+<span class="code-line"># 整体上传速度限制，0 表示不限制，默认 0</span>
+<span class="code-line">#max-overall-upload-limit=0</span>
+<span class="code-line"># 每个下载上传速度限制，默认 0</span>
+<span class="code-line">#max-upload-limit=0</span>
+<span class="code-line"># 种子分享率大于1, 则停止做种，默认 1.0</span>
+<span class="code-line">#seed-ratio=1</span>
+<span class="code-line"># 做种时间大于2小时，则停止做种</span>
+<span class="code-line">seed-time=120</span>
+<span class="code-line"># RPC 配置</span>
+<span class="code-line"># 开启 JSON-RPC/XML-RPC 服务，默认 false</span>
+<span class="code-line">enable-rpc=true</span>
+<span class="code-line"># 允许所有来源，web 界面跨域权限需要，默认 false</span>
+<span class="code-line">rpc-allow-origin-all=true</span>
+<span class="code-line"># 允许外部访问，默认 false</span>
+<span class="code-line">rpc-listen-all=true</span>
+<span class="code-line"># rpc 端口，默认 6800</span>
+<span class="code-line">rpc-listen-port=6800</span>
+<span class="code-line"># 设置最大的 JSON-RPC/XML-RPC 请求大小，默认 2M</span>
+<span class="code-line">#rpc-max-request-size=2M</span>
+<span class="code-line"># rpc 密码，可不设置</span>
+<span class="code-line">#rpc-passwd=raspberry</span>
+<span class="code-line"># 做种时间大于2小时，则停止做种</span>
+<span class="code-line">seed-time=120</span>
+<span class="code-line"># RPC 配置</span>
+<span class="code-line"># 开启 JSON-RPC/XML-RPC 服务，默认 false</span>
+<span class="code-line">enable-rpc=true</span>
+<span class="code-line"># 允许所有来源，web 界面跨域权限需要，默认 false</span>
+<span class="code-line">rpc-allow-origin-all=true</span>
+<span class="code-line"># 允许外部访问，默认 false</span>
+<span class="code-line">rpc-listen-all=true</span>
+<span class="code-line"># rpc 端口，默认 6800rpc-listen-port=6800</span>
+<span class="code-line"># 设置最大的 JSON-RPC/XML-RPC 请求大小，默认 2M</span>
+<span class="code-line">#rpc-max-request-size=2M</span>
+<span class="code-line"># rpc 密码，可不设置</span>
+<span class="code-line">#rpc-passwd=raspberry</span>
+<span class="code-line"># rpc 用户名，可不设置</span>
+<span class="code-line">#rpc-user=aria2pi</span>
+<span class="code-line">rpc-secret=MYSECRET</span>
+<span class="code-line"># 高级配置</span>
+<span class="code-line"># This is useful if you have to use broken DNS and</span>
+<span class="code-line"># want to avoid terribly slow AAAA record lookup.</span>
+<span class="code-line"># 默认 false</span>
+<span class="code-line">disable-ipv6=true</span>
+<span class="code-line"># 指定文件分配方法，预分配能有效降低文件碎片，提高磁盘性能，缺点是预分配时间稍长</span>
+<span class="code-line"># 如果使用新的文件系统，例如 ext4 (with extents support), btrfs, xfs or NTFS(MinGW build only), falloc 是最好的选择</span>
+<span class="code-line"># 如果设置为 none，那么不预先分配文件空间，默认 prealloc</span>
+<span class="code-line">file-allocation=prealloc</span>
+<span class="code-line"># 整体下载速度限制，默认 0</span>
+<span class="code-line">#max-overall-download-limit=0</span>
+<span class="code-line"># 每个下载下载速度限制，默认 0</span>
+<span class="code-line">#max-download-limit=0</span>
+<span class="code-line"># 保存错误或者未完成的下载到这个文件</span>
+<span class="code-line"># 和基本配置中的 input-file 一起使用，那么重启后仍可继续下载</span>
+<span class="code-line">save-session=/home/lao/.config/aria2/session.lock</span>
+<span class="code-line"># 每5分钟自动保存错误或未完成的下载，如果为 0, 只有 aria2 正常退出才回保存，默认 0</span>
+<span class="code-line">save-session-interval=300</span>
+<span class="code-line"># 若要用于 PT 下载，需另外的配置，这里没写</span>
+</pre></div>
+</li>
+<li><dl class="first docutils">
+<dt>开机启动</dt>
+<dd><p class="first last"><tt class="docutils literal">aria2</tt> 开机启动很简单，把以下代码存为 <tt class="docutils literal">/etc/systemd/user/aria2.service</tt> ，然后 <tt class="docutils literal">systemctl enable aria2.service <span class="pre">--user</span></tt> ，即可。</p>
+</dd>
+</dl>
+<div class="highlight"><pre><span class="code-line"><span></span>[Unit]</span>
+<span class="code-line">Description=Aria2 Service</span>
+<span class="code-line">After=mnt-MHDD.mount</span>
+<span class="code-line">After=systemd-fsck@.service</span>
+<span class="code-line">After=network.target</span>
+<span class="code-line"></span>
+<span class="code-line">[Service]</span>
+<span class="code-line">Type=simple</span>
+<span class="code-line">User=lao</span>
+<span class="code-line">Group=lao</span>
+<span class="code-line">UMask=0002</span>
+<span class="code-line">PIDFile=/home/lao/.config/aria2/aria2.pid</span>
+<span class="code-line">ExecStart=/usr/bin/aria2c --check-certificate=false --enable-rpc=true --rpc-listen-all=true --rpc-allow-origin-all=true --rpc-secret=passwd --save-session /home/lao/.config/aria2/session.lock --input-file /home/lao/.config/aria2/session.lock --conf-path=/home/lao/.config/aria2/aria2.conf</span>
+<span class="code-line">Restart=on-abort</span>
+<span class="code-line"></span>
+<span class="code-line">[Install]</span>
+<span class="code-line">WantedBy=multi-user.target</span>
+</pre></div>
+</li>
+</ol>
+<p>mldonkey 安装</p>
+<p>samba 安装
+smbpasswd -a lao</p>
+</div>
+
+
+                <!-- Neighbors -->
+                    <br>
+                    <b>Read more:</b><br>
+<div class="pagination">
+    <a class="w-50" href="//blog.laolilin.com/posts/2016/09/python-install-config-for-data-analysis.html">
+&ll; Python数据分析-安装与配置
+    </a>
+    <a class="w-50 text-right" href="//blog.laolilin.com/posts/2016/10/dnspod_ddns_auto_update.html">
+        dnspod DDNS 自动更新 &gg;    </a>
+</div>
+                <!-- Google Adsense -->
+            </div>
+
+            <!-- Sidebar -->
+            <div class="col-md-2 d-none d-md-block small">
+                <div class="sticky-top">
+                    <!-- ToC -->
+                    <nav id="toc" data-toggle="toc" ></nav>
+
+                    <!-- Share post -->
+
+                    <!-- Google Adsense -->
+                </div>
+            </div>
+        </div>
+
+    <!-- Releated posts -->
+        <hr>
+        <div>
+            <h5>Related posts:</h5>
+            <ul>
+                <li><a href="//blog.laolilin.com/posts/2021/05/config_raspberry_pi4_and_cm4_aarch64.html">Raspberry pi 4 和 Cm4 aarch64 配置</a></li>
+            </ul>
+        </div>
+
+    <!-- Comments -->
+<section class="comments" id="comments">
+    <!-- <h2>Comments</h2> -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/blueimp-md5/2.10.0/js/md5.min.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+    <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+    <hr/>
+    <div id="gitalk-container"></div>
+    <script>
+        var gitalk = new Gitalk({
+            clientID: '32128e45765077b3152c',
+            clientSecret: '04b40e6a8191416fb3bcf87adb2cf7e2cb2be7d9',
+            repo: 'comments-blog.laolilin.com',
+            owner: 'laolilin',
+            admin: ['laolilin','lll9p'],
+            id: md5(location.pathname),      // Ensure uniqueness and length less than 50
+            distractionFreeMode: false,  // Facebook-like distraction free mode
+            createIssueManually: true,
+            proxy: 'https:/cloudflare-cors-anywhere.lll9p.workers.dev/?https://github.com/login/oauth/access_token',
+        })
+
+        gitalk.render('gitalk-container')
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="https://github.com/gitalk/gitalk" target="_blank">Comment system powered by
+            gitalk.</a></noscript>
+</section>                </div>
+        </main>
+
+    </div>
+
+    <!-- Footer -->
+    <footer class="flex-shrink-0 bg-dark text-light small py-1">
+        <div class="container text-center">
+                &copy; 2021 <a href="//blog.laolilin.com">劳思杂记</a> by <a href="//blog.laolilin.com/pages/about.html">Lao</a>, Build on: Wed Jul 14 08:58:35 CST 2021<br>
+            Powered by <a href="http://getpelican.com">Pelican</a>, <a href="http://python.org">Python</a>, <a href="https://getbootstrap.com">Bootstrap 4</a>,
+            <!-- Do not remove below license sentence -->
+            License: <a href="https://spdx.org/licenses/CC-BY-4.0.html">CC-BY-4.0</a>, based on <a href="https://github.com/vuquangtrong/simplify-theme">Simplify Bootstrap Theme</a>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <!--
+    <script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.4.1.min.js"></script>
+    -->
+    <script type="text/javascript" src="//blog.laolilin.com/theme/jquery/jquery-3.4.1.min.js"></script>
+    <!--
+    <script src="https://ajax.aspnetcdn.com/ajax/bootstrap/4.3.1/bootstrap.min.js"></script>
+    -->
+    <script type="text/javascript" src="//blog.laolilin.com/theme/bootstrap/bootstrap.min.js"></script>
+    <!--
+    <script src="https://cdn.rawgit.com/afeld/bootstrap-toc/v1.0.1/dist/bootstrap-toc.min.js"></script>
+    -->
+        <script type="text/javascript" src="//blog.laolilin.com/theme/extra/bootstrap-toc.min.js"></script>
+    <script type="text/javascript" src="//blog.laolilin.com/theme/style.js"></script>
+
+    <!-- Sharing -->
+    <!-- Baidu push -->
+        <script>
+        (function(){
+            var bp = document.createElement('script');
+            var curProtocol = window.location.protocol.split(':')[0];
+            if (curProtocol === 'https') {
+                bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+            }
+            else {
+                bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+            }
+            var s = document.getElementsByTagName("script")[0];
+            s.parentNode.insertBefore(bp, s);
+        })();
+        </script>
+    <!-- JSON LD -->
+<script type="application/ld+json">
+{
+    "@context": "http://schema.org",
+    "@type": "BlogPosting",
+    "name": "Raspberry pi 配置",
+    "headline": "Raspberry pi 配置",
+    "datePublished": "2016-10-03 09:43:00+08:00",
+    "dateModified": "2021-03-25 21:41:00+08:00",
+    "author": {
+        "@type": "Person",
+        "name": "lao",
+        "url": "//blog.laolilin.com/author/lao.html"
+    },
+    "image": "//blog.laolilin.com/logo.png",
+    "url": "//blog.laolilin.com/posts/2016/10/config_raspberry_pi.html",
+    "description": "Raspberry Pi 配置"
+}
+</script>
+    <!-- Disqus count -->
+</body>
+
+</html>

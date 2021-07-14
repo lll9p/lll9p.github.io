@@ -1,0 +1,1000 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head -->
+<head>
+
+        <!-- Required metadata tags -->
+        <meta charset="utf-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="HandheldFriendly" content="True" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+
+        <!-- Default metadata -->
+    <meta name="author" content="lao" />
+    <meta name="description" content="使用Python实现单形重心设计法，进行混料设计" />
+    <meta name="keywords" content="Python, 单形重心法, 混料设计">
+<meta property="og:site_name" content="劳思杂记" />
+<meta property="og:title" content="Python实现单形重心法混料设计" />
+<meta property="og:description" content="使用Python实现单形重心设计法，进行混料设计" />
+<meta property="og:locale" content="en_US" />
+<meta property="og:url" content="//blog.laolilin.com/posts/2016/11/implement_simplex_centroid_mix_design_by_python.html" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2016-11-05 06:10:00+08:00" />
+<meta property="article:modified_time" content="2016-11-05 06:10:00+08:00" />
+<meta property="article:author" content="//blog.laolilin.com/author/lao.html">
+<meta property="article:section" content="Tech" />
+	<meta property="article:tag" content="Python" />
+	<meta property="article:tag" content="单形重心法" />
+	<meta property="article:tag" content="混料设计" />
+	<meta property="og:image" content="//blog.laolilin.com/logo.png">
+
+        <!-- Site Claim -->
+
+
+        <!-- Title -->
+        <title>
+    Python实现单形重心法混料设计 &ndash; 劳思杂记
+        </title>
+
+        <!-- Icon -->
+        <link rel="shortcut icon" href="//blog.laolilin.com/static/favicon.png" type="image/x-icon">
+        <link rel="icon" href="//blog.laolilin.com/static/favicon.png" type="image/x-icon">
+
+        <!-- Search engine -->
+            <meta name="robots" content="index, follow" />
+
+        <!-- Feeds -->
+            <link href="//blog.laolilin.com/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="劳思杂记 Full Atom Feed" />
+
+            <link href="//blog.laolilin.com/feeds/all.rss.xml" type="application/rss+xml" rel="alternate" title="劳思杂记 Full RSS Feed" />
+
+
+
+            <link href="//blog.laolilin.com/feeds/tech.atom.xml" type="application/atom+xml" rel="alternate" title="劳思杂记 Categories Atom Feed" />
+
+
+
+
+        <!-- Styles -->
+        <!--
+        <link rel="stylesheet" href="https://ajax.aspnetcdn.com/ajax/bootstrap/4.3.1/css/bootstrap.min.css">
+        -->
+        <link rel="stylesheet" href="//blog.laolilin.com/theme/bootstrap/bootstrap.min.css">
+        <!--
+        <link rel="stylesheet" href="https://cdn.rawgit.com/afeld/bootstrap-toc/v1.0.1/dist/bootstrap-toc.min.css">
+        -->
+            <link rel="stylesheet" href="//blog.laolilin.com/theme/extra/bootstrap-toc.min.css">
+        <link rel="stylesheet" href="//blog.laolilin.com/theme/pygment/friendly.min.css">
+        <!--
+        <link rel="stylesheet" href="//blog.laolilin.com/theme/extra/admonition.min.css">
+        -->
+        <link rel="stylesheet" href="//blog.laolilin.com/theme/style.css">
+
+        <!-- Google Analytics -->
+<script>
+(function(i, s, o, g, r, a, m) { i['GoogleAnalyticsObject'] = r;
+    i[r] = i[r] || function() {
+        (i[r].q = i[r].q || []).push(arguments) }, i[r].l = 1 * new Date();
+    a = s.createElement(o), m = s.getElementsByTagName(o)[0];
+    a.async = 1;
+    a.src = g;
+    m.parentNode.insertBefore(a, m) })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
+ga('create', 'UA-181588-5', 'auto');
+ga('send', 'pageview');
+</script>
+        <!-- Google Global Site Tag -->
+
+        <!-- Google Tag Manager -->
+
+        <!-- Google Adsense -->
+
+        <!-- Heap Analytic -->
+
+        <!-- Piwik Tracking -->
+
+        <!-- Matomo Tracking -->
+
+</head>
+
+<!-- Body -->
+<body class="d-flex flex-column" data-spy="scroll" data-target="#toc" data-offset="0" style="position: relative;">
+    <!-- Top anchor -->
+    <a href="#" id="backToTop" style="display: none; z-index: 1;" title="Back to top"><span></span></a>
+
+    <!-- Google tag manager -->
+
+    <!-- Navigation -->
+    <nav class="flex-shrink-0 navbar navbar-expand-md navbar-expand-lg navbar-dark bg-dark text-light shadow-sm">
+        <!-- Logo -->
+        <a class="navbar-brand" href="//blog.laolilin.com">劳思杂记</a>
+
+        <!-- Collapse button -->
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarMenu" aria-controls="navbarMenu" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon small"></span>
+        </button>
+
+        <!-- Collapsible content -->
+        <div class="collapse navbar-collapse" id="navbarMenu">
+            <!-- Page links -->
+            <ul class="navbar-nav mr-auto text-center">
+                <li class="nav-item ">
+                    <a class="nav-link" href="//blog.laolilin.com">
+                        <svg class="nav-icon" xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24">
+                            <path d="M21 13v10h-6v-6h-6v6h-6v-10h-3l12-12 12 12h-3zm-1-5.907v-5.093h-3v2.093l3 3z" fill="currentColor"></path>
+                        </svg>
+                        Home <span class="sr-only">(current)</span>
+                    </a>
+                </li>
+                <li class="nav-item ">
+                    <a class="nav-link" href="//blog.laolilin.com/categories.html">
+                        <svg class="nav-icon" xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24">
+                            <path d="M16 6h-8v-6h8v6zm-8 12h-8v6h8v-6zm16 0h-8v6h8v-6zm-11-7v-3h-2v3h-8v5h2v-3h14v3h2v-5h-8z" fill="currentColor"></path>
+                        </svg>
+                        Categories
+                    </a>
+                </li>
+                <li class="nav-item ">
+                    <a class="nav-link" href="//blog.laolilin.com/tags.html">
+                        <svg class="nav-icon" xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24">
+                            <path d="M10.605 0h-10.605v10.609l13.391 13.391 10.609-10.604-13.395-13.396zm-4.191 6.414c-.781.781-2.046.781-2.829.001-.781-.783-.781-2.048 0-2.829.782-.782 2.048-.781 2.829-.001.782.782.781 2.047 0 2.829z" fill="currentColor"></path>
+                        </svg>
+                        Tags
+                    </a>
+                </li>
+                <li class="nav-item ">
+                    <a class="nav-link" href="//blog.laolilin.com/archives.html">
+                        <svg class="nav-icon" xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24">
+                            <path d="M1.8 9l-.8-4h22l-.8 4h-2.029l.39-2h-17.122l.414 2h-2.053zm18.575-6l.604-2h-17.979l.688 2h16.687zm3.625 8l-2 13h-20l-2-13h24zm-8 4c0-.552-.447-1-1-1h-6c-.553 0-1 .448-1 1s.447 1 1 1h6c.553 0 1-.448 1-1z" fill="currentColor"></path>
+                        </svg>
+                        Archives
+                    </a>
+                </li>
+                <li class="nav-item ">
+                    <a class="nav-link" href="//blog.laolilin.com/drafts.html">
+                        <svg class="nav-icon" xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24">
+                            <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" fill="currentColor"></path>
+                        </svg>
+                        Drafts
+                    </a>
+                </li>
+                <li class="nav-item ">
+                    <a class="nav-link" href="//blog.laolilin.com/pages/about.html">
+                        <svg class="nav-icon" xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24">
+                            <path d="M20.822 18.096c-3.439-.794-6.64-1.49-5.09-4.418 4.72-8.912 1.251-13.678-3.732-13.678-5.082 0-8.464 4.949-3.732 13.678 1.597 2.945-1.725 3.641-5.09 4.418-3.073.71-3.188 2.236-3.178 4.904l.004 1h23.99l.004-.969c.012-2.688-.092-4.222-3.176-4.935z" fill="currentColor"></path>
+                        </svg>
+                        About
+                    </a>
+                </li>
+            </ul>
+
+            <!-- Search form -->
+            <form class="form-inline text-center" action="//blog.laolilin.com/search.html">
+                <input class="form-control w-100 bg-dark text-light text-center border-0 p-2" type="text" name="q" pattern=".{3,}" title="At least 3 characters" required="" placeholder="Type here to search" aria-label="Search">
+            </form>
+
+            <!-- Social links -->
+            <ul class="navbar-nav text-center">
+                <li class="nav-item">
+                    <a class="nav-link" href="https://facebook.com/laolilin">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                            <title>Facebook</title>
+                            <path d="M12 0c-6.627 0-12 5.373-12 12s5.373 12 12 12 12-5.373 12-12-5.373-12-12-12zm3 8h-1.35c-.538 0-.65.221-.65.778v1.222h2l-.209 2h-1.791v7h-3v-7h-2v-2h2v-2.308c0-1.769.931-2.692 3.029-2.692h1.971v3z" fill="currentColor"></path>
+                        </svg>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="https://github.com/lll9p">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                            <title>Github</title>
+                            <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" fill="currentColor"></path>
+                        </svg>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="https://twitter.com/lll9p">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                            <title>Twitter</title>
+                            <path d="M12 0c-6.627 0-12 5.373-12 12s5.373 12 12 12 12-5.373 12-12-5.373-12-12-12zm6.066 9.645c.183 4.04-2.83 8.544-8.164 8.544-1.622 0-3.131-.476-4.402-1.291 1.524.18 3.045-.244 4.252-1.189-1.256-.023-2.317-.854-2.684-1.995.451.086.895.061 1.298-.049-1.381-.278-2.335-1.522-2.304-2.853.388.215.83.344 1.301.359-1.279-.855-1.641-2.544-.889-3.835 1.416 1.738 3.533 2.881 5.92 3.001-.419-1.796.944-3.527 2.799-3.527.825 0 1.572.349 2.096.907.654-.128 1.27-.368 1.824-.697-.215.671-.67 1.233-1.263 1.589.581-.07 1.135-.224 1.649-.453-.384.578-.87 1.084-1.433 1.489z" fill="currentColor"></path>
+                        </svg>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Full page -->
+    <div class="flex-shrink-0 flex-grow-1">
+
+        <!-- Header -->
+        <header class="bg-dark text-light shadow-sm pt-3 pb-2">
+	<div class="container">
+		<h3 id="implement_simplex_centroid_mix_design_by_python">Python实现单形重心法混料设计</h3>
+		<p style="font-size:larger;"><p class="first last">使用Python实现单形重心设计法，进行混料设计</p>
+</p>
+        <div class="row mx-auto mt-3">
+            <div class="col-xs-12 col-sm-12 col-md-6 text-left" style="padding: 0">
+                <a href="//blog.laolilin.com/author/lao.html" class="card-link">lao</a>
+                <span class="card-link text-success">
+                    <span class="post-date" title="Post date">05 Nov 2016</span>
+                    <span class="text-info modified-date" title="Updated date">
+                            05 Nov 2016
+                    </span>
+                </span>
+                    <span class="card-link text-secondary" title="~789 words">4 mins</span>
+            </div>
+            <div class="col-xs-12 col-sm-12 col-md-6 text-right" style="padding: 0">
+                <a class="badge badge-success" href="//blog.laolilin.com/category/tech.html">tech</a>
+                    <a class="badge badge-info" href="//blog.laolilin.com/tag/python.html">python</a>
+                    <a class="badge badge-info" href="//blog.laolilin.com/tag/dan xing zhong xin fa.html">单形重心法</a>
+                    <a class="badge badge-info" href="//blog.laolilin.com/tag/hun liao she ji.html">混料设计</a>
+            </div>
+        </div>
+	</div>
+        </header>
+
+        <!-- Main -->
+        <main class="py-3">
+                <div class="container">
+                    <!-- Sharing -->
+
+                    <!-- Content -->
+    <!-- 2 columns layout -->
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-10">
+
+                <!-- Sharing -->
+
+                <!-- Article -->
+                <div class="section" id="id1">
+<h2>介绍及概念</h2>
+<p>单纯形重心设计法是一种效率较高的混料试验统计模型，可用来设计试验，它能根据试验点和响应值给出响应曲面（模型）。
+该法具有较高的精度和可靠性，以及较少的试验量，很适合混料试验设计。</p>
+<p><strong>概念</strong></p>
+<ul class="simple">
+<li>单形（单纯形）：为空间中顶点比维数多1的凸多边形，比如〇维的点、一维的线段，二维的三角形、三维的四面体等。</li>
+<li>响应值：某一试验点试验后的评价。</li>
+<li>三角坐标系：由三角形构成的坐标系，顶点代表对应成分的最大值。特点是三角形内（含边）一点 <span class="math">\(P(ax,by,cz)\)</span>，过P作三条对三角形边的平行线，可以确定x,y,z的比例。如图所示。</li>
+</ul>
+<img alt="单形重心法示意图" class="img-fluid" src="//blog.laolilin.com/images/05/computer.Math.2016.11.Python单形重心法混料设计.static.introduce_simplex_design.png"/>
+<ul class="simple">
+<li>等值线：将某一指标中数值相同的点连线。等值线实际上是将空间（Z轴）投影到平面（XY轴）的表示。如下图。</li>
+</ul>
+<img alt="等值线示意图" class="img-fluid" src="//blog.laolilin.com/images/05/computer.Math.2016.11.Python单形重心法混料设计.static.contour_lines.png"/>
+</div>
+<div class="section" id="id2">
+<h2>单形格子设计</h2>
+<p>设试验中考察的指标为 <span class="math">\(y\)</span> ，那么 <span class="math">\(y\)</span> 与 <span class="math">\(p\)</span> 个因子 <span class="math">\(x_1,x_2,...,x_p\)</span> 的关系可以表示为：<span class="math">\(y=f(x_1,x_2,\dot,x_p )+\varepsilon\)</span></p>
+<p>其中， <span class="math">\(\varepsilon\)</span> 是随机误差，且要保证 <span class="math">\(0\leq x\leq 1 ,\sum_{i=1}^p x_i=1\)</span></p>
+<p>称 <span class="math">\(y=f(x_1,x_2,\dots,x_p)\)</span> 为响应函数，当响应函数中的未知参数用估计值代替后便得到回归方程，也称响应曲面方程。</p>
+<p>由于 <span class="math">\(f(x_1,x_2,...,x_p)\)</span> 形式往往是未知的，通常用 <span class="math">\(x_1,x_2,\dots,x_p\)</span> 的一个 <span class="math">\(d\)</span> 次多项式表示，此时一个混料试验由因子数 <span class="math">\(p\)</span> 与响应多项式的次数 <span class="math">\(d\)</span> 来确定，以后用 <span class="math">\(M\{p,d\}\)</span> 表示一个混料试验。
+即 ：（公式1）</p>
+<div class="math">
+\begin{align*}
+y&amp;=f(x_1,x_2,\dots,x_p) \\
+ &amp;=\sum_{i=1}^p\eta_ix_i+\sum_{i\leq j}\eta_{ij}x_ix_j+\sum_{i\leq j\leq k}\eta_{ijk}x_ix_jx_k+\cdots
+\end{align*}
+</div>
+<p>单形格子设计是 <tt class="docutils literal">Scheffé</tt> 提出的一种混料设计。 <span class="math">\(M\{p,d\}\)</span> 的单形格子设计，为 <span class="math">\(d\)</span> 阶格子设计，它将单形的边划分成 <span class="math">\(d\)</span> 等份，在等分点做与其它边平行的直线，形成许多格子，故名单形格子设计。</p>
+<p><span class="math">\(p=1\)</span> ，为点； <span class="math">\(p=2\)</span> ，为线段； <span class="math">\(p=3\)</span> ，为三角形；  <span class="math">\(p=4\)</span> ，为四面体； <span class="math">\(p=5\)</span> ，为超四面体……</p>
+<p>举例： <span class="math">\(p=3\)</span> ，一阶、二阶和三阶单形格子设计的点分布图。</p>
+<img alt="格子设计示意图" class="img-fluid" src="//blog.laolilin.com/images/05/computer.Math.2016.11.Python单形重心法混料设计.static.grid.png"/>
+</div>
+<div class="section" id="id3">
+<h2>单形重心设计</h2>
+<p>单形格子设计的缺陷是在 <span class="math">\(M\{p,d\}\)</span> 单形格子设计中，当 <span class="math">\(d&gt;2\)</span> 时某些混料设计中格子点的非零坐标（如 <span class="math">\(M\{3,3\}\)</span> 中的8、9及其对称点）并不相等，这种非对称性会使某些点对回归系数的估计产生较大的影响，为改进这一点， <tt class="docutils literal">Scheffé</tt> 提出了一种只考虑有相等非零坐标的单形重心设计，既消除了以上缺陷，又不至于试验点数太多。</p>
+<p>单形重心设计 <a class="footnote-reference" href="#id12" id="id4">[1]</a> 的试验点为 <span class="math">\(1\)</span> 到 <span class="math">\(p\)</span> 个顶点的重心，顶点本身就是重心，两个顶点的重心是它们连线的中点，三个顶点的重心是它们组成正三角形的中心，……， <span class="math">\(p\)</span> 个顶点的重心就是该单形的中心。</p>
+<p>此时给出的多项式模型称为 <tt class="docutils literal">Scheffé单形重心设计的多项式模型</tt> 。具体如下，注意最后一项。（公式2）</p>
+<div class="math">
+\begin{align*}
+y&amp;=f(x_1,x_2,\cdots,x_p) \\
+ &amp;=\sum_{i=1}^p\eta_ix_i+\sum_{i\leq j}\eta_{ij}x_ix_j+\sum_{i\leq j\leq k}\eta_{ijk}x_ix_jx_k+\cdots+\eta_{12\cdots p}x_1x_2\cdots x_p
+\end{align*}
+</div>
+<p>其中，若 <span class="math">\(p=3\)</span> ，由于只取重心试验，故有：</p>
+<div class="math">
+\begin{align*}
+y&amp;=f(x_1,x_2,x_3) \\
+ &amp;=\sum_{i=1}^3\eta_ix_i+\sum_{i\leq j}\eta_{ij}x_ix_j+\eta_{123}x_1x_2x_3
+\end{align*}
+</div>
+<p>分别取 <span class="math">\(x_i=1, x_j=x_k=0;x_i=x_j=1/2,x_k=0;x_i=x_j=x_k=1/3\)</span> ,分别代入单形重心设计的多项式，可得各系数与各响应值的关系。</p>
+<p>各系数与各响应值的关系如下：</p>
+<div class="math">
+\begin{equation*}
+\begin{cases}
+\eta_i&amp;=y_i \\
+\eta_{ij}&amp;=2\big(2^1y_{ij}-1^1(y_i+y_j)\big) \\
+\eta_{ijk}&amp;=3\big(3^2y_{ijk}-2^2(y_{ij}+y_{ik}+y_{jk})+1^2(y_i+y_j+y_k)\big)
+\end{cases}
+\end{equation*}
+</div>
+<p>其实经过推导，可以获得一般公式的，若 <span class="math">\(S_r=\{i_1,i_2,\cdots,i_r\}\)</span> 为关于 <span class="math">\((1,2,\cdots,p)\)</span> 的某个 <span class="math">\(r\)</span> 元素的子集，则:（公式3)</p>
+<div class="math">
+\begin{equation*}
+\eta_{S_r}=r\Big(\sum_{t=1}^r(-1)^{r-t}t^{r-1}L_t(S_r)\Big)
+\end{equation*}
+</div>
+<p>其中 ，从 <span class="math">\(S_r\)</span> 对应的 <span class="math">\(r\)</span> 个分量中取 <span class="math">\(t\)</span> 个， <span class="math">\(L_t(S_r)\)</span> 表示所有 <span class="math">\(C_r^t\)</span> 个分量等比例混料响应的和（简单的说就是 <span class="math">\(1\)</span> 到 <span class="math">\(r\)</span> 取 <span class="math">\(t\)</span> 个的不重复组合）。</p>
+<p>下面举例计算 <span class="math">\(\eta_{1234}\)</span> ：</p>
+<p>在 <span class="math">\(\eta_{1234}\)</span> 中，</p>
+<div class="math">
+\begin{equation*}
+\begin{cases}
+r&amp; = 4 \\
+S_4&amp; = \{i_1,i_2,\cdots,i_r\}=\{1,2,3,4\} \\
+L_1(S_4)&amp; = y_1+y_2+y_3+y_4 \\
+L_2(S_4)&amp; = y_{12}+y_{13}+y_{14}+y_{23}+y_{24}+y_{34} \\
+L_3(S_4)&amp; = y_{123}+y_{124}+y_{134}+y_{234} \\
+L_4(S_4)&amp; = y_{1234}
+\end{cases}
+\end{equation*}
+</div>
+<p>所以根据公式3有：</p>
+<div class="math">
+\begin{equation*}
+\begin{split}
+\eta_{1234} &amp; = r\Big(\sum_{t=1}^r(-1)^{r-t}t^{r-1}L_t(S_r)\Big) \\
+&amp; = 4\Big(\sum_{t=1}^4(-1)^{4-t}t^{4-1}L_t(S_4)\Big) \\
+&amp; = 4\Big((-1)^{4-1}1^{4-1}L_1(S_4)+(-1)^{4-2}2^{4-1}L_2(S_4)+(-1)^{4-3}3^{4-1}L_3(S_4)+(-1)^{4-4}4^{4-1}L_4(S_4)\Big) \\
+&amp; =-4(y_1+y_2+y_3+y_4)+32(y_{12}+y_{13}+y_{14}+y_{23}+y_{24}+y_{34})-108(y_{123}+y_{124}+y_{134}+y_{234})+256y_{1234}
+\end{split}
+\end{equation*}
+</div>
+<p>再举例计算 <span class="math">\(\eta_{23}\)</span> ：</p>
+<p>在 <span class="math">\(\eta_{23}\)</span> 中，</p>
+<div class="math">
+\begin{equation*}
+\begin{cases}
+r&amp; = 2 \\
+S_2&amp; = \{i_1,i_2,\cdots,i_r\}=\{2,3\} \\
+L_1(S_2)&amp; = y_2+y_3\\
+L_2(S_2)&amp; = y_{23} \\
+\end{cases}
+\end{equation*}
+</div>
+<p>所以根据公式3有：</p>
+<div class="math">
+\begin{equation*}
+\begin{split}
+\eta_{23} &amp; = r\Big(\sum_{t=1}^r(-1)^{r-t}t^{r-1}L_t(S_r)\Big) \\
+&amp; = 2\Big(\sum_{t=1}^2(-1)^{2-t}t^{2-1}L_t(S_2)\Big) \\
+&amp; = 2\Big((-1)^{2-1}1^{2-1}L_1(S_2)+(-1)^{2-2}2^{2-1}L_2(S_2)\Big) \\
+&amp; =2\Big(-(y_2+y_3)+2y_{23}\Big)
+\end{split}
+\end{equation*}
+</div>
+</div>
+<div class="section" id="id5">
+<h2>单形重心法代码实现</h2>
+<ol class="arabic">
+<li><p class="first">先导入相应的包。</p>
+<div class="highlight"><pre><span class="code-line"><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span></span>
+<span class="code-line"><span class="kn">from</span> <span class="nn">itertools</span> <span class="kn">import</span> <span class="n">chain</span><span class="p">,</span> <span class="n">combinations</span></span>
+</pre></div>
+</li>
+<li><p class="first">由公式3可知，我们需要生成 <span class="math">\(S_r\)</span> ，它是一个不含空集的幂集，简单地，生成一个不含空集的 <a class="reference external" href="//en.wikipedia.org/wiki/Power_set">Power Set</a> ，这里演示 <tt class="docutils literal">n_point</tt> 为对应的  <span class="math">\(p\)</span> 。</p>
+<div class="highlight"><pre><span class="code-line"><span></span><span class="n">n_point</span> <span class="o">=</span> <span class="o">...</span></span>
+<span class="code-line"><span class="n">nums</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_point</span><span class="p">)</span></span>
+<span class="code-line"><span class="c1"># generate a powerset except zeroset</span></span>
+<span class="code-line"><span class="n">test_points</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">chain</span><span class="o">.</span><span class="n">from_iterable</span><span class="p">(</span></span>
+<span class="code-line">    <span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">num</span><span class="p">:</span> <span class="n">combinations</span><span class="p">(</span><span class="n">nums</span><span class="p">,</span> <span class="n">num</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span> <span class="n">nums</span><span class="p">)))</span></span>
+</pre></div>
+</li>
+<li><p class="first">有了 <span class="math">\(S_r\)</span> ，我们就可以逐个生成 <span class="math">\(L_t(S_r)\)</span> ，及 <span class="math">\(\eta_{S_r}\)</span> ，然后传入各点实测的 <span class="math">\(y\)</span> ，即可计算出响应曲面的系数： <cite>_response_surface_coef</cite> 。</p>
+<div class="highlight"><pre><span class="code-line"><span></span><span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">...</span><span class="p">])</span></span>
+<span class="code-line"><span class="n">_response_surface_coef</span> <span class="o">=</span> <span class="p">[]</span></span>
+<span class="code-line"><span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">test_point</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">test_points</span><span class="p">):</span></span>
+<span class="code-line">    <span class="n">r</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">test_point</span><span class="p">)</span></span>
+<span class="code-line">    <span class="n">temp</span> <span class="o">=</span> <span class="mi">0</span></span>
+<span class="code-line">    <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">r</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span></span>
+<span class="code-line">        <span class="k">for</span> <span class="n">test_point_pos</span> <span class="ow">in</span> <span class="n">combinations</span><span class="p">(</span><span class="n">test_point</span><span class="p">,</span> <span class="n">j</span><span class="p">):</span></span>
+<span class="code-line">            <span class="n">t</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">test_point_pos</span><span class="p">)</span></span>
+<span class="code-line">            <span class="n">temp</span> <span class="o">+=</span> <span class="n">y</span><span class="p">[</span><span class="n">test_points</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">test_point_pos</span><span class="p">)]</span> <span class="o">*</span> \</span>
+<span class="code-line">                <span class="n">r</span> <span class="o">*</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">**</span><span class="p">(</span><span class="n">r</span> <span class="o">-</span> <span class="n">t</span><span class="p">)</span> <span class="o">*</span> <span class="n">t</span><span class="o">**</span><span class="p">(</span><span class="n">r</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span></span>
+<span class="code-line">    <span class="n">_response_surface_coef</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">temp</span><span class="p">)</span></span>
+</pre></div>
+</li>
+<li><p class="first">有了响应曲面的系数，即可算出每个 <span class="math">\(\begin{pmatrix}x_1,\dots,x_n\end{pmatrix}\)</span> 的响应值。 <strong>此处输入的是x'，也就是编码矩阵。</strong></p>
+<div class="highlight"><pre><span class="code-line"><span></span><span class="n">prediction</span> <span class="o">=</span> <span class="n">_response_surface_coef</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span></span>
+<span class="code-line">  <span class="p">[</span><span class="n">X</span><span class="o">.</span><span class="n">take</span><span class="p">(</span><span class="n">test_point_pos</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">prod</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span></span>
+<span class="code-line">  <span class="k">for</span> <span class="n">test_point_pos</span> <span class="ow">in</span> <span class="n">test_points</span><span class="p">]</span></span>
+<span class="code-line"><span class="p">)</span></span>
+</pre></div>
+</li>
+</ol>
+</div>
+<div class="section" id="id6">
+<h2>带下界的设计</h2>
+<p>由于单形重心要求 <span class="math">\(0\leq x_i\leq 1\)</span> ，但在实际试验中，很难做到。如混凝土掺合料设计试验中，取煤灰或石粉等为100%时无法获取有效数据。</p>
+<img alt="带下界的单形重心法示意图1" class="img-fluid" src="//blog.laolilin.com/images/05/computer.Math.2016.11.Python单形重心法混料设计.static.lower_bound1.png"/>
+<p>如上图， <span class="math">\(a_i\)</span> 为各成分最小含量，我们将 <span class="math">\(\{x'_i\}\)</span> 称为自然空间， <span class="math">\(\{x_i\}\)</span> 称为编码空间（实际值），要在编码空间上进行单形重心设计，必须将其映射到自然空间上（编码值）。</p>
+<div class="math">
+\begin{equation*}
+\begin{cases}
+0\leq x'_i\leq 1 \\
+\sum_{i=1}^pa_i\leq 1 \\
+0\leq x'_i\leq x_i\leq 1
+\end{cases}
+\end{equation*}
+</div>
+<img alt="带下界的单形重心法示意图2" class="img-fluid" src="//blog.laolilin.com/images/05/computer.Math.2016.11.Python单形重心法混料设计.static.lower_bound2.png"/>
+<p>编码值与实际值可以进行线性变换 <span class="math">\(\{x'_i\}\leftrightarrow\{x_i\}\)</span> ，由上图可得变换矩阵 <span class="math">\(M\)</span> ：</p>
+<div class="math">
+\begin{equation*}
+M =
+\begin{bmatrix}
+1+a_1-\sum_{i=1}^pa_i &amp; a_1 &amp; a_1 &amp; \dots &amp; a_1 \\
+a_2 &amp; 1+a_2-\sum_{i=1}^pa_i &amp; a_1 &amp; \dots &amp; a_1 \\
+\vdots &amp; \vdots &amp; \ddots &amp; \dots &amp;\vdots \\
+a_p &amp; a_p &amp; a_p &amp; \dots &amp; 1+a_p-\sum_{i=1}^pa_i \\
+\end{bmatrix}
+\end{equation*}
+</div>
+<p>再通过坐标与自然空间相乘得 <span class="math">\(x_i\)</span> （公式4)</p>
+<div class="math">
+\begin{equation*}
+\begin{pmatrix}
+x_1 \\ x_2 \\ \vdots \\ x_p
+\end{pmatrix} =
+M\begin{pmatrix}
+x'_1 \\ x'_2 \\ \vdots \\ x'_p
+\end{pmatrix}
+\end{equation*}
+</div>
+<p>实际值与编码值也可以按以下公式进行转换（线性变换化简的公式，虽然文献中用的多，但个人觉得不够直观，不推荐使用）：</p>
+<div class="math">
+\begin{equation*}
+\begin{cases}
+x'_i&amp;=(1-\sum_{i=1}^pa_i)x_i+a_i \\
+x_i&amp;=\frac{x'_i-a_i}{1-\sum_{i=1}^pa_i}
+\end{cases}
+\end{equation*}
+</div>
+<p>编码空间上的点 <span class="math">\(X\)</span> 为配料的真实比例，而自然空间的点 <span class="math">\(X'\)</span> （编码值）则为变换后的符合单纯形设计的比例。</p>
+<p>编码空间映射到的自然空间并不是成分均为100%的单纯形，仅仅是概念上的自然空间。故应直接按单纯形重点设计，得到数据之后通过等值线找到自然空间中的点，再通过编码转换得到真实的配比。</p>
+</div>
+<div class="section" id="id7">
+<h2>带下界的单形重心法代码实现</h2>
+<p>假设下界为变量 <tt class="docutils literal">lower_bounds</tt> ， <span class="math">\(lower\_bounds = [a_1,a_2,\dots,a_p]\)</span> ，当 <span class="math">\(lower\_bounds = [0,\dots,0]\)</span> 时，即是普通的单形重心法。</p>
+<ol class="arabic">
+<li><p class="first">由公式3生成 <span class="math">\(S_r\)</span></p>
+<div class="highlight"><pre><span class="code-line"><span></span><span class="n">n_point</span> <span class="o">=</span> <span class="o">...</span></span>
+<span class="code-line"><span class="n">nums</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_point</span><span class="p">)</span></span>
+<span class="code-line"><span class="c1"># generate a powerset except zeroset</span></span>
+<span class="code-line"><span class="n">test_points</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">chain</span><span class="o">.</span><span class="n">from_iterable</span><span class="p">(</span></span>
+<span class="code-line">    <span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">num</span><span class="p">:</span> <span class="n">combinations</span><span class="p">(</span><span class="n">nums</span><span class="p">,</span> <span class="n">num</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span> <span class="n">nums</span><span class="p">)))</span></span>
+</pre></div>
+</li>
+<li><p class="first">生成变换矩阵 <span class="math">\(M\)</span> ，</p>
+<div class="highlight"><pre><span class="code-line"><span></span><span class="n">_M</span> <span class="o">=</span> <span class="n">lower_bounds</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="n">n_point</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span></span>
+<span class="code-line">    <span class="p">(</span><span class="n">n_point</span><span class="p">,</span> <span class="n">n_point</span><span class="p">))</span> \</span>
+<span class="code-line">    <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="n">n_point</span><span class="p">)</span> \</span>
+<span class="code-line">    <span class="o">-</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">lower_bounds</span><span class="o">.</span><span class="n">sum</span><span class="p">())</span></span>
+</pre></div>
+</li>
+<li><p class="first">如前所述，有了 <span class="math">\(S_r\)</span> ，然后传入各点实测的 <span class="math">\(y\)</span> ，即可计算出响应曲面的系数： <tt class="docutils literal">_response_surface_coef</tt> ，注意，此处不需要转换矩阵 <tt class="docutils literal">M</tt> 。</p>
+<div class="highlight"><pre><span class="code-line"><span></span><span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">...</span><span class="p">])</span></span>
+<span class="code-line"><span class="n">_response_surface_coef</span> <span class="o">=</span> <span class="p">[]</span></span>
+<span class="code-line"><span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">test_point</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">test_points</span><span class="p">):</span></span>
+<span class="code-line">    <span class="n">r</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">test_point</span><span class="p">)</span></span>
+<span class="code-line">    <span class="n">temp</span> <span class="o">=</span> <span class="mi">0</span></span>
+<span class="code-line">    <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">r</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span></span>
+<span class="code-line">        <span class="k">for</span> <span class="n">test_point_pos</span> <span class="ow">in</span> <span class="n">combinations</span><span class="p">(</span><span class="n">test_point</span><span class="p">,</span> <span class="n">j</span><span class="p">):</span></span>
+<span class="code-line">            <span class="n">t</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">test_point_pos</span><span class="p">)</span></span>
+<span class="code-line">            <span class="n">temp</span> <span class="o">+=</span> <span class="n">y</span><span class="p">[</span><span class="n">test_points</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">test_point_pos</span><span class="p">)]</span> <span class="o">*</span> \</span>
+<span class="code-line">                <span class="n">r</span> <span class="o">*</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">**</span><span class="p">(</span><span class="n">r</span> <span class="o">-</span> <span class="n">t</span><span class="p">)</span> <span class="o">*</span> <span class="n">t</span><span class="o">**</span><span class="p">(</span><span class="n">r</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span></span>
+<span class="code-line">    <span class="n">_response_surface_coef</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">temp</span><span class="p">)</span></span>
+</pre></div>
+</li>
+<li><p class="first">有了响应曲面的系数，即可通过转换矩阵 <tt class="docutils literal">_M</tt> 和真实比例 <tt class="docutils literal">X</tt> 算出每个 <span class="math">\(\begin{pmatrix}x'_1,\dots,x'_n\end{pmatrix}\)</span> 的响应值。 <strong>此处输入的是X，也就是编码矩阵。</strong></p>
+<div class="highlight"><pre><span class="code-line"><span></span><span class="n">XX</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">_M</span><span class="o">.</span><span class="n">T</span><span class="p">))</span></span>
+<span class="code-line"><span class="n">prediction</span> <span class="o">=</span> <span class="n">_response_surface_coef</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span></span>
+<span class="code-line">  <span class="p">[</span><span class="n">XX</span><span class="o">.</span><span class="n">take</span><span class="p">(</span><span class="n">test_point_pos</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">prod</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span></span>
+<span class="code-line">  <span class="k">for</span> <span class="n">test_point_pos</span> <span class="ow">in</span> <span class="n">test_points</span><span class="p">]</span></span>
+<span class="code-line"><span class="p">)</span></span>
+</pre></div>
+</li>
+</ol>
+</div>
+<div class="section" id="id8">
+<h2>应用举例说明</h2>
+<p>这里对一种调料和一种混凝土的带下界约束单形重心试验设计进行了应用的举例。</p>
+<p>两个例子均为3成分混料试验，由于公式2、公式3、公式4均是一般情形的公式，可以推广到任意数量成分的混料试验，不赘述。</p>
+<div class="section" id="id9">
+<h3>例1，调料配制</h3>
+<p>一种调料由三种成分 <span class="math">\(A、B、C\)</span> 混合制成 <span class="math">\(A、B、C\)</span> 各为味精、盐、五香粉。 <span class="math">\(a\geq 0.2,b\geq 0.4,c\geq0.2\)</span> 。求设计方案。</p>
+<p>此处可以按公式1采用 <span class="math">\(M\{3,2\}\)</span> 单形格子设计，本文主要讲单形重心设计，就不按格子设计来了。采用单形重心设计，取点如下图：</p>
+<img alt="示例1设计图" class="img-fluid" src="//blog.laolilin.com/images/05/computer.Math.2016.11.Python单形重心法混料设计.static.ex1design.png"/>
+<p>根据 <span class="math">\(a\geq 0.2,b\geq 0.4,c\geq0.2\)</span> 画出小单形，即黑色小三角，然后根据单形重心设计标出7个重心（红色数字表示）</p>
+<p>由公式4列出编码矩阵：</p>
+<div class="math">
+\begin{align*}
+M &amp;=
+\begin{bmatrix}
+1+a-(a+b+c) &amp; a &amp; a \\
+b &amp; 1+b-(a+b+c) &amp; b \\
+c &amp; c &amp; 1+c-(a+b+c) \\
+\end{bmatrix} \\
+&amp;=
+\begin{bmatrix}
+0.4 &amp; 0.2 &amp; 0.2 \\
+0.4 &amp; 0.6 &amp; 0.4 \\
+0.2 &amp; 0.2 &amp; 0.4 \\
+\end{bmatrix}
+\end{align*}
+</div>
+<p>根据公式2、公式3和 <span class="math">\(X'*(Z.T)\)</span> 可轻松列出试验表和试验结果以及口感得分（A*、B*、C*为编码值，<cite>味精_</cite> 、<cite>盐_</cite> 、<cite>五香粉_</cite> 则为实际成分）</p>
+<table border="1" class="docutils table table-striped">
+<colgroup>
+<col width="16%"/>
+<col width="13%"/>
+<col width="13%"/>
+<col width="13%"/>
+<col width="13%"/>
+<col width="13%"/>
+<col width="13%"/>
+<col width="6%"/>
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">试验号</th>
+<th class="head"><cite>A*</cite></th>
+<th class="head"><cite>B*</cite></th>
+<th class="head"><cite>C*</cite></th>
+<th class="head"><cite>味精_</cite></th>
+<th class="head"><cite>盐_</cite></th>
+<th class="head"><cite>五香粉_</cite></th>
+<th class="head">口感</th>
+</tr>
+<tr><th class="head"> </th>
+<th class="head"><span class="math">\(x'_1\)</span></th>
+<th class="head"><span class="math">\(x'_2\)</span></th>
+<th class="head"><span class="math">\(x'_3\)</span></th>
+<th class="head"><span class="math">\(x_1\)</span></th>
+<th class="head"><span class="math">\(x_2\)</span></th>
+<th class="head"><span class="math">\(x_3\)</span></th>
+<th class="head"> </th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td><span class="math">\(y_1\)</span></td>
+<td>1</td>
+<td>0</td>
+<td>0</td>
+<td>0.4</td>
+<td>0.4</td>
+<td>0.2</td>
+<td>5</td>
+</tr>
+<tr><td><span class="math">\(y_2\)</span></td>
+<td>0</td>
+<td>1</td>
+<td>0</td>
+<td>0.2</td>
+<td>0.6</td>
+<td>0.2</td>
+<td>11</td>
+</tr>
+<tr><td><span class="math">\(y_3\)</span></td>
+<td>0</td>
+<td>0</td>
+<td>1</td>
+<td>0.2</td>
+<td>0.4</td>
+<td>0.4</td>
+<td>8</td>
+</tr>
+<tr><td><span class="math">\(y_{12}\)</span></td>
+<td>1/2</td>
+<td>1/2</td>
+<td>0</td>
+<td>0.3</td>
+<td>0.5</td>
+<td>0.2</td>
+<td>10</td>
+</tr>
+<tr><td><span class="math">\(y_{13}\)</span></td>
+<td>1/2</td>
+<td>0</td>
+<td>1/2</td>
+<td>0.3</td>
+<td>0.4</td>
+<td>0.3</td>
+<td>2</td>
+</tr>
+<tr><td><span class="math">\(y_{23}\)</span></td>
+<td>0</td>
+<td>1/2</td>
+<td>1/2</td>
+<td>0.2</td>
+<td>0.5</td>
+<td>0.3</td>
+<td>10</td>
+</tr>
+<tr><td><span class="math">\(y_{123}\)</span></td>
+<td>1/3</td>
+<td>1/3</td>
+<td>1/3</td>
+<td>4/15</td>
+<td>7/15</td>
+<td>4/15</td>
+<td>13</td>
+</tr>
+</tbody>
+</table>
+<p>将结果和编码值代入公式2得：</p>
+<div class="math">
+\begin{equation*}
+y=159x'_1x'_2x'_3+8x'_1x'_2-18x'_1x'_3+5x'_1+2x'_2x'_3+11x'_2+8x'_3
+\end{equation*}
+</div>
+<img alt="示例1结果图" class="img-fluid" src="//blog.laolilin.com/images/05/computer.Math.2016.11.Python单形重心法混料设计.static.ex1result.png"/>
+<p>作三角坐标图，根据三角坐标系在最大值作图，可得自然空间中
+最大值坐标 <span class="math">\({x'_i}\)</span> 为：</p>
+<div class="math">
+\begin{equation*}
+\begin{pmatrix}
+x'_1 \\ x'_2 \\ x'_3\end{pmatrix}=\begin{pmatrix}0.26 \\ 0.48 \\ 0.26
+\end{pmatrix}
+\end{equation*}
+</div>
+<p>用编码矩阵转换得真实比例为：</p>
+<div class="math">
+\begin{equation*}
+\begin{pmatrix}0.252,0.496,0.252\end{pmatrix}
+\end{equation*}
+</div>
+<p>即，按这个比例配制的调料味道最好。</p>
+</div>
+<div class="section" id="id10">
+<h3>例2，混凝土强度预测</h3>
+<img alt="示例2设计图" class="img-fluid" src="//blog.laolilin.com/images/05/computer.Math.2016.11.Python单形重心法混料设计.static.ex2design.png"/>
+<p>如上图，混凝土用胶凝材料为水泥，矿粉，煤灰，其中水泥用量在25%以上，求单形重心试验方案。</p>
+<p>这是一个约束设计问题，水泥用量25%以上，即 <span class="math">\(a_1\geq 0.25, a_2=a_3=0\)</span> 。
+编码矩阵 <span class="math">\(M\)</span> 为：</p>
+<div class="math">
+\begin{equation*}
+\begin{bmatrix}
+1 &amp; 0.25 &amp; 0.25 \\
+0 &amp; 0.75 &amp; 0 \\
+0 &amp; 0 &amp; 0.75
+\end{bmatrix}
+\end{equation*}
+</div>
+<p>标上7个实验点，列出试验表并根据表来做实验得到结果 <a class="footnote-reference" href="#id13" id="id11">[2]</a> ：</p>
+<table border="1" class="docutils table table-striped">
+<colgroup>
+<col width="14%"/>
+<col width="12%"/>
+<col width="12%"/>
+<col width="12%"/>
+<col width="11%"/>
+<col width="11%"/>
+<col width="11%"/>
+<col width="5%"/>
+<col width="9%"/>
+<col width="5%"/>
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">试验号</th>
+<th class="head">A*</th>
+<th class="head">B*</th>
+<th class="head">C*</th>
+<th class="head"><cite>水泥_</cite></th>
+<th class="head"><cite>矿粉_</cite></th>
+<th class="head"><cite>煤灰_</cite></th>
+<th class="head"> </th>
+<th class="head">强度(MPa)</th>
+<th class="head"> </th>
+</tr>
+<tr><th class="head"> </th>
+<th class="head"><span class="math">\(x'_1\)</span></th>
+<th class="head"><span class="math">\(x'_2\)</span></th>
+<th class="head"><span class="math">\(x'_3\)</span></th>
+<th class="head"><span class="math">\(x_1\)</span></th>
+<th class="head"><span class="math">\(x_2\)</span></th>
+<th class="head"><span class="math">\(x_3\)</span></th>
+<th class="head">3d</th>
+<th class="head">28d</th>
+<th class="head">180d</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td><span class="math">\(y_1\)</span></td>
+<td>1</td>
+<td>0</td>
+<td>0</td>
+<td>1</td>
+<td>0</td>
+<td>0</td>
+<td>63.1</td>
+<td>88.3</td>
+<td>96</td>
+</tr>
+<tr><td><span class="math">\(y_2\)</span></td>
+<td>0</td>
+<td>1</td>
+<td>0</td>
+<td>0.25</td>
+<td>0.75</td>
+<td>0</td>
+<td>29.0</td>
+<td>56.2</td>
+<td>77</td>
+</tr>
+<tr><td><span class="math">\(y_3\)</span></td>
+<td>0</td>
+<td>0</td>
+<td>1</td>
+<td>0.25</td>
+<td>0</td>
+<td>0.75</td>
+<td>22.2</td>
+<td>53.5</td>
+<td>75.4</td>
+</tr>
+<tr><td><span class="math">\(y_{12}\)</span></td>
+<td>1/2</td>
+<td>1/2</td>
+<td>0</td>
+<td>0.625</td>
+<td>0.375</td>
+<td>0</td>
+<td>50.6</td>
+<td>84.5</td>
+<td>90.1</td>
+</tr>
+<tr><td><span class="math">\(y_{13}\)</span></td>
+<td>1/2</td>
+<td>0</td>
+<td>1/2</td>
+<td>0.625</td>
+<td>0</td>
+<td>0.375</td>
+<td>44.5</td>
+<td>92.3</td>
+<td>102</td>
+</tr>
+<tr><td><span class="math">\(y_{23}\)</span></td>
+<td>0</td>
+<td>1/2</td>
+<td>1/2</td>
+<td>0.25</td>
+<td>0.375</td>
+<td>0.375</td>
+<td>26.5</td>
+<td>62.8</td>
+<td>86</td>
+</tr>
+<tr><td><span class="math">\(y_{123}\)</span></td>
+<td>1/3</td>
+<td>1/3</td>
+<td>1/3</td>
+<td>0.5</td>
+<td>0.25</td>
+<td>0.25</td>
+<td>40.3</td>
+<td>80.5</td>
+<td>96.5</td>
+</tr>
+</tbody>
+</table>
+<p>将结果和编码值代入公式2得：</p>
+<div class="math">
+\begin{align*}
+y_{3d}&amp;=63.1x'_1+29.0x'_2+22.2x'_3+18.2x'_1 x'_2+7.4x'_1 x'_3+3.6x'_2 x'_3-28.2x'_1 x'_2 x'_3 \\
+y_{28d}&amp;=88.3x'_1+56.2x'_2+53.5x'_3+49x'_1 x'_2+85.6x'_1 x'_3+31.8x'_2 x'_3-107.7x'_1 x'_2 x'_3 \\
+y_{180d}&amp;=96x'_1+77x'_2+75.4x'_3+14.9x'_1 x'_2+65.2x'_1 x'_3+39.2x'_2 x'_3+13.5x'_1 x'_2 x'_3
+\end{align*}
+</div>
+<p>对上面三式作三角坐标图，可以清晰地看出各组分对强度的贡献。从图中求出 <span class="math">\(x'_1\)</span> , <span class="math">\(x'_2\)</span> , <span class="math">\(x'_3\)</span> 坐标，再利用编码矩阵即可换算出实际各组分比例。另外，从3d与28d、180d对比，说明前期是水泥、矿粉对强度贡献大，后期煤灰贡献逐渐超过矿粉。</p>
+<p><strong>作图</strong></p>
+<p>对组分的单形重心设计可以作图。</p>
+<img alt="示例2结果图" class="img-fluid" src="//blog.laolilin.com/images/05/computer.Math.2016.11.Python单形重心法混料设计.static.ex2result.png"/>
+<table class="footnote docutils table table-striped" frame="void" id="id12" rules="none">
+<colgroup><col class="label"/><col/></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id4">[1]</a></td><td>关颖男. 混料试验设计. 上海科学技术出版社, 1990.</td></tr>
+</tbody>
+</table>
+<table class="footnote docutils table table-striped" frame="void" id="id13" rules="none">
+<colgroup><col class="label"/><col/></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id11">[2]</a></td><td>孙伟, 严捍东. 复合胶凝材料组成与混凝土抗压强度定量关系研究[J]. 東南大學學報 (自然科學版), 2003, 33(4): 450-453.</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+<script type='text/javascript'>if (!document.getElementById('mathjaxscript_pelican_#%@#$@#')) {
+    var align = "center",
+        indent = "0em",
+        linebreak = "false";
+
+    if (false) {
+        align = (screen.width < 768) ? "left" : align;
+        indent = (screen.width < 768) ? "0em" : indent;
+        linebreak = (screen.width < 768) ? 'true' : linebreak;
+    }
+
+    var mathjaxscript = document.createElement('script');
+    mathjaxscript.id = 'mathjaxscript_pelican_#%@#$@#';
+    mathjaxscript.type = 'text/javascript';
+    mathjaxscript.src = 'https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+
+    var configscript = document.createElement('script');
+    configscript.type = 'text/x-mathjax-config';
+    configscript[(window.opera ? "innerHTML" : "text")] =
+        "MathJax.Hub.Config({" +
+        "    config: ['MMLorHTML.js']," +
+        "    TeX: { extensions: ['AMSmath.js','AMSsymbols.js','noErrors.js','noUndefined.js','color.js','mhchem.js'], equationNumbers: { autoNumber: 'none' } }," +
+        "    jax: ['input/TeX','input/MathML','output/HTML-CSS']," +
+        "    extensions: ['tex2jax.js','mml2jax.js','MathMenu.js','MathZoom.js']," +
+        "    displayAlign: '"+ align +"'," +
+        "    displayIndent: '"+ indent +"'," +
+        "    showMathMenu: true," +
+        "    messageStyle: 'normal'," +
+        "    tex2jax: { " +
+        "        inlineMath: [ ['\\\\(','\\\\)'] ], " +
+        "        displayMath: [ ['$$','$$'] ]," +
+        "        processEscapes: true," +
+        "        preview: 'TeX'," +
+        "    }, " +
+        "    'HTML-CSS': { " +
+        "        availableFonts: ['STIX', 'TeX']," +
+        "        preferredFont: 'STIX'," +
+        "        styles: { '.MathJax_Display, .MathJax .mo, .MathJax .mi, .MathJax .mn': {color: 'inherit ! important'} }," +
+        "        linebreaks: { automatic: "+ linebreak +", width: '90% container' }," +
+        "    }, " +
+        "}); " +
+        "if ('default' !== 'default') {" +
+            "MathJax.Hub.Register.StartupHook('HTML-CSS Jax Ready',function () {" +
+                "var VARIANT = MathJax.OutputJax['HTML-CSS'].FONTDATA.VARIANT;" +
+                "VARIANT['normal'].fonts.unshift('MathJax_default');" +
+                "VARIANT['bold'].fonts.unshift('MathJax_default-bold');" +
+                "VARIANT['italic'].fonts.unshift('MathJax_default-italic');" +
+                "VARIANT['-tex-mathit'].fonts.unshift('MathJax_default-italic');" +
+            "});" +
+            "MathJax.Hub.Register.StartupHook('SVG Jax Ready',function () {" +
+                "var VARIANT = MathJax.OutputJax.SVG.FONTDATA.VARIANT;" +
+                "VARIANT['normal'].fonts.unshift('MathJax_default');" +
+                "VARIANT['bold'].fonts.unshift('MathJax_default-bold');" +
+                "VARIANT['italic'].fonts.unshift('MathJax_default-italic');" +
+                "VARIANT['-tex-mathit'].fonts.unshift('MathJax_default-italic');" +
+            "});" +
+        "}";
+
+    (document.body || document.getElementsByTagName('head')[0]).appendChild(configscript);
+    (document.body || document.getElementsByTagName('head')[0]).appendChild(mathjaxscript);
+}
+</script>
+
+                <!-- Neighbors -->
+                    <br>
+                    <b>Read more:</b><br>
+<div class="pagination">
+    <a class="w-50" href="//blog.laolilin.com/posts/2016/10/dnspod_ddns_auto_update.html">
+&ll; dnspod DDNS 自动更新
+    </a>
+    <a class="w-50 text-right" href="//blog.laolilin.com/posts/2020/02/using_docker_to_build_openwrt.html">
+        用 Docker 编译 Openwrt &gg;    </a>
+</div>
+                <!-- Google Adsense -->
+            </div>
+
+            <!-- Sidebar -->
+            <div class="col-md-2 d-none d-md-block small">
+                <div class="sticky-top">
+                    <!-- ToC -->
+                    <nav id="toc" data-toggle="toc" ></nav>
+
+                    <!-- Share post -->
+
+                    <!-- Google Adsense -->
+                </div>
+            </div>
+        </div>
+
+    <!-- Releated posts -->
+        <hr>
+        <div>
+            <h5>Related posts:</h5>
+            <ul>
+                <li><a href="//blog.laolilin.com/posts/2016/09/python-install-config-for-data-analysis.html">Python数据分析-安装与配置</a></li>
+            </ul>
+        </div>
+
+    <!-- Comments -->
+<section class="comments" id="comments">
+    <!-- <h2>Comments</h2> -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/blueimp-md5/2.10.0/js/md5.min.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+    <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+    <hr/>
+    <div id="gitalk-container"></div>
+    <script>
+        var gitalk = new Gitalk({
+            clientID: '32128e45765077b3152c',
+            clientSecret: '04b40e6a8191416fb3bcf87adb2cf7e2cb2be7d9',
+            repo: 'comments-blog.laolilin.com',
+            owner: 'laolilin',
+            admin: ['laolilin','lll9p'],
+            id: md5(location.pathname),      // Ensure uniqueness and length less than 50
+            distractionFreeMode: false,  // Facebook-like distraction free mode
+            createIssueManually: true,
+            proxy: 'https:/cloudflare-cors-anywhere.lll9p.workers.dev/?https://github.com/login/oauth/access_token',
+        })
+
+        gitalk.render('gitalk-container')
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="https://github.com/gitalk/gitalk" target="_blank">Comment system powered by
+            gitalk.</a></noscript>
+</section>                </div>
+        </main>
+
+    </div>
+
+    <!-- Footer -->
+    <footer class="flex-shrink-0 bg-dark text-light small py-1">
+        <div class="container text-center">
+                &copy; 2021 <a href="//blog.laolilin.com">劳思杂记</a> by <a href="//blog.laolilin.com/pages/about.html">Lao</a>, Build on: Wed Jul 14 08:58:35 CST 2021<br>
+            Powered by <a href="http://getpelican.com">Pelican</a>, <a href="http://python.org">Python</a>, <a href="https://getbootstrap.com">Bootstrap 4</a>,
+            <!-- Do not remove below license sentence -->
+            License: <a href="https://spdx.org/licenses/CC-BY-4.0.html">CC-BY-4.0</a>, based on <a href="https://github.com/vuquangtrong/simplify-theme">Simplify Bootstrap Theme</a>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <!--
+    <script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.4.1.min.js"></script>
+    -->
+    <script type="text/javascript" src="//blog.laolilin.com/theme/jquery/jquery-3.4.1.min.js"></script>
+    <!--
+    <script src="https://ajax.aspnetcdn.com/ajax/bootstrap/4.3.1/bootstrap.min.js"></script>
+    -->
+    <script type="text/javascript" src="//blog.laolilin.com/theme/bootstrap/bootstrap.min.js"></script>
+    <!--
+    <script src="https://cdn.rawgit.com/afeld/bootstrap-toc/v1.0.1/dist/bootstrap-toc.min.js"></script>
+    -->
+        <script type="text/javascript" src="//blog.laolilin.com/theme/extra/bootstrap-toc.min.js"></script>
+    <script type="text/javascript" src="//blog.laolilin.com/theme/style.js"></script>
+
+    <!-- Sharing -->
+    <!-- Baidu push -->
+        <script>
+        (function(){
+            var bp = document.createElement('script');
+            var curProtocol = window.location.protocol.split(':')[0];
+            if (curProtocol === 'https') {
+                bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+            }
+            else {
+                bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+            }
+            var s = document.getElementsByTagName("script")[0];
+            s.parentNode.insertBefore(bp, s);
+        })();
+        </script>
+    <!-- JSON LD -->
+<script type="application/ld+json">
+{
+    "@context": "http://schema.org",
+    "@type": "BlogPosting",
+    "name": "Python实现单形重心法混料设计",
+    "headline": "Python实现单形重心法混料设计",
+    "datePublished": "2016-11-05 06:10:00+08:00",
+    "dateModified": "2016-11-05 06:10:00+08:00",
+    "author": {
+        "@type": "Person",
+        "name": "lao",
+        "url": "//blog.laolilin.com/author/lao.html"
+    },
+    "image": "//blog.laolilin.com/logo.png",
+    "url": "//blog.laolilin.com/posts/2016/11/implement_simplex_centroid_mix_design_by_python.html",
+    "description": "使用Python实现单形重心设计法，进行混料设计"
+}
+</script>
+    <!-- Disqus count -->
+</body>
+
+</html>

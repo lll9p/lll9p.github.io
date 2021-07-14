@@ -1,0 +1,1036 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head -->
+<head>
+
+        <!-- Required metadata tags -->
+        <meta charset="utf-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="HandheldFriendly" content="True" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+
+        <!-- Default metadata -->
+    <meta name="author" content="lao" />
+    <meta name="description" content="reStructuredText 笔记+备忘录" />
+    <meta name="keywords" content="reStructuredText, ReST, note">
+<meta property="og:site_name" content="劳思杂记" />
+<meta property="og:title" content="reStructuredText 笔记" />
+<meta property="og:description" content="reStructuredText 笔记+备忘录" />
+<meta property="og:locale" content="en_US" />
+<meta property="og:url" content="//blog.laolilin.com/posts/2016/08/reStructuredText-notes.html" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2016-08-09 21:10:32+08:00" />
+<meta property="article:modified_time" content="2016-08-14 10:21:00+08:00" />
+<meta property="article:author" content="//blog.laolilin.com/author/lao.html">
+<meta property="article:section" content="Tech" />
+	<meta property="article:tag" content="reStructuredText" />
+	<meta property="article:tag" content="ReST" />
+	<meta property="article:tag" content="note" />
+	<meta property="og:image" content="//blog.laolilin.com/logo.png">
+
+        <!-- Site Claim -->
+
+
+        <!-- Title -->
+        <title>
+    reStructuredText 笔记 &ndash; 劳思杂记
+        </title>
+
+        <!-- Icon -->
+        <link rel="shortcut icon" href="//blog.laolilin.com/static/favicon.png" type="image/x-icon">
+        <link rel="icon" href="//blog.laolilin.com/static/favicon.png" type="image/x-icon">
+
+        <!-- Search engine -->
+            <meta name="robots" content="index, follow" />
+
+        <!-- Feeds -->
+            <link href="//blog.laolilin.com/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="劳思杂记 Full Atom Feed" />
+
+            <link href="//blog.laolilin.com/feeds/all.rss.xml" type="application/rss+xml" rel="alternate" title="劳思杂记 Full RSS Feed" />
+
+
+
+            <link href="//blog.laolilin.com/feeds/tech.atom.xml" type="application/atom+xml" rel="alternate" title="劳思杂记 Categories Atom Feed" />
+
+
+
+
+        <!-- Styles -->
+        <!--
+        <link rel="stylesheet" href="https://ajax.aspnetcdn.com/ajax/bootstrap/4.3.1/css/bootstrap.min.css">
+        -->
+        <link rel="stylesheet" href="//blog.laolilin.com/theme/bootstrap/bootstrap.min.css">
+        <!--
+        <link rel="stylesheet" href="https://cdn.rawgit.com/afeld/bootstrap-toc/v1.0.1/dist/bootstrap-toc.min.css">
+        -->
+            <link rel="stylesheet" href="//blog.laolilin.com/theme/extra/bootstrap-toc.min.css">
+        <link rel="stylesheet" href="//blog.laolilin.com/theme/pygment/friendly.min.css">
+        <!--
+        <link rel="stylesheet" href="//blog.laolilin.com/theme/extra/admonition.min.css">
+        -->
+        <link rel="stylesheet" href="//blog.laolilin.com/theme/style.css">
+
+        <!-- Google Analytics -->
+<script>
+(function(i, s, o, g, r, a, m) { i['GoogleAnalyticsObject'] = r;
+    i[r] = i[r] || function() {
+        (i[r].q = i[r].q || []).push(arguments) }, i[r].l = 1 * new Date();
+    a = s.createElement(o), m = s.getElementsByTagName(o)[0];
+    a.async = 1;
+    a.src = g;
+    m.parentNode.insertBefore(a, m) })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
+ga('create', 'UA-181588-5', 'auto');
+ga('send', 'pageview');
+</script>
+        <!-- Google Global Site Tag -->
+
+        <!-- Google Tag Manager -->
+
+        <!-- Google Adsense -->
+
+        <!-- Heap Analytic -->
+
+        <!-- Piwik Tracking -->
+
+        <!-- Matomo Tracking -->
+
+</head>
+
+<!-- Body -->
+<body class="d-flex flex-column" data-spy="scroll" data-target="#toc" data-offset="0" style="position: relative;">
+    <!-- Top anchor -->
+    <a href="#" id="backToTop" style="display: none; z-index: 1;" title="Back to top"><span></span></a>
+
+    <!-- Google tag manager -->
+
+    <!-- Navigation -->
+    <nav class="flex-shrink-0 navbar navbar-expand-md navbar-expand-lg navbar-dark bg-dark text-light shadow-sm">
+        <!-- Logo -->
+        <a class="navbar-brand" href="//blog.laolilin.com">劳思杂记</a>
+
+        <!-- Collapse button -->
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarMenu" aria-controls="navbarMenu" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon small"></span>
+        </button>
+
+        <!-- Collapsible content -->
+        <div class="collapse navbar-collapse" id="navbarMenu">
+            <!-- Page links -->
+            <ul class="navbar-nav mr-auto text-center">
+                <li class="nav-item ">
+                    <a class="nav-link" href="//blog.laolilin.com">
+                        <svg class="nav-icon" xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24">
+                            <path d="M21 13v10h-6v-6h-6v6h-6v-10h-3l12-12 12 12h-3zm-1-5.907v-5.093h-3v2.093l3 3z" fill="currentColor"></path>
+                        </svg>
+                        Home <span class="sr-only">(current)</span>
+                    </a>
+                </li>
+                <li class="nav-item ">
+                    <a class="nav-link" href="//blog.laolilin.com/categories.html">
+                        <svg class="nav-icon" xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24">
+                            <path d="M16 6h-8v-6h8v6zm-8 12h-8v6h8v-6zm16 0h-8v6h8v-6zm-11-7v-3h-2v3h-8v5h2v-3h14v3h2v-5h-8z" fill="currentColor"></path>
+                        </svg>
+                        Categories
+                    </a>
+                </li>
+                <li class="nav-item ">
+                    <a class="nav-link" href="//blog.laolilin.com/tags.html">
+                        <svg class="nav-icon" xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24">
+                            <path d="M10.605 0h-10.605v10.609l13.391 13.391 10.609-10.604-13.395-13.396zm-4.191 6.414c-.781.781-2.046.781-2.829.001-.781-.783-.781-2.048 0-2.829.782-.782 2.048-.781 2.829-.001.782.782.781 2.047 0 2.829z" fill="currentColor"></path>
+                        </svg>
+                        Tags
+                    </a>
+                </li>
+                <li class="nav-item ">
+                    <a class="nav-link" href="//blog.laolilin.com/archives.html">
+                        <svg class="nav-icon" xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24">
+                            <path d="M1.8 9l-.8-4h22l-.8 4h-2.029l.39-2h-17.122l.414 2h-2.053zm18.575-6l.604-2h-17.979l.688 2h16.687zm3.625 8l-2 13h-20l-2-13h24zm-8 4c0-.552-.447-1-1-1h-6c-.553 0-1 .448-1 1s.447 1 1 1h6c.553 0 1-.448 1-1z" fill="currentColor"></path>
+                        </svg>
+                        Archives
+                    </a>
+                </li>
+                <li class="nav-item ">
+                    <a class="nav-link" href="//blog.laolilin.com/drafts.html">
+                        <svg class="nav-icon" xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24">
+                            <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" fill="currentColor"></path>
+                        </svg>
+                        Drafts
+                    </a>
+                </li>
+                <li class="nav-item ">
+                    <a class="nav-link" href="//blog.laolilin.com/pages/about.html">
+                        <svg class="nav-icon" xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24">
+                            <path d="M20.822 18.096c-3.439-.794-6.64-1.49-5.09-4.418 4.72-8.912 1.251-13.678-3.732-13.678-5.082 0-8.464 4.949-3.732 13.678 1.597 2.945-1.725 3.641-5.09 4.418-3.073.71-3.188 2.236-3.178 4.904l.004 1h23.99l.004-.969c.012-2.688-.092-4.222-3.176-4.935z" fill="currentColor"></path>
+                        </svg>
+                        About
+                    </a>
+                </li>
+            </ul>
+
+            <!-- Search form -->
+            <form class="form-inline text-center" action="//blog.laolilin.com/search.html">
+                <input class="form-control w-100 bg-dark text-light text-center border-0 p-2" type="text" name="q" pattern=".{3,}" title="At least 3 characters" required="" placeholder="Type here to search" aria-label="Search">
+            </form>
+
+            <!-- Social links -->
+            <ul class="navbar-nav text-center">
+                <li class="nav-item">
+                    <a class="nav-link" href="https://facebook.com/laolilin">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                            <title>Facebook</title>
+                            <path d="M12 0c-6.627 0-12 5.373-12 12s5.373 12 12 12 12-5.373 12-12-5.373-12-12-12zm3 8h-1.35c-.538 0-.65.221-.65.778v1.222h2l-.209 2h-1.791v7h-3v-7h-2v-2h2v-2.308c0-1.769.931-2.692 3.029-2.692h1.971v3z" fill="currentColor"></path>
+                        </svg>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="https://github.com/lll9p">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                            <title>Github</title>
+                            <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" fill="currentColor"></path>
+                        </svg>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="https://twitter.com/lll9p">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                            <title>Twitter</title>
+                            <path d="M12 0c-6.627 0-12 5.373-12 12s5.373 12 12 12 12-5.373 12-12-5.373-12-12-12zm6.066 9.645c.183 4.04-2.83 8.544-8.164 8.544-1.622 0-3.131-.476-4.402-1.291 1.524.18 3.045-.244 4.252-1.189-1.256-.023-2.317-.854-2.684-1.995.451.086.895.061 1.298-.049-1.381-.278-2.335-1.522-2.304-2.853.388.215.83.344 1.301.359-1.279-.855-1.641-2.544-.889-3.835 1.416 1.738 3.533 2.881 5.92 3.001-.419-1.796.944-3.527 2.799-3.527.825 0 1.572.349 2.096.907.654-.128 1.27-.368 1.824-.697-.215.671-.67 1.233-1.263 1.589.581-.07 1.135-.224 1.649-.453-.384.578-.87 1.084-1.433 1.489z" fill="currentColor"></path>
+                        </svg>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Full page -->
+    <div class="flex-shrink-0 flex-grow-1">
+
+        <!-- Header -->
+        <header class="bg-dark text-light shadow-sm pt-3 pb-2">
+	<div class="container">
+		<h3 id="reStructuredText-notes">reStructuredText 笔记</h3>
+		<p style="font-size:larger;"><p class="first last">reStructuredText 笔记+备忘录</p>
+</p>
+        <div class="row mx-auto mt-3">
+            <div class="col-xs-12 col-sm-12 col-md-6 text-left" style="padding: 0">
+                <a href="//blog.laolilin.com/author/lao.html" class="card-link">lao</a>
+                <span class="card-link text-success">
+                    <span class="post-date" title="Post date">09 Aug 2016</span>
+                    <span class="text-info modified-date" title="Updated date">
+                            14 Aug 2016
+                    </span>
+                </span>
+                    <span class="card-link text-secondary" title="~535 words">3 mins</span>
+            </div>
+            <div class="col-xs-12 col-sm-12 col-md-6 text-right" style="padding: 0">
+                <a class="badge badge-success" href="//blog.laolilin.com/category/tech.html">tech</a>
+                    <a class="badge badge-info" href="//blog.laolilin.com/tag/restructuredtext.html">restructuredtext</a>
+                    <a class="badge badge-info" href="//blog.laolilin.com/tag/rest.html">rest</a>
+                    <a class="badge badge-info" href="//blog.laolilin.com/tag/note.html">note</a>
+            </div>
+        </div>
+	</div>
+        </header>
+
+        <!-- Main -->
+        <main class="py-3">
+                <div class="container">
+                    <!-- Sharing -->
+
+                    <!-- Content -->
+    <!-- 2 columns layout -->
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-10">
+
+                <!-- Sharing -->
+
+                <!-- Article -->
+                <p>Via <a class="reference external" href="http://docutils.sourceforge.net/docs/user/rst/quickref.html">reStructuredText 笔记</a></p>
+<div class="section" id="id2">
+<h2>行内标记</h2>
+<table border="1" class="docutils table table-striped">
+<colgroup>
+<col width="34%"/>
+<col width="20%"/>
+<col width="45%"/>
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">例子</th>
+<th class="head">效果</th>
+<th class="head">备注</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td><tt class="docutils literal">*重点*</tt></td>
+<td><em>重点</em></td>
+<td>显示为斜体</td>
+</tr>
+<tr><td><tt class="docutils literal">**强调**</tt></td>
+<td><strong>强调</strong></td>
+<td>显示为粗体</td>
+</tr>
+<tr><td><tt class="docutils literal">`解释文本`</tt></td>
+<td>解释 <cite>文本</cite></td>
+<td><tt class="docutils literal"><span class="pre">&lt;cite&gt;文本&lt;/cite&gt;</span></tt> 因设备而异</td>
+</tr>
+<tr><td><tt class="docutils literal">``行 内 字 面``</tt></td>
+<td><tt class="docutils literal">行 内 字 面</tt></td>
+<td>显示为等宽文本，保留空格，不保留断行</td>
+</tr>
+<tr><td><p class="first"><tt class="docutils literal">引用_</tt></p>
+<p class="last"><tt class="docutils literal">.. _引用: imtho.com</tt></p>
+</td>
+<td><a class="reference external" href="imtho.com">引用</a></td>
+<td>简单的、一个词的、不带空格的超链接</td>
+</tr>
+<tr><td><p class="first"><tt class="docutils literal">`短语 引用`_</tt></p>
+<p class="last"><tt class="docutils literal">.. _`短语 引用`: imtho.com</tt></p>
+</td>
+<td><a class="reference external" href="imtho.com">短语 引用</a></td>
+<td>带空格或标点的超链接</td>
+</tr>
+<tr><td><p class="first"><tt class="docutils literal">匿名__</tt></p>
+<p class="last"><tt class="docutils literal">__ 引用_</tt></p>
+</td>
+<td><a class="reference external" href="imtho.com">匿名</a></td>
+<td>重用链接</td>
+</tr>
+<tr><td><tt class="docutils literal">_`行内交叉引用`</tt></td>
+<td><span class="target" id="id3">行内交叉引用</span></td>
+<td>行内交叉引用,给指定文本一个id</td>
+</tr>
+<tr><td>替换参考</td>
+<td>见 <a class="reference internal" href="#id6">替换参考</a></td>
+<td>可以是文字，图像，链接或上述及其他的组合</td>
+</tr>
+<tr><td>脚注 <tt class="docutils literal">[1]_</tt></td>
+<td>脚注 <a class="footnote-reference" href="#id10" id="id4">[1]</a></td>
+<td> </td>
+</tr>
+<tr><td>引注 <tt class="docutils literal">[CIT2002]_</tt></td>
+<td>引注 <a class="citation-reference" href="#cit2002" id="id5">[CIT2002]</a></td>
+<td> </td>
+</tr>
+<tr><td><tt class="docutils literal"><span class="pre">http://python.org</span></tt></td>
+<td><a class="reference external" href="http://python.org">http://python.org</a></td>
+<td>单独的链接</td>
+</tr>
+</tbody>
+</table>
+<p><span class="target" id="id6">替换参考</span> <tt class="docutils literal">|替换参考|</tt> ，可用的替换 directive 有 image 和 replace，
+如：</p>
+<pre class="code reST literal-block">
+|替换参考|
+<span class="p">..</span> <span class="nt">|替换参考|</span> <span class="ow">image</span><span class="p">::</span> https://cdn.v2ex.co/site/logo@2x.png?m=1346064962
+</pre>
+<table class="footnote docutils table table-striped" frame="void" id="id10" rules="none">
+<colgroup><col class="label"/><col/></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id4">[1]</a></td><td>这是一个脚注</td></tr>
+</tbody>
+</table>
+<table class="citation docutils table table-striped" frame="void" id="cit2002" rules="none">
+<colgroup><col class="label"/><col/></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id5">[CIT2002]</a></td><td>这是一个引注</td></tr>
+</tbody>
+</table>
+<div class="section" id="id11">
+<h3>行内标记分隔符</h3>
+<p>星号*、反引号`、水平线、下划线_、为行内分隔符，要显示它们，可用转义或双反引号（ <tt class="docutils literal">\*</tt> 及 <tt class="docutils literal"><span class="pre">``*``</span></tt> ）</p>
+<ol class="arabic simple">
+<li>行内标记必须为 text block 、其之前为空格或以下字符之一 <tt class="docutils literal"><span class="pre">'"([{&lt;</span></tt> 。</li>
+<li>开始字符之后必须紧跟非空格，如 <tt class="docutils literal">**强调**</tt> 是对的，而 <tt class="docutils literal">** 强调**</tt> 是错的。</li>
+<li>结束字符之前必须为非空格。</li>
+<li>结束字符必须结束一个块（之后为文档尾或空行），或以空格或以下字符之一结尾 <tt class="docutils literal"><span class="pre">'".,:;!?-)]}/\&gt;</span></tt> 。</li>
+<li>开始字符之前若为 <tt class="docutils literal"><span class="pre">'"([{&lt;</span></tt> 之一,则不能以 <tt class="docutils literal"><span class="pre">'")]}&gt;</span></tt> 结尾。</li>
+<li>开始字符与结束字符之间必须有一个字符。</li>
+<li>开始字符与结束字符之前若为转义反斜杠，则整个行内标志不会被识别，除了 <cite>行内字面量</cite> 。</li>
+</ol>
+</div>
+</div>
+<div class="section" id="id12">
+<h2>反斜杠转义</h2>
+<table border="1" class="docutils table table-striped">
+<colgroup>
+<col width="57%"/>
+<col width="43%"/>
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">原始 rST</th>
+<th class="head">效果</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>\``用`` <tt class="docutils literal"><span class="pre">"\\"</span></tt> <tt class="docutils literal">\*转义*</tt></td>
+<td>``用`` "\" *转义*</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="section">
+<h2>Section结构</h2>
+<table border="1" class="docutils table table-striped">
+<colgroup>
+<col width="73%"/>
+<col width="27%"/>
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">原始 rST</th>
+<th class="head">效果</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>标题可以用以下字符之一来表示：
+<tt class="docutils literal"><span class="pre">=-`:'"~^_*+#&lt;&gt;</span></tt></td>
+<td>如本文所示</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="id13">
+<h2>段落</h2>
+<p>以空行分隔的字符串。</p>
+</div>
+<div class="section" id="id14">
+<h2>无序列表</h2>
+<p>以-、*、+开头，如：</p>
+<div class="highlight"><pre><span class="code-line"><span></span><span class="m">-</span> 这是</span>
+<span class="code-line"><span class="m">-</span> 一个</span>
+<span class="code-line"><span class="m">-</span> 无序列表</span>
+</pre></div>
+<ul class="simple">
+<li>这是</li>
+<li>一个</li>
+<li>无序列表</li>
+</ul>
+</div>
+<div class="section" id="id15">
+<h2>有序列表</h2>
+<p>以#、数字、字母、i,I开头，开始字符可带.及)，如：</p>
+<div class="highlight"><pre><span class="code-line"><span></span><span class="m">i.</span> 这是</span>
+<span class="code-line"></span>
+<span class="code-line">   <span class="m">#)</span> 嵌套</span>
+<span class="code-line">   <span class="m">#)</span> 列表</span>
+<span class="code-line"><span class="m">#.</span> 一个</span>
+<span class="code-line"></span>
+<span class="code-line">   <span class="m">i.</span> 也是</span>
+<span class="code-line">   <span class="m">#.</span> 嵌套</span>
+<span class="code-line">   <span class="m">#.</span> 列表</span>
+<span class="code-line"><span class="m">#.</span> 有序列表</span>
+</pre></div>
+<ol class="lowerroman simple">
+<li>这是<ol class="arabic">
+<li>嵌套</li>
+<li>列表</li>
+</ol>
+</li>
+<li>一个<ol class="lowerroman">
+<li>也是</li>
+<li>嵌套</li>
+<li>列表</li>
+</ol>
+</li>
+<li>有序列表</li>
+</ol>
+</div>
+<div class="section" id="id16">
+<h2>定义列表</h2>
+<p>以词为开头的列表，如：</p>
+<div class="highlight"><pre><span class="code-line"><span></span>定义列表</span>
+<span class="code-line">    以词开头的列表</span>
+<span class="code-line">ReST</span>
+<span class="code-line">    reStructuredText</span>
+</pre></div>
+<dl class="docutils">
+<dt>定义列表</dt>
+<dd>以词开头的列表</dd>
+<dt>ReST</dt>
+<dd>reStructuredText</dd>
+</dl>
+</div>
+<div class="section" id="id17">
+<h2>区域列表</h2>
+<div class="highlight"><pre><span class="code-line"><span></span><span class="nc">:作者:</span></span>
+<span class="code-line">        某某</span>
+<span class="code-line"></span>
+<span class="code-line">        毕业于某某大学</span>
+<span class="code-line"><span class="nc">:版本:</span></span>
+<span class="code-line">        1.0</span>
+</pre></div>
+<table class="docutils table-striped table field-list" frame="void" rules="none">
+<col class="field-name"/>
+<col class="field-body"/>
+<tbody valign="top">
+<tr class="field"><th class="field-name">作者:</th><td class="field-body"><p class="first">某某</p>
+<p>毕业于某某大学</p>
+</td>
+</tr>
+<tr class="field"><th class="field-name">版本:</th><td class="field-body"><p class="first last">1.0</p>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="id18">
+<h2>选项列表</h2>
+<p>选项和描述之间必须间隔两个空格以上，如：</p>
+<div class="highlight"><pre><span class="code-line"><span></span>-a  all</span>
+<span class="code-line">-f file  读入文件</span>
+<span class="code-line">--file=file  读入一个文件</span>
+<span class="code-line">/f  MS命令行</span>
+</pre></div>
+<table class="table docutils option-list table-striped" frame="void" rules="none">
+<col class="option"/>
+<col class="description"/>
+<tbody valign="top">
+<tr><td class="option-group">
+<kbd><span class="option">-a</span></kbd></td>
+<td>all</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">-f <var>file</var></span></kbd></td>
+<td>读入文件</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">--file=<var>file</var></span></kbd></td>
+<td>读入一个文件</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">/f</span></kbd></td>
+<td>MS命令行</td></tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="id19">
+<h2>字面量块</h2>
+<div class="highlight"><pre><span class="code-line"><span></span>字面量块以 "::" 开始</span>
+<span class="code-line"></span>
+<span class="code-line"><span class="se">::</span></span>
+<span class="code-line"></span>
+<span class="code-line"><span class="s">    空格、新行、空行及::之后的所有字符都以字面量显示。</span></span>
+<span class="code-line"></span>
+<span class="code-line">符号 <span class="s">``::``</span> 必须在空行行首，或一段的结尾<span class="se">::</span></span>
+<span class="code-line"></span>
+<span class="code-line"><span class="s">    真的很方便啊！</span></span>
+<span class="code-line"></span>
+<span class="code-line">在字面量块中使用单行引用::</span>
+<span class="code-line"></span>
+<span class="code-line">&gt; 这是一个</span>
+<span class="code-line">&gt; 单行引用</span>
+<span class="code-line">&gt;&gt; per-line quoting</span>
+</pre></div>
+<p>字面量块以 "::" 开始,前后应有空行</p>
+<pre class="literal-block">
+空格、新行、空行及::之后的所有字符都以字面量显示。
+</pre>
+<p>符号 <tt class="docutils literal">::</tt> 必须在空行行首，或一段的结尾:</p>
+<pre class="literal-block">
+真的很方便啊！
+</pre>
+<p>在字面量块中使用单行引用:</p>
+<pre class="literal-block">
+&gt; 这是一个
+&gt; 单行引用
+&gt;&gt; per-line quoting
+</pre>
+</div>
+<div class="section" id="id20">
+<h2>行块</h2>
+<div class="highlight"><pre><span class="code-line"><span></span>行块以"| "在行首开头。</span>
+<span class="code-line"></span>
+<span class="code-line">|这是</span>
+<span class="code-line">|行块</span>
+<span class="code-line">|很好用</span>
+</pre></div>
+<p>行块以"| "在行首开头。</p>
+<div class="line-block">
+<div class="line">这是</div>
+<div class="line">行块</div>
+<div class="line">很好用</div>
+</div>
+</div>
+<div class="section" id="id21">
+<h2>块引用</h2>
+<div class="highlight"><pre><span class="code-line"><span></span>一个块引用</span>
+<span class="code-line"></span>
+<span class="code-line">  只需要</span>
+<span class="code-line">  缩进</span>
+<span class="code-line"></span>
+<span class="code-line">   及嵌套</span>
+<span class="code-line">   缩进</span>
+</pre></div>
+<p>一个块引用</p>
+<blockquote>
+<p>只需要
+缩进</p>
+<blockquote>
+及嵌套
+缩进</blockquote>
+</blockquote>
+</div>
+<div class="section" id="doctest">
+<h2>Doctest块</h2>
+<div class="highlight"><pre><span class="code-line"><span></span>&gt;&gt;&gt; print('这是一个 Doctest 块')</span>
+<span class="code-line">&gt;&gt;&gt; import time</span>
+</pre></div>
+<pre class="doctest-block">
+&gt;&gt;&gt; print('这是一个 Doctest 块')
+&gt;&gt;&gt; import time
+</pre>
+</div>
+<div class="section" id="id22">
+<h2>表格</h2>
+<p>ReST有两种表格：</p>
+<div class="section" id="grid">
+<h3>Grid表格：</h3>
+<div class="highlight"><pre><span class="code-line"><span></span>+------------+------------+-----------+</span>
+<span class="code-line"><span class="o">|</span> Header 1   | Header 2   | Header 3  |</span>
+<span class="code-line">+============+============+===========+</span>
+<span class="code-line"><span class="o">|</span> body row 1 | column 2   | column 3  |</span>
+<span class="code-line">+------------+------------+-----------+</span>
+<span class="code-line"><span class="o">|</span> body row 2 | Cells may span columns.|</span>
+<span class="code-line">+------------+------------+-----------+</span>
+<span class="code-line"><span class="o">|</span> body row 3 | Cells may  | - Cells   |</span>
+<span class="code-line">+------------+------------+-----------+</span>
+<span class="code-line"><span class="o">|</span> body row 4 |            | - blocks. |</span>
+<span class="code-line">+------------+------------+-----------+</span>
+</pre></div>
+<table border="1" class="docutils table table-striped">
+<colgroup>
+<col width="34%"/>
+<col width="34%"/>
+<col width="31%"/>
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Header 1</th>
+<th class="head">Header 2</th>
+<th class="head">Header 3</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>body row 1</td>
+<td>column 2</td>
+<td>column 3</td>
+</tr>
+<tr><td>body row 2</td>
+<td colspan="2">Cells may span columns.</td>
+</tr>
+<tr><td>body row 3</td>
+<td>Cells may</td>
+<td><ul class="first last simple">
+<li>Cells</li>
+</ul>
+</td>
+</tr>
+<tr><td>body row 4</td>
+<td> </td>
+<td><ul class="first last simple">
+<li>blocks.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="id23">
+<h3>简单表格：</h3>
+<div class="highlight"><pre><span class="code-line"><span></span>=====  =====  ======</span>
+<span class="code-line">   Inputs     Output</span>
+<span class="code-line">------------  ------</span>
+<span class="code-line">  A      B    A or B</span>
+<span class="code-line">=====  =====  ======</span>
+<span class="code-line">False  False  False</span>
+<span class="code-line">True   False  True</span>
+<span class="code-line">False  True   True</span>
+<span class="code-line">True   True   True</span>
+<span class="code-line">=====  =====  ======</span>
+</pre></div>
+<table border="1" class="docutils table table-striped">
+<colgroup>
+<col width="31%"/>
+<col width="31%"/>
+<col width="38%"/>
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head" colspan="2">Inputs</th>
+<th class="head">Output</th>
+</tr>
+<tr><th class="head">A</th>
+<th class="head">B</th>
+<th class="head">A or B</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>False</td>
+<td>False</td>
+<td>False</td>
+</tr>
+<tr><td>True</td>
+<td>False</td>
+<td>True</td>
+</tr>
+<tr><td>False</td>
+<td>True</td>
+<td>True</td>
+</tr>
+<tr><td>True</td>
+<td>True</td>
+<td>True</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="section" id="id24">
+<h2>分隔线</h2>
+<div class="highlight"><pre><span class="code-line"><span></span>----</span>
+<span class="code-line"></span>
+<span class="code-line">分隔线，以4个及以上的“-”表示</span>
+</pre></div>
+<p>一条</p>
+<hr class="docutils"/>
+<p>分隔线，以4个及以上的“-”表示</p>
+</div>
+<div class="section" id="id25">
+<h2>显式标记</h2>
+<div class="section" id="id26">
+<h3>脚注</h3>
+<div class="highlight"><pre><span class="code-line"><span></span>这是一个脚注 <span class="s">[#]_</span> 。或用\* <span class="s">[*]_</span> ，\#后可加上字符串 <span class="s">[#标识1]_</span> 用来标识 <span class="s">[#标识2]_</span> ，亦可用直接数字 <span class="s">[7]_</span> 。</span>
+<span class="code-line"></span>
+<span class="code-line"><span class="p">..</span> <span class="nt">[#] 自动脚注，注意 ``]</span><span class="s">`` 后没有``_``。</span></span>
+<span class="code-line"><span class="p">..</span> <span class="nt">[*]</span> 星号脚注。</span>
+<span class="code-line"><span class="p">..</span> <span class="nt">[#标识1]</span> 自动标识1。</span>
+<span class="code-line"><span class="p">..</span> <span class="nt">[#标识2]</span> 自动标识2。</span>
+<span class="code-line"><span class="p">..</span> <span class="nt">[7]</span>_ 数字标识。</span>
+</pre></div>
+<p>这是一个脚注 <a class="footnote-reference" href="#id32" id="id27">[2]</a> 。或用* <a class="footnote-reference" href="#id33" id="id28">[*]</a> ，#后可加上字符串 <a class="footnote-reference" href="#id34" id="id29">[3]</a> 用来标识 <a class="footnote-reference" href="#id35" id="id30">[4]</a> ，亦可用直接数字 <a class="footnote-reference" href="#id36" id="id31">[7]</a> 。</p>
+<table class="footnote docutils table table-striped" frame="void" id="id32" rules="none">
+<colgroup><col class="label"/><col/></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id27">[2]</a></td><td>自动脚注，注意 <tt class="docutils literal">]</tt> 后没有``_``。</td></tr>
+</tbody>
+</table>
+<table class="footnote docutils table table-striped" frame="void" id="id33" rules="none">
+<colgroup><col class="label"/><col/></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id28">[*]</a></td><td>星号脚注。</td></tr>
+</tbody>
+</table>
+<table class="footnote docutils table table-striped" frame="void" id="id34" rules="none">
+<colgroup><col class="label"/><col/></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id29">[3]</a></td><td>自动标识1。</td></tr>
+</tbody>
+</table>
+<table class="footnote docutils table table-striped" frame="void" id="id35" rules="none">
+<colgroup><col class="label"/><col/></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id30">[4]</a></td><td>自动标识2。</td></tr>
+</tbody>
+</table>
+<table class="footnote docutils table table-striped" frame="void" id="id36" rules="none">
+<colgroup><col class="label"/><col/></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id31">[7]</a></td><td>数字标识。</td></tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="id37">
+<h3>引用</h3>
+<div class="highlight"><pre><span class="code-line"><span></span>一个引用出自 <span class="s">[某文]_</span> ，还可以出自 某文_ 。</span>
+<span class="code-line"></span>
+<span class="code-line"><span class="p">..</span> <span class="nt">[某文]</span> 这里是某文</span>
+</pre></div>
+<p>一个引用出自 <a class="citation-reference" href="#id39" id="id38">[某文]</a> ，还可以出自 <a class="reference internal" href="#id39">某文</a> 。</p>
+<table class="citation docutils table table-striped" frame="void" id="id39" rules="none">
+<colgroup><col class="label"/><col/></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id38">[某文]</a></td><td>这里是某文</td></tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="id40">
+<h3>超链接</h3>
+<div class="highlight"><pre><span class="code-line"><span></span>外部链接，如 Python官网_ ，亦可在行内写出 <span class="s">`Python官网 </span><span class="si">&lt;https://python.org&gt;</span><span class="s">`_</span>。</span>
+<span class="code-line"></span>
+<span class="code-line"><span class="p">..</span> <span class="nt">_Python官网:</span> https://python.org</span>
+<span class="code-line"></span>
+<span class="code-line">内部链接，如 此处_ 。</span>
+<span class="code-line"></span>
+<span class="code-line"><span class="p">..</span> <span class="nt">_此处:</span></span>
+<span class="code-line"></span>
+<span class="code-line">此处是内部链接一例子。</span>
+<span class="code-line"></span>
+<span class="code-line">间接链接，如： 我爱 Python_ , <span class="s">`官网在此`__</span> 。</span>
+<span class="code-line"></span>
+<span class="code-line"><span class="p">..</span> <span class="nt">_Python:</span> https://python.org</span>
+<span class="code-line">__ Python_</span>
+<span class="code-line"></span>
+<span class="code-line">隐式链接，如：我要链接到 <span class="s">`显式标记`_</span> 。</span>
+</pre></div>
+<p>外部链接，如 <a class="reference external" href="https://python.org">Python官网</a> ，亦可在行内写出 <a class="reference external" href="https://python.org">Python官网</a>。</p>
+<p>内部链接，如 <a class="reference internal" href="#id42">此处</a> 。</p>
+<p id="id42">此处是内部链接一例子。</p>
+<p>间接链接，如： 我爱 <a class="reference external" href="https://python.org">Python</a> , <a class="reference external" href="https://python.org">官网在此</a> 。</p>
+<p>隐式链接，如：我要链接到 <a class="reference internal" href="#id25">显式标记</a> 。</p>
+</div>
+<div class="section" id="id45">
+<h3>指令</h3>
+<p>见 <a class="reference external" href="http://docutils.sourceforge.net/docs/ref/rst/directives.html">reStructuredText Directives</a> 。</p>
+<div class="highlight"><pre><span class="code-line"><span></span>图片：</span>
+<span class="code-line"></span>
+<span class="code-line"><span class="p">..</span> <span class="ow">image</span><span class="p">::</span> http://docutils.sourceforge.net/docs/user/rst/images/ball1.gif</span>
+<span class="code-line">   <span class="nc">:alt:</span> 一个图片</span>
+<span class="code-line"></span>
+<span class="code-line"></span>
+<span class="code-line">数学公式：</span>
+<span class="code-line"></span>
+<span class="code-line">行内公式： <span class="na">:math:</span><span class="nv">`A_\text{c} = (\pi/4) d^2`</span>.</span>
+<span class="code-line"></span>
+<span class="code-line">整行公式</span>
+<span class="code-line"></span>
+<span class="code-line"><span class="p">..</span> <span class="ow">math</span><span class="p">::</span> \alpha{}_t(i) = P(O_1, O_2, … O_t, q_t = S_i \lambda{})</span>
+<span class="code-line"></span>
+<span class="code-line">代码：</span>
+<span class="code-line"></span>
+<span class="code-line"><span class="p">..</span> <span class="ow">code-block</span><span class="p">::</span> <span class="k">python</span></span>
+<span class="code-line"></span>
+<span class="code-line"> <span class="c1"># python 代码</span></span>
+<span class="code-line"> <span class="k">def</span> <span class="nf">print_hello</span><span class="p">():</span></span>
+<span class="code-line">     <span class="nb">print</span><span class="p">(</span><span class="s1">'Hello, World!'</span><span class="p">)</span></span>
+</pre></div>
+<p>图片：</p>
+<img alt="一张图片" class="img-fluid" src="http://docutils.sourceforge.net/docs/user/rst/images/ball1.gif"/>
+<p>数学公式：</p>
+<p>行内公式： <span class="math">\(A_\text{c} = (\pi/4) d^2\)</span>.</p>
+<p>整行公式</p>
+<div class="math">
+\begin{equation*}
+\alpha{}_t(i) = P(O_1, O_2, \ldots  O_t, q_t = S_i \lambda{})
+\end{equation*}
+</div>
+<p>代码:</p>
+<div class="highlight"><pre><span class="code-line"><span></span><span class="c1"># python 代码</span></span>
+<span class="code-line"><span class="k">def</span> <span class="nf">print_hello</span><span class="p">():</span></span>
+<span class="code-line">    <span class="nb">print</span><span class="p">(</span><span class="s1">'Hello, World!'</span><span class="p">)</span></span>
+</pre></div>
+</div>
+<div class="section" id="id46">
+<h3>替换引用和定义</h3>
+<div class="highlight"><pre><span class="code-line"><span></span>此 |生物危害| 标志用在医用废物回收箱中。</span>
+<span class="code-line"></span>
+<span class="code-line"><span class="p">..</span> <span class="nt">|生物危害|</span> <span class="ow">image</span><span class="p">::</span> http://docutils.sourceforge.net/docs/user/rst/images/biohazard.png</span>
+<span class="code-line"></span>
+<span class="code-line">还可以构造任意结构，如：我想在新标签页打开 |Python官网|。</span>
+<span class="code-line"></span>
+<span class="code-line"><span class="p">..</span> <span class="nt">|Python官网|</span> <span class="ow">raw</span><span class="p">::</span> html</span>
+<span class="code-line"></span>
+<span class="code-line">   &lt;a href="https://python.org" target="_blank"&gt;Python的官网&lt;/a&gt;</span>
+</pre></div>
+<p>此 <img alt="生物危害" class="img-fluid" src="http://docutils.sourceforge.net/docs/user/rst/images/biohazard.png"/> 标志用在医用废物回收箱中。</p>
+<p>我想在新标签页打开 <a href="https://python.org" target="_blank">Python的官网</a>。</p>
+</div>
+<div class="section" id="id47">
+<h3>评论</h3>
+<div class="highlight"><pre><span class="code-line"><span></span><span class="cp">.. 任何以显式标记开始</span></span>
+<span class="code-line"><span class="cp">   但没有用任何以上的语法</span></span>
+<span class="code-line"><span class="cp">   的文本，就是评论。</span></span>
+<span class="code-line"></span>
+<span class="code-line">空评论：</span>
+<span class="code-line"></span>
+<span class="code-line"><span class="cp">..</span></span>
+<span class="code-line"></span>
+<span class="code-line"></span>
+<span class="code-line"><span class="cp">    就是“``..``”前后都是空行。</span></span>
+</pre></div>
+<!-- 任何以显式标记开始
+但没有用任何以上的语法
+的文本，就是评论。 -->
+<p>空评论：</p>
+<!-- -->
+<blockquote>
+就是“<tt class="docutils literal">..</tt>”前后都是空行。</blockquote>
+</div>
+</div>
+<script type='text/javascript'>if (!document.getElementById('mathjaxscript_pelican_#%@#$@#')) {
+    var align = "center",
+        indent = "0em",
+        linebreak = "false";
+
+    if (false) {
+        align = (screen.width < 768) ? "left" : align;
+        indent = (screen.width < 768) ? "0em" : indent;
+        linebreak = (screen.width < 768) ? 'true' : linebreak;
+    }
+
+    var mathjaxscript = document.createElement('script');
+    mathjaxscript.id = 'mathjaxscript_pelican_#%@#$@#';
+    mathjaxscript.type = 'text/javascript';
+    mathjaxscript.src = 'https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+
+    var configscript = document.createElement('script');
+    configscript.type = 'text/x-mathjax-config';
+    configscript[(window.opera ? "innerHTML" : "text")] =
+        "MathJax.Hub.Config({" +
+        "    config: ['MMLorHTML.js']," +
+        "    TeX: { extensions: ['AMSmath.js','AMSsymbols.js','noErrors.js','noUndefined.js','color.js','mhchem.js'], equationNumbers: { autoNumber: 'none' } }," +
+        "    jax: ['input/TeX','input/MathML','output/HTML-CSS']," +
+        "    extensions: ['tex2jax.js','mml2jax.js','MathMenu.js','MathZoom.js']," +
+        "    displayAlign: '"+ align +"'," +
+        "    displayIndent: '"+ indent +"'," +
+        "    showMathMenu: true," +
+        "    messageStyle: 'normal'," +
+        "    tex2jax: { " +
+        "        inlineMath: [ ['\\\\(','\\\\)'] ], " +
+        "        displayMath: [ ['$$','$$'] ]," +
+        "        processEscapes: true," +
+        "        preview: 'TeX'," +
+        "    }, " +
+        "    'HTML-CSS': { " +
+        "        availableFonts: ['STIX', 'TeX']," +
+        "        preferredFont: 'STIX'," +
+        "        styles: { '.MathJax_Display, .MathJax .mo, .MathJax .mi, .MathJax .mn': {color: 'inherit ! important'} }," +
+        "        linebreaks: { automatic: "+ linebreak +", width: '90% container' }," +
+        "    }, " +
+        "}); " +
+        "if ('default' !== 'default') {" +
+            "MathJax.Hub.Register.StartupHook('HTML-CSS Jax Ready',function () {" +
+                "var VARIANT = MathJax.OutputJax['HTML-CSS'].FONTDATA.VARIANT;" +
+                "VARIANT['normal'].fonts.unshift('MathJax_default');" +
+                "VARIANT['bold'].fonts.unshift('MathJax_default-bold');" +
+                "VARIANT['italic'].fonts.unshift('MathJax_default-italic');" +
+                "VARIANT['-tex-mathit'].fonts.unshift('MathJax_default-italic');" +
+            "});" +
+            "MathJax.Hub.Register.StartupHook('SVG Jax Ready',function () {" +
+                "var VARIANT = MathJax.OutputJax.SVG.FONTDATA.VARIANT;" +
+                "VARIANT['normal'].fonts.unshift('MathJax_default');" +
+                "VARIANT['bold'].fonts.unshift('MathJax_default-bold');" +
+                "VARIANT['italic'].fonts.unshift('MathJax_default-italic');" +
+                "VARIANT['-tex-mathit'].fonts.unshift('MathJax_default-italic');" +
+            "});" +
+        "}";
+
+    (document.body || document.getElementsByTagName('head')[0]).appendChild(configscript);
+    (document.body || document.getElementsByTagName('head')[0]).appendChild(mathjaxscript);
+}
+</script>
+
+                <!-- Neighbors -->
+                    <br>
+                    <b>Read more:</b><br>
+<div class="pagination">
+    <a class="w-100 " href="//blog.laolilin.com/posts/2016/09/python-install-config-for-data-analysis.html">
+        Python数据分析-安装与配置    </a>
+</div>
+                <!-- Google Adsense -->
+            </div>
+
+            <!-- Sidebar -->
+            <div class="col-md-2 d-none d-md-block small">
+                <div class="sticky-top">
+                    <!-- ToC -->
+                    <nav id="toc" data-toggle="toc" ></nav>
+
+                    <!-- Share post -->
+
+                    <!-- Google Adsense -->
+                </div>
+            </div>
+        </div>
+
+    <!-- Releated posts -->
+
+    <!-- Comments -->
+<section class="comments" id="comments">
+    <!-- <h2>Comments</h2> -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/blueimp-md5/2.10.0/js/md5.min.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+    <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+    <hr/>
+    <div id="gitalk-container"></div>
+    <script>
+        var gitalk = new Gitalk({
+            clientID: '32128e45765077b3152c',
+            clientSecret: '04b40e6a8191416fb3bcf87adb2cf7e2cb2be7d9',
+            repo: 'comments-blog.laolilin.com',
+            owner: 'laolilin',
+            admin: ['laolilin','lll9p'],
+            id: md5(location.pathname),      // Ensure uniqueness and length less than 50
+            distractionFreeMode: false,  // Facebook-like distraction free mode
+            createIssueManually: true,
+            proxy: 'https:/cloudflare-cors-anywhere.lll9p.workers.dev/?https://github.com/login/oauth/access_token',
+        })
+
+        gitalk.render('gitalk-container')
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="https://github.com/gitalk/gitalk" target="_blank">Comment system powered by
+            gitalk.</a></noscript>
+</section>                </div>
+        </main>
+
+    </div>
+
+    <!-- Footer -->
+    <footer class="flex-shrink-0 bg-dark text-light small py-1">
+        <div class="container text-center">
+                &copy; 2021 <a href="//blog.laolilin.com">劳思杂记</a> by <a href="//blog.laolilin.com/pages/about.html">Lao</a>, Build on: Wed Jul 14 08:58:35 CST 2021<br>
+            Powered by <a href="http://getpelican.com">Pelican</a>, <a href="http://python.org">Python</a>, <a href="https://getbootstrap.com">Bootstrap 4</a>,
+            <!-- Do not remove below license sentence -->
+            License: <a href="https://spdx.org/licenses/CC-BY-4.0.html">CC-BY-4.0</a>, based on <a href="https://github.com/vuquangtrong/simplify-theme">Simplify Bootstrap Theme</a>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <!--
+    <script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.4.1.min.js"></script>
+    -->
+    <script type="text/javascript" src="//blog.laolilin.com/theme/jquery/jquery-3.4.1.min.js"></script>
+    <!--
+    <script src="https://ajax.aspnetcdn.com/ajax/bootstrap/4.3.1/bootstrap.min.js"></script>
+    -->
+    <script type="text/javascript" src="//blog.laolilin.com/theme/bootstrap/bootstrap.min.js"></script>
+    <!--
+    <script src="https://cdn.rawgit.com/afeld/bootstrap-toc/v1.0.1/dist/bootstrap-toc.min.js"></script>
+    -->
+        <script type="text/javascript" src="//blog.laolilin.com/theme/extra/bootstrap-toc.min.js"></script>
+    <script type="text/javascript" src="//blog.laolilin.com/theme/style.js"></script>
+
+    <!-- Sharing -->
+    <!-- Baidu push -->
+        <script>
+        (function(){
+            var bp = document.createElement('script');
+            var curProtocol = window.location.protocol.split(':')[0];
+            if (curProtocol === 'https') {
+                bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+            }
+            else {
+                bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+            }
+            var s = document.getElementsByTagName("script")[0];
+            s.parentNode.insertBefore(bp, s);
+        })();
+        </script>
+    <!-- JSON LD -->
+<script type="application/ld+json">
+{
+    "@context": "http://schema.org",
+    "@type": "BlogPosting",
+    "name": "reStructuredText 笔记",
+    "headline": "reStructuredText 笔记",
+    "datePublished": "2016-08-09 21:10:32+08:00",
+    "dateModified": "2016-08-14 10:21:00+08:00",
+    "author": {
+        "@type": "Person",
+        "name": "lao",
+        "url": "//blog.laolilin.com/author/lao.html"
+    },
+    "image": "//blog.laolilin.com/logo.png",
+    "url": "//blog.laolilin.com/posts/2016/08/reStructuredText-notes.html",
+    "description": "reStructuredText 笔记+备忘录"
+}
+</script>
+    <!-- Disqus count -->
+</body>
+
+</html>

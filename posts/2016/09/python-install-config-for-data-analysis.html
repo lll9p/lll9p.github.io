@@ -1,0 +1,439 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head -->
+<head>
+
+        <!-- Required metadata tags -->
+        <meta charset="utf-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="HandheldFriendly" content="True" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+
+        <!-- Default metadata -->
+    <meta name="author" content="lao" />
+    <meta name="description" content="Python机器学习安装配置教程" />
+    <meta name="keywords" content="Python, Machine learning, Data Mining">
+<meta property="og:site_name" content="劳思杂记" />
+<meta property="og:title" content="Python数据分析-安装与配置" />
+<meta property="og:description" content="Python机器学习安装配置教程" />
+<meta property="og:locale" content="en_US" />
+<meta property="og:url" content="//blog.laolilin.com/posts/2016/09/python-install-config-for-data-analysis.html" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2016-09-22 08:45:00+08:00" />
+<meta property="article:modified_time" content="2016-10-29 17:34:00+08:00" />
+<meta property="article:author" content="//blog.laolilin.com/author/lao.html">
+<meta property="article:section" content="Tech" />
+	<meta property="article:tag" content="Python" />
+	<meta property="article:tag" content="Machine learning" />
+	<meta property="article:tag" content="Data Mining" />
+	<meta property="og:image" content="//blog.laolilin.com/logo.png">
+
+        <!-- Site Claim -->
+
+
+        <!-- Title -->
+        <title>
+    Python数据分析-安装与配置 &ndash; 劳思杂记
+        </title>
+
+        <!-- Icon -->
+        <link rel="shortcut icon" href="//blog.laolilin.com/static/favicon.png" type="image/x-icon">
+        <link rel="icon" href="//blog.laolilin.com/static/favicon.png" type="image/x-icon">
+
+        <!-- Search engine -->
+            <meta name="robots" content="index, follow" />
+
+        <!-- Feeds -->
+            <link href="//blog.laolilin.com/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="劳思杂记 Full Atom Feed" />
+
+            <link href="//blog.laolilin.com/feeds/all.rss.xml" type="application/rss+xml" rel="alternate" title="劳思杂记 Full RSS Feed" />
+
+
+
+            <link href="//blog.laolilin.com/feeds/tech.atom.xml" type="application/atom+xml" rel="alternate" title="劳思杂记 Categories Atom Feed" />
+
+
+
+
+        <!-- Styles -->
+        <!--
+        <link rel="stylesheet" href="https://ajax.aspnetcdn.com/ajax/bootstrap/4.3.1/css/bootstrap.min.css">
+        -->
+        <link rel="stylesheet" href="//blog.laolilin.com/theme/bootstrap/bootstrap.min.css">
+        <!--
+        <link rel="stylesheet" href="https://cdn.rawgit.com/afeld/bootstrap-toc/v1.0.1/dist/bootstrap-toc.min.css">
+        -->
+            <link rel="stylesheet" href="//blog.laolilin.com/theme/extra/bootstrap-toc.min.css">
+        <link rel="stylesheet" href="//blog.laolilin.com/theme/pygment/friendly.min.css">
+        <!--
+        <link rel="stylesheet" href="//blog.laolilin.com/theme/extra/admonition.min.css">
+        -->
+        <link rel="stylesheet" href="//blog.laolilin.com/theme/style.css">
+
+        <!-- Google Analytics -->
+<script>
+(function(i, s, o, g, r, a, m) { i['GoogleAnalyticsObject'] = r;
+    i[r] = i[r] || function() {
+        (i[r].q = i[r].q || []).push(arguments) }, i[r].l = 1 * new Date();
+    a = s.createElement(o), m = s.getElementsByTagName(o)[0];
+    a.async = 1;
+    a.src = g;
+    m.parentNode.insertBefore(a, m) })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
+ga('create', 'UA-181588-5', 'auto');
+ga('send', 'pageview');
+</script>
+        <!-- Google Global Site Tag -->
+
+        <!-- Google Tag Manager -->
+
+        <!-- Google Adsense -->
+
+        <!-- Heap Analytic -->
+
+        <!-- Piwik Tracking -->
+
+        <!-- Matomo Tracking -->
+
+</head>
+
+<!-- Body -->
+<body class="d-flex flex-column" data-spy="scroll" data-target="#toc" data-offset="0" style="position: relative;">
+    <!-- Top anchor -->
+    <a href="#" id="backToTop" style="display: none; z-index: 1;" title="Back to top"><span></span></a>
+
+    <!-- Google tag manager -->
+
+    <!-- Navigation -->
+    <nav class="flex-shrink-0 navbar navbar-expand-md navbar-expand-lg navbar-dark bg-dark text-light shadow-sm">
+        <!-- Logo -->
+        <a class="navbar-brand" href="//blog.laolilin.com">劳思杂记</a>
+
+        <!-- Collapse button -->
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarMenu" aria-controls="navbarMenu" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon small"></span>
+        </button>
+
+        <!-- Collapsible content -->
+        <div class="collapse navbar-collapse" id="navbarMenu">
+            <!-- Page links -->
+            <ul class="navbar-nav mr-auto text-center">
+                <li class="nav-item ">
+                    <a class="nav-link" href="//blog.laolilin.com">
+                        <svg class="nav-icon" xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24">
+                            <path d="M21 13v10h-6v-6h-6v6h-6v-10h-3l12-12 12 12h-3zm-1-5.907v-5.093h-3v2.093l3 3z" fill="currentColor"></path>
+                        </svg>
+                        Home <span class="sr-only">(current)</span>
+                    </a>
+                </li>
+                <li class="nav-item ">
+                    <a class="nav-link" href="//blog.laolilin.com/categories.html">
+                        <svg class="nav-icon" xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24">
+                            <path d="M16 6h-8v-6h8v6zm-8 12h-8v6h8v-6zm16 0h-8v6h8v-6zm-11-7v-3h-2v3h-8v5h2v-3h14v3h2v-5h-8z" fill="currentColor"></path>
+                        </svg>
+                        Categories
+                    </a>
+                </li>
+                <li class="nav-item ">
+                    <a class="nav-link" href="//blog.laolilin.com/tags.html">
+                        <svg class="nav-icon" xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24">
+                            <path d="M10.605 0h-10.605v10.609l13.391 13.391 10.609-10.604-13.395-13.396zm-4.191 6.414c-.781.781-2.046.781-2.829.001-.781-.783-.781-2.048 0-2.829.782-.782 2.048-.781 2.829-.001.782.782.781 2.047 0 2.829z" fill="currentColor"></path>
+                        </svg>
+                        Tags
+                    </a>
+                </li>
+                <li class="nav-item ">
+                    <a class="nav-link" href="//blog.laolilin.com/archives.html">
+                        <svg class="nav-icon" xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24">
+                            <path d="M1.8 9l-.8-4h22l-.8 4h-2.029l.39-2h-17.122l.414 2h-2.053zm18.575-6l.604-2h-17.979l.688 2h16.687zm3.625 8l-2 13h-20l-2-13h24zm-8 4c0-.552-.447-1-1-1h-6c-.553 0-1 .448-1 1s.447 1 1 1h6c.553 0 1-.448 1-1z" fill="currentColor"></path>
+                        </svg>
+                        Archives
+                    </a>
+                </li>
+                <li class="nav-item ">
+                    <a class="nav-link" href="//blog.laolilin.com/drafts.html">
+                        <svg class="nav-icon" xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24">
+                            <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" fill="currentColor"></path>
+                        </svg>
+                        Drafts
+                    </a>
+                </li>
+                <li class="nav-item ">
+                    <a class="nav-link" href="//blog.laolilin.com/pages/about.html">
+                        <svg class="nav-icon" xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24">
+                            <path d="M20.822 18.096c-3.439-.794-6.64-1.49-5.09-4.418 4.72-8.912 1.251-13.678-3.732-13.678-5.082 0-8.464 4.949-3.732 13.678 1.597 2.945-1.725 3.641-5.09 4.418-3.073.71-3.188 2.236-3.178 4.904l.004 1h23.99l.004-.969c.012-2.688-.092-4.222-3.176-4.935z" fill="currentColor"></path>
+                        </svg>
+                        About
+                    </a>
+                </li>
+            </ul>
+
+            <!-- Search form -->
+            <form class="form-inline text-center" action="//blog.laolilin.com/search.html">
+                <input class="form-control w-100 bg-dark text-light text-center border-0 p-2" type="text" name="q" pattern=".{3,}" title="At least 3 characters" required="" placeholder="Type here to search" aria-label="Search">
+            </form>
+
+            <!-- Social links -->
+            <ul class="navbar-nav text-center">
+                <li class="nav-item">
+                    <a class="nav-link" href="https://facebook.com/laolilin">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                            <title>Facebook</title>
+                            <path d="M12 0c-6.627 0-12 5.373-12 12s5.373 12 12 12 12-5.373 12-12-5.373-12-12-12zm3 8h-1.35c-.538 0-.65.221-.65.778v1.222h2l-.209 2h-1.791v7h-3v-7h-2v-2h2v-2.308c0-1.769.931-2.692 3.029-2.692h1.971v3z" fill="currentColor"></path>
+                        </svg>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="https://github.com/lll9p">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                            <title>Github</title>
+                            <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" fill="currentColor"></path>
+                        </svg>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="https://twitter.com/lll9p">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                            <title>Twitter</title>
+                            <path d="M12 0c-6.627 0-12 5.373-12 12s5.373 12 12 12 12-5.373 12-12-5.373-12-12-12zm6.066 9.645c.183 4.04-2.83 8.544-8.164 8.544-1.622 0-3.131-.476-4.402-1.291 1.524.18 3.045-.244 4.252-1.189-1.256-.023-2.317-.854-2.684-1.995.451.086.895.061 1.298-.049-1.381-.278-2.335-1.522-2.304-2.853.388.215.83.344 1.301.359-1.279-.855-1.641-2.544-.889-3.835 1.416 1.738 3.533 2.881 5.92 3.001-.419-1.796.944-3.527 2.799-3.527.825 0 1.572.349 2.096.907.654-.128 1.27-.368 1.824-.697-.215.671-.67 1.233-1.263 1.589.581-.07 1.135-.224 1.649-.453-.384.578-.87 1.084-1.433 1.489z" fill="currentColor"></path>
+                        </svg>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Full page -->
+    <div class="flex-shrink-0 flex-grow-1">
+
+        <!-- Header -->
+        <header class="bg-dark text-light shadow-sm pt-3 pb-2">
+	<div class="container">
+		<h3 id="python-install-config-for-data-analysis">Python数据分析-安装与配置</h3>
+		<p style="font-size:larger;"><p class="first last">Python机器学习安装配置教程</p>
+</p>
+        <div class="row mx-auto mt-3">
+            <div class="col-xs-12 col-sm-12 col-md-6 text-left" style="padding: 0">
+                <a href="//blog.laolilin.com/author/lao.html" class="card-link">lao</a>
+                <span class="card-link text-success">
+                    <span class="post-date" title="Post date">22 Sep 2016</span>
+                    <span class="text-info modified-date" title="Updated date">
+                            29 Oct 2016
+                    </span>
+                </span>
+                    <span class="card-link text-secondary" title="~179 words">1 mins</span>
+            </div>
+            <div class="col-xs-12 col-sm-12 col-md-6 text-right" style="padding: 0">
+                <a class="badge badge-success" href="//blog.laolilin.com/category/tech.html">tech</a>
+                    <a class="badge badge-info" href="//blog.laolilin.com/tag/python.html">python</a>
+                    <a class="badge badge-info" href="//blog.laolilin.com/tag/machine learning.html">machine learning</a>
+                    <a class="badge badge-info" href="//blog.laolilin.com/tag/data mining.html">data mining</a>
+            </div>
+        </div>
+	</div>
+        </header>
+
+        <!-- Main -->
+        <main class="py-3">
+                <div class="container">
+                    <!-- Sharing -->
+
+                    <!-- Content -->
+    <!-- 2 columns layout -->
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-10">
+
+                <!-- Sharing -->
+
+                <!-- Article -->
+                <div class="section" id="id1">
+<h2>前言</h2>
+<p>本文针对 <tt class="docutils literal">python3.5</tt> 的数据分析需求进行配置，尽量满足分析及学习的需求（本人的）。</p>
+</div>
+<div class="section" id="venv">
+<h2>创建 <tt class="docutils literal">venv</tt> 环境</h2>
+<p><tt class="docutils literal">venv</tt> 是 <tt class="docutils literal">python3.4</tt> 以上的版本自带的功能，之前的版本需要安装 <tt class="docutils literal">virtualenv</tt> 。它可以将工作环境及系统的python环境隔离开来，在这个环境下工作很方便，安装包也不需要 <tt class="docutils literal">root权限</tt> 。</p>
+<div class="highlight"><pre><span class="code-line"><span></span><span class="c1"># 一条命令完成venv的创建</span></span>
+<span class="code-line">python -m venv venvoflao</span>
+<span class="code-line"><span class="c1"># 进入venv</span></span>
+<span class="code-line"><span class="nb">source</span> ./venvoflao/bin/activate</span>
+<span class="code-line"><span class="c1"># 退出venv</span></span>
+<span class="code-line">deactivate</span>
+</pre></div>
+<p>添加以下代码到 <tt class="docutils literal"><span class="pre">~/.bashrc</span></tt> ，1.主要是自动更新全部包的命令，这样就可以通过 <tt class="docutils literal">pip_update</tt> 来一键更新所有库；2.后面三行是编译 <tt class="docutils literal">numpy</tt> 和 <tt class="docutils literal">scipy</tt> 的必须品： <tt class="docutils literal">LAPACK</tt> 、 <tt class="docutils literal">BLAS</tt> ：先安装好 <tt class="docutils literal">LAPACK</tt> 和 <tt class="docutils literal">BLAS</tt> 然后添加后三行到 <tt class="docutils literal">~.bashrc</tt> ，然后 <tt class="docutils literal">source .bashrc</tt> 生效。</p>
+<div class="highlight"><pre><span class="code-line"><span></span>alias pip_update="pip list --outdated | grep --invert-match '^\-e' | cut --delimiter ' ' --fields 1 | xargs --max-args 1 pip install --upgrade --trusted-host pypi.douban.com"</span>
+<span class="code-line">export LAPACK=/usr/lib/liblapack.so</span>
+<span class="code-line">#export ATLAS=/usr/lib/libatlas.so</span>
+<span class="code-line">export BLAS=/usr/lib/libblas.so</span>
+</pre></div>
+</div>
+<div class="section" id="id2">
+<h2>基本Python库安装</h2>
+<p>以下的操作都是在 <tt class="docutils literal">venv</tt> 下进行的。</p>
+<p>以下代码安装常用的机器学习的库， <tt class="docutils literal">numpy</tt> 和 <tt class="docutils literal">scipy</tt> 编译需要较长时间，耐心等待即可。</p>
+<div class="highlight"><pre><span class="code-line"><span></span>pip install numpy, pandas, scipy, sympy,<span class="se">\</span></span>
+<span class="code-line">            matplotlib, seaborn, plotly, networkx, Pillow,<span class="se">\</span></span>
+<span class="code-line">            scikit-learn, scikit-image, Theano, Keras, treeinterpreter,<span class="se">\</span></span>
+<span class="code-line">            notebook, qtconsole,<span class="se">\</span></span>
+<span class="code-line">            jupyter-contrib-nbextensions, jupyter-nbextensions-configurator,<span class="se">\</span></span>
+<span class="code-line">            requests, beautifulsoup4,<span class="se">\</span></span>
+<span class="code-line">            openpyxl, xlrd, xlwt, XlsxWriter</span>
+</pre></div>
+</div>
+<div class="section" id="matplotlib">
+<h2><tt class="docutils literal">matplotlib</tt> 中文配置</h2>
+<p><tt class="docutils literal">matplotlib</tt> 是一个很常用的画图库，可惜对中文支持不好，其实只要添加中文字体并稍微设置一下即可解决。</p>
+<p>安装 <tt class="docutils literal">文泉驿微米黑</tt> 字体，
+再 <tt class="docutils literal">touch .config/matplotlib/matplotlibrc</tt> 再添加以下几行到里面即可。</p>
+<div class="highlight"><pre><span class="code-line"><span></span>backend      : TkAgg</span>
+<span class="code-line">font.family         : sans-serif</span>
+<span class="code-line">font.sans-serif     : WenQuanYi Micro Hei, Bitstream Vera Sans, Lucida Grande, Verdana, Geneva, Lucid, Arial, Helvetica, Avant Garde, sans-serif</span>
+<span class="code-line">axes.unicode_minus  : True</span>
+<span class="code-line">figure.dpi       : 96</span>
+</pre></div>
+</div>
+<div class="section" id="jupyter-notebook">
+<h2><tt class="docutils literal">jupyter notebook</tt> 配置</h2>
+<p><tt class="docutils literal">jupyter notebook</tt> 是一个很方便的工具，可以在上面直接运行、调试代码，基本上写好之后稍微改下就成了一篇挺好的笔记了，可以导出为 <tt class="docutils literal">pdf</tt> 、 <tt class="docutils literal">html</tt> 等格式（需要安装 <tt class="docutils literal">pandoc</tt> ）。</p>
+<p>生成配置文件： <tt class="docutils literal">jupyter notebook <span class="pre">--generate-config</span></tt> 并修改 <tt class="docutils literal"><span class="pre">~/.jupyter/jupyter_notebook_config.py</span></tt> 下面相应的几行。</p>
+<div class="highlight"><pre><span class="code-line"><span></span><span class="n">c</span> <span class="o">=</span> <span class="n">get_config</span><span class="p">()</span></span>
+<span class="code-line"><span class="n">c</span><span class="o">.</span><span class="n">NotebookApp</span><span class="o">.</span><span class="n">notebook_dir</span> <span class="o">=</span> <span class="s1">'/home/lao/Notebook'</span></span>
+<span class="code-line"><span class="n">c</span><span class="o">.</span><span class="n">NotebookApp</span><span class="o">.</span><span class="n">enable_mathjax</span> <span class="o">=</span> <span class="kc">True</span></span>
+</pre></div>
+<p>完成 <tt class="docutils literal">nbextensions</tt> 的安装：</p>
+<div class="highlight"><pre><span class="code-line"><span></span>jupyter nbextensions_configurator <span class="nb">enable</span></span>
+<span class="code-line">jupyter contrib nbextension install --user</span>
+</pre></div>
+</div>
+
+
+                <!-- Neighbors -->
+                    <br>
+                    <b>Read more:</b><br>
+<div class="pagination">
+    <a class="w-50" href="//blog.laolilin.com/posts/2016/08/reStructuredText-notes.html">
+&ll; reStructuredText 笔记
+    </a>
+    <a class="w-50 text-right" href="//blog.laolilin.com/posts/2016/10/config_raspberry_pi.html">
+        Raspberry pi 配置 &gg;    </a>
+</div>
+                <!-- Google Adsense -->
+            </div>
+
+            <!-- Sidebar -->
+            <div class="col-md-2 d-none d-md-block small">
+                <div class="sticky-top">
+                    <!-- ToC -->
+                    <nav id="toc" data-toggle="toc" ></nav>
+
+                    <!-- Share post -->
+
+                    <!-- Google Adsense -->
+                </div>
+            </div>
+        </div>
+
+    <!-- Releated posts -->
+        <hr>
+        <div>
+            <h5>Related posts:</h5>
+            <ul>
+                <li><a href="//blog.laolilin.com/posts/2016/11/implement_simplex_centroid_mix_design_by_python.html">Python实现单形重心法混料设计</a></li>
+            </ul>
+        </div>
+
+    <!-- Comments -->
+<section class="comments" id="comments">
+    <!-- <h2>Comments</h2> -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/blueimp-md5/2.10.0/js/md5.min.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+    <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+    <hr/>
+    <div id="gitalk-container"></div>
+    <script>
+        var gitalk = new Gitalk({
+            clientID: '32128e45765077b3152c',
+            clientSecret: '04b40e6a8191416fb3bcf87adb2cf7e2cb2be7d9',
+            repo: 'comments-blog.laolilin.com',
+            owner: 'laolilin',
+            admin: ['laolilin','lll9p'],
+            id: md5(location.pathname),      // Ensure uniqueness and length less than 50
+            distractionFreeMode: false,  // Facebook-like distraction free mode
+            createIssueManually: true,
+            proxy: 'https:/cloudflare-cors-anywhere.lll9p.workers.dev/?https://github.com/login/oauth/access_token',
+        })
+
+        gitalk.render('gitalk-container')
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="https://github.com/gitalk/gitalk" target="_blank">Comment system powered by
+            gitalk.</a></noscript>
+</section>                </div>
+        </main>
+
+    </div>
+
+    <!-- Footer -->
+    <footer class="flex-shrink-0 bg-dark text-light small py-1">
+        <div class="container text-center">
+                &copy; 2021 <a href="//blog.laolilin.com">劳思杂记</a> by <a href="//blog.laolilin.com/pages/about.html">Lao</a>, Build on: Wed Jul 14 08:58:35 CST 2021<br>
+            Powered by <a href="http://getpelican.com">Pelican</a>, <a href="http://python.org">Python</a>, <a href="https://getbootstrap.com">Bootstrap 4</a>,
+            <!-- Do not remove below license sentence -->
+            License: <a href="https://spdx.org/licenses/CC-BY-4.0.html">CC-BY-4.0</a>, based on <a href="https://github.com/vuquangtrong/simplify-theme">Simplify Bootstrap Theme</a>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <!--
+    <script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.4.1.min.js"></script>
+    -->
+    <script type="text/javascript" src="//blog.laolilin.com/theme/jquery/jquery-3.4.1.min.js"></script>
+    <!--
+    <script src="https://ajax.aspnetcdn.com/ajax/bootstrap/4.3.1/bootstrap.min.js"></script>
+    -->
+    <script type="text/javascript" src="//blog.laolilin.com/theme/bootstrap/bootstrap.min.js"></script>
+    <!--
+    <script src="https://cdn.rawgit.com/afeld/bootstrap-toc/v1.0.1/dist/bootstrap-toc.min.js"></script>
+    -->
+        <script type="text/javascript" src="//blog.laolilin.com/theme/extra/bootstrap-toc.min.js"></script>
+    <script type="text/javascript" src="//blog.laolilin.com/theme/style.js"></script>
+
+    <!-- Sharing -->
+    <!-- Baidu push -->
+        <script>
+        (function(){
+            var bp = document.createElement('script');
+            var curProtocol = window.location.protocol.split(':')[0];
+            if (curProtocol === 'https') {
+                bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+            }
+            else {
+                bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+            }
+            var s = document.getElementsByTagName("script")[0];
+            s.parentNode.insertBefore(bp, s);
+        })();
+        </script>
+    <!-- JSON LD -->
+<script type="application/ld+json">
+{
+    "@context": "http://schema.org",
+    "@type": "BlogPosting",
+    "name": "Python数据分析-安装与配置",
+    "headline": "Python数据分析-安装与配置",
+    "datePublished": "2016-09-22 08:45:00+08:00",
+    "dateModified": "2016-10-29 17:34:00+08:00",
+    "author": {
+        "@type": "Person",
+        "name": "lao",
+        "url": "//blog.laolilin.com/author/lao.html"
+    },
+    "image": "//blog.laolilin.com/logo.png",
+    "url": "//blog.laolilin.com/posts/2016/09/python-install-config-for-data-analysis.html",
+    "description": "Python机器学习安装配置教程"
+}
+</script>
+    <!-- Disqus count -->
+</body>
+
+</html>

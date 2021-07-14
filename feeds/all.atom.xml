@@ -1,0 +1,2269 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom"><title>劳思杂记</title><link href="//blog.laolilin.com/" rel="alternate"></link><link href="//blog.laolilin.com/feeds/all.atom.xml" rel="self"></link><id>//blog.laolilin.com/</id><updated>2021-05-24T16:05:00+08:00</updated><subtitle>Just a blog</subtitle><entry><title>Raspberry pi 4 和 Cm4 aarch64 配置</title><link href="//blog.laolilin.com/posts/2021/05/config_raspberry_pi4_and_cm4_aarch64.html" rel="alternate"></link><published>2021-05-24T16:05:00+08:00</published><updated>2021-05-24T16:05:00+08:00</updated><author><name>lao</name></author><id>tag:blog.laolilin.com,2021-05-24:/posts/2021/05/config_raspberry_pi4_and_cm4_aarch64.html</id><summary type="html">&lt;p class="first last"&gt;Raspberry Pi 4 和 CM4 aarch64 配置&lt;/p&gt;
+</summary><content type="html">&lt;div class="section" id="id1"&gt;
+&lt;h2&gt;前言&lt;/h2&gt;
+&lt;p&gt;Raspberry Pi 4 和 Raspberry Pi Compute Module(CM4) 具备BCM2711 1.5GHz 4 核心 64-bit ARM Cortex-A72 CPU，Rpi4我用的是8GB内存，CM4是8GB无线+32GB EMMC的版本。&lt;/p&gt;
+&lt;p&gt;64位系统的安装比较麻烦，此处特记录。&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="section" id="id2"&gt;
+&lt;h2&gt;系统安装&lt;/h2&gt;
+&lt;p&gt;系统我选 &lt;a class="reference external" href="https://www.archlinux.org"&gt;Archlinux&lt;/a&gt; ，与之前的树莓派一致。&lt;/p&gt;
+&lt;p&gt;具体安装方法 &lt;a class="reference external" href="https://archlinuxarm.org/platforms/armv8/broadcom/raspberry-pi-4"&gt;Archlinux ARM 安装指引&lt;/a&gt; 进行安装，很简单，不赘述。默认用户名 &lt;tt class="docutils literal"&gt;alarm&lt;/tt&gt; ，密码同用户名。敢死队长 &lt;tt class="docutils literal"&gt;root&lt;/tt&gt; 密码为 &lt;tt class="docutils literal"&gt;root&lt;/tt&gt; 。&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="section" id="id3"&gt;
+&lt;h2&gt;运行前配置&lt;/h2&gt;
+&lt;p&gt;** 以下不注明的都是在 &lt;cite&gt;Raspberry Pi 4&lt;/cite&gt; 上进行操作 **&lt;/p&gt;
+&lt;p&gt;安装TF卡前，根据 &lt;cite&gt;Archlinux ARM 安装指引_&lt;/cite&gt; 首次安装后要执行 &lt;cite&gt;sed -i 's/mmcblk0/mmcblk1/g' root/etc/fstab&lt;/cite&gt; 替换启动盘。&lt;/p&gt;
+&lt;p&gt;&lt;cite&gt;Raspberry Pi 4&lt;/cite&gt; 有时候在不插HDMI的时候无法启动，为防止不能启动，HDMI配置为热插拔： &lt;tt class="docutils literal"&gt;echo hdmi_force_hotplug=1 &amp;gt;&amp;gt; boot/config.txt&lt;/tt&gt;&lt;/p&gt;
+&lt;p&gt;开启串口： &lt;tt class="docutils literal"&gt;echo enable_uart=1 &amp;gt;&amp;gt; boot/config.txt&lt;/tt&gt;&lt;/p&gt;
+&lt;p&gt;安装TF卡，启动、插上网线并使用串口登录 &lt;cite&gt;root&lt;/cite&gt;&lt;/p&gt;
+&lt;div class="section" id="id4"&gt;
+&lt;h3&gt;修改软件源&lt;/h3&gt;
+&lt;p&gt;&lt;cite&gt;/etc/pacman.d/mirrorlist&lt;/cite&gt; 加入&lt;/p&gt;
+&lt;p&gt;&lt;cite&gt;Server = https://mirrors.ustc.edu.cn/archlinuxarm/$arch/$repo&lt;/cite&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="section" id="raspberry-pi-4"&gt;
+&lt;h3&gt;替换`Raspberry Pi 4`专用内核&lt;/h3&gt;
+&lt;p&gt;默认的内核是 &lt;cite&gt;linux-aarch64&lt;/cite&gt; ，目前无法在 &lt;cite&gt;CM4&lt;/cite&gt; 上顺利启动，我们需要替换为 &lt;em&gt;专用内核&lt;/em&gt; 。&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="code-line"&gt;&lt;span&gt;&lt;/span&gt;pacman -Syyu linux-raspberrypi4 raspberrypi-firmware&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;安装完毕后将 &lt;cite&gt;/etc/fstab&lt;/cite&gt; 为 &lt;cite&gt;/dev/mmcblk0p1&lt;/cite&gt; 。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;暂不重启&lt;/strong&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="section" id="id5"&gt;
+&lt;h3&gt;启动设置&lt;/h3&gt;
+&lt;ol class="arabic simple"&gt;
+&lt;li&gt;开启 &lt;cite&gt;ssh&lt;/cite&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;&lt;tt class="docutils literal"&gt;touch /boot/ssh&lt;/tt&gt;&lt;/p&gt;
+&lt;ol class="arabic simple"&gt;
+&lt;li&gt;其他启动设置&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;为防止不能启动，修改 &lt;cite&gt;/boot/cmdline.txt&lt;/cite&gt; 删除 &lt;cite&gt;kgdboc=ttyAMA0,115200&lt;/cite&gt;
+在 &lt;cite&gt;/boot/cmdline.txt&lt;/cite&gt; 修改 &lt;cite&gt;rw&lt;/cite&gt; 为 &lt;cite&gt;ro&lt;/cite&gt; ，即只读模式 。
+同样，在 &lt;cite&gt;/etc/fstab&lt;/cite&gt; 中也需要将boot分区变为ro &lt;tt class="docutils literal"&gt;&lt;span class="pre"&gt;defaults,ro,errors=remount-ro&lt;/span&gt;&lt;/tt&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;重启进入系统，以 `root` 登录&lt;/strong&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="section" id="id6"&gt;
+&lt;h3&gt;无线设置&lt;/h3&gt;
+&lt;p&gt;目前系统默认找不到无线网卡，需要运行 &lt;tt class="docutils literal"&gt;rmmod brcmfmac &amp;amp;&amp;amp; modprobe brcmfmac&lt;/tt&gt; 加载无线网卡驱动。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;对于 `CM4`&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;需要将驱动改名：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="code-line"&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="nb"&gt;cd&lt;/span&gt; /lib/firmware/brcm&lt;/span&gt;
+&lt;span class="code-line"&gt;cp &lt;span class="s1"&gt;'brcmfmac43455-sdio.Raspberry Pi Foundation-Raspberry Pi Compute Module 4.txt'&lt;/span&gt; &lt;span class="s1"&gt;'brcmfmac43455-sdio.raspberrypi,4-compute-module.txt'&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;rmmod brcmfmac &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt; modprobe brcmfmac&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="section" id="id7"&gt;
+&lt;h3&gt;其他设置&lt;/h3&gt;
+&lt;ol class="arabic"&gt;
+&lt;li&gt;&lt;p class="first"&gt;安装一些基本软件&lt;/p&gt;
+&lt;p&gt;&lt;tt class="docutils literal"&gt;pacman &lt;span class="pre"&gt;-S&lt;/span&gt; sudo tmux ufw&lt;/tt&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;p class="first"&gt;启用 &lt;cite&gt;sshd&lt;/cite&gt; &lt;tt class="docutils literal"&gt;systemctl enable sshd&lt;/tt&gt; ；&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;p class="first"&gt;修改用户名&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;按个人习惯，先改掉默认的用户名。
+如果你直接用alarm登录，是无法修改用户名的，先用 &lt;cite&gt;root&lt;/cite&gt; 登录。&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="code-line"&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="nv"&gt;new_user&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;YOURNAME&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;span class="c1"&gt;# change user name&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;usermod -l &lt;span class="nv"&gt;$new_user&lt;/span&gt; -d /home/&lt;span class="nv"&gt;$new_user&lt;/span&gt; -m alarm&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;span class="c1"&gt;# chenge user group&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;groupmod -n &lt;span class="nv"&gt;$new_user&lt;/span&gt; alarm&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;修改用户密码 &lt;tt class="docutils literal"&gt;passwd $new_user&lt;/tt&gt; 。&lt;/p&gt;
+&lt;ol class="arabic simple"&gt;
+&lt;li&gt;&lt;cite&gt;sudo&lt;/cite&gt; 配置&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="code-line"&gt;&lt;span&gt;&lt;/span&gt;visudo&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;span class="c1"&gt;# uncomment the line "%wheel ALL=(ALL) ALL"&lt;/span&gt;&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="code-line"&gt;&lt;span&gt;&lt;/span&gt;vi /etc/locale.gen&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;span class="c1"&gt;# uncomment en_US.UTF-8 UTF-8&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;locale-gen&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;ol class="arabic simple"&gt;
+&lt;li&gt;时间设置&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="code-line"&gt;&lt;span&gt;&lt;/span&gt;timedatectl set-ntp &lt;span class="nb"&gt;true&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;rm /etc/localtime&lt;/span&gt;
+&lt;span class="code-line"&gt;ln -s /usr/share/zoneinfo/Asia/Shanghai /etc/localtime&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;&lt;strong&gt;配置完成，现在可以重启并 `ssh` 进入系统了&lt;/strong&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="section" id="cm4"&gt;
+&lt;h2&gt;CM4系统安装&lt;/h2&gt;
+&lt;p&gt;将 &lt;cite&gt;Raspberry Pi 4&lt;/cite&gt; 的上述系统，复制到 &lt;cite&gt;CM4&lt;/cite&gt; 的 TF 卡或EMMC中，就可以完成配置。&lt;/p&gt;
+&lt;/div&gt;
+</content><category term="Tech"></category><category term="raspberry pi"></category><category term="compute module"></category><category term="cm4"></category><category term="配置"></category></entry><entry><title>用 Docker 编译 Openwrt</title><link href="//blog.laolilin.com/posts/2020/02/using_docker_to_build_openwrt.html" rel="alternate"></link><published>2020-02-11T17:57:00+08:00</published><updated>2020-02-11T17:57:00+08:00</updated><author><name>lao</name></author><id>tag:blog.laolilin.com,2020-02-11:/posts/2020/02/using_docker_to_build_openwrt.html</id><summary type="html">&lt;p class="first last"&gt;docker编译Openwrt教程&lt;/p&gt;
+</summary><content type="html">&lt;div class="section" id="id1"&gt;
+&lt;h2&gt;前言&lt;/h2&gt;
+&lt;p&gt;家里的 &lt;tt class="docutils literal"&gt;斐讯 K2P&lt;/tt&gt; 路由器已经使用了3年了，一直用别人的固件，后来想自己编译固件。&lt;/p&gt;
+&lt;p&gt;我打算编译和使用 &lt;a class="reference external" href="//github.com/coolsnowwolf/lede"&gt;Lean's OpenWrt&lt;/a&gt; ，Lean 的这个固件非常完善，对 &lt;tt class="docutils literal"&gt;K2P&lt;/tt&gt; 的无线支持的非常好（开源的 &lt;a class="reference external" href="//openwrt.org"&gt;Openwrt&lt;/a&gt; &lt;tt class="docutils literal"&gt;K2P&lt;/tt&gt; 的无线没办法 &lt;tt class="docutils literal"&gt;2.4G&lt;/tt&gt; 和 &lt;tt class="docutils literal"&gt;5G&lt;/tt&gt; 同时使用）。&lt;/p&gt;
+&lt;p&gt;采用 &lt;a class="reference external" href="//docker.com"&gt;Docker&lt;/a&gt; 进行编译有很多好处，避免在宿主机上安装杂七杂八的软件。网上有许多 &lt;tt class="docutils literal"&gt;&lt;span class="pre"&gt;lede-builder&lt;/span&gt;&lt;/tt&gt; ，我尝试过使用 &lt;a class="reference external" href="//github.com/hanxi/lede-docker-builder"&gt;hanxi的lede-docker-builder&lt;/a&gt; ，用了几天，发现有一些问题：&lt;/p&gt;
+&lt;ol class="arabic simple"&gt;
+&lt;li&gt;&lt;a class="reference external" href="//docker.com"&gt;Docker&lt;/a&gt; 底包用的是 &lt;a class="reference external" href="//hub.docker.com/_/ubuntu"&gt;Ubuntu&lt;/a&gt; &lt;tt class="docutils literal"&gt;18.04&lt;/tt&gt; ，里面的包都比较老了，尤其是 &lt;a class="reference external" href="//openwrt.org"&gt;Openwrt&lt;/a&gt; &lt;tt class="docutils literal"&gt;19.07&lt;/tt&gt; 发布之后，有些需要 &lt;a class="reference external" href="//python.org"&gt;Python&lt;/a&gt; &lt;tt class="docutils literal"&gt;3.5&lt;/tt&gt; 以上版本的包都没办法编译；&lt;/li&gt;
+&lt;li&gt;镜像文件比较大，解压之后足足有 &lt;tt class="docutils literal"&gt;1.82G&lt;/tt&gt; 下载下来非常慢。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;折腾了一天，我终于把设置和流程弄好了。&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="section" id="docker"&gt;
+&lt;h2&gt;建立 &lt;tt class="docutils literal"&gt;Docker&lt;/tt&gt; 镜像&lt;/h2&gt;
+&lt;p&gt;我在 &lt;tt class="docutils literal"&gt;github&lt;/tt&gt; 上新建了一个仓库 &lt;a class="reference external" href="//github.com/lll9p/docker-lede-builder"&gt;lll9p/docker-lede-builder&lt;/a&gt; ，要点主要有：&lt;/p&gt;
+&lt;ol class="arabic simple"&gt;
+&lt;li&gt;使用 &lt;a class="reference external" href="//hub.docker.com/_/debian"&gt;debian:buster-slim&lt;/a&gt; 容器，比较新，而且比完整的 &lt;a class="reference external" href="//hub.docker.com/_/debian"&gt;debian:buster&lt;/a&gt; 有所精简；&lt;/li&gt;
+&lt;li&gt;预安装 &lt;a class="reference external" href="//github.com/rofl0r/proxychains-ng"&gt;proxychains4&lt;/a&gt; 和 &lt;a class="reference external" href="//www.sudo.ws/"&gt;sudo&lt;/a&gt; &lt;tt class="docutils literal"&gt;proxychains&lt;/tt&gt; 当处于网络环境不好的时候使用代理进行文件下载或提高网速； &lt;tt class="docutils literal"&gt;sudo&lt;/tt&gt; 可以进行一些 &lt;tt class="docutils literal"&gt;root&lt;/tt&gt; 用户操作；&lt;/li&gt;
+&lt;li&gt;使用 &lt;tt class="docutils literal"&gt;&lt;span class="pre"&gt;apt-get&lt;/span&gt; &lt;span class="pre"&gt;--no-install-recommends&lt;/span&gt;&lt;/tt&gt; 命令进行安装，大幅精简镜像体积；&lt;/li&gt;
+&lt;li&gt;新建 &lt;tt class="docutils literal"&gt;build&lt;/tt&gt; 用户，免于直接使用 &lt;tt class="docutils literal"&gt;root&lt;/tt&gt; 编译。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;&lt;a class="reference external" href="//github.com/lll9p/docker-lede-builder/blob/master/Dockerfile"&gt;Dockerfile&lt;/a&gt; 如下：&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="code-line"&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="k"&gt;FROM&lt;/span&gt; &lt;span class="s"&gt;debian:buster-slim&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;span class="k"&gt;MAINTAINER&lt;/span&gt;&lt;span class="s"&gt; lll9p &amp;lt;lll9p.china@gmail.com&amp;gt;&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;span class="k"&gt;ARG&lt;/span&gt; &lt;span class="nv"&gt;DEBIAN_FRONTEND&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;noninteractive&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;span class="k"&gt;RUN&lt;/span&gt; apt-get update  &lt;span class="se"&gt;\&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;    &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt; apt-get install -y locales curl wget &lt;span class="se"&gt;\&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;    &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt; apt-get install -y --no-install-recommends build-essential &lt;span class="se"&gt;\&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;    asciidoc binutils bzip2 gawk gettext git libncurses5-dev &lt;span class="se"&gt;\&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;    libz-dev patch python3 unzip zlib1g-dev lib32gcc1 &lt;span class="se"&gt;\&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;    libc6-dev-i386 subversion flex uglifyjs git-core &lt;span class="se"&gt;\&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;    gcc-multilib p7zip p7zip-full msmtp libssl-dev texinfo &lt;span class="se"&gt;\&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;    libglib2.0-dev xmlto qemu-utils upx libelf-dev autoconf &lt;span class="se"&gt;\&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;    automake libtool autopoint device-tree-compiler &lt;span class="se"&gt;\&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;    proxychains4 sudo vim &lt;span class="se"&gt;\&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;    &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt; groupadd -r build &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt; useradd -r -u &lt;span class="m"&gt;1000&lt;/span&gt; -g build build &lt;span class="se"&gt;\&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;    &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt; passwd -d root &lt;span class="se"&gt;\&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;    &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt; passwd -d build &lt;span class="se"&gt;\&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;    &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="s1"&gt;'%build ALL=(ALL) NOPASSWD:ALL'&lt;/span&gt; &amp;gt;&amp;gt; /etc/sudoers &lt;span class="se"&gt;\&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;    &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt; apt-get clean &lt;span class="se"&gt;\&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;    &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt; rm -rf /var/lib/apt/lists/* &lt;span class="se"&gt;\&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;    &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt; localedef -i en_US -c -f UTF-8 -A /usr/share/locale/locale.alias en_US.UTF-8&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;span class="k"&gt;ENV&lt;/span&gt; LANG en_US.utf8&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;span class="k"&gt;USER&lt;/span&gt;&lt;span class="s"&gt; build&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;span class="k"&gt;WORKDIR&lt;/span&gt;&lt;span class="s"&gt; /home/build&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;span class="k"&gt;ENV&lt;/span&gt; &lt;span class="nv"&gt;FORCE_UNSAFE_CONFIGURE&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;1&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;span class="k"&gt;CMD&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="s2"&gt;"/bin/bash"&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;&lt;tt class="docutils literal"&gt;push&lt;/tt&gt; 到 &lt;tt class="docutils literal"&gt;github&lt;/tt&gt; 上之后，再在 &lt;a class="reference external" href="//docker.com"&gt;Docker&lt;/a&gt; 上新建一个 &lt;tt class="docutils literal"&gt;repo&lt;/tt&gt; : &lt;a class="reference external" href="//hub.docker.com/r/lll9p/docker-lede-builder"&gt;lll9p/docker-lede-builder@dockerhub&lt;/a&gt; ，在 &lt;tt class="docutils literal"&gt;Build configurations&lt;/tt&gt; 那里设置好指向就自动进行 &lt;tt class="docutils literal"&gt;build&lt;/tt&gt; 了，经过几次修改提交之后，最后一个 &lt;tt class="docutils literal"&gt;build&lt;/tt&gt; 用了11min的样子。&lt;tt class="docutils literal"&gt;pull&lt;/tt&gt; 镜像下来，大小也才 &lt;tt class="docutils literal"&gt;650MB&lt;/tt&gt; ，精简的不错。&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="section" id="id2"&gt;
+&lt;h2&gt;一些编译辅助脚本&lt;/h2&gt;
+&lt;p&gt;利用脚本可以方便地编译或实现自动化：&lt;/p&gt;
+&lt;ol class="arabic"&gt;
+&lt;li&gt;&lt;p class="first"&gt;目录结构初始化
+- 将 &lt;tt class="docutils literal"&gt;&lt;span class="pre"&gt;/home/\`whoami\`/data/docker&lt;/span&gt;&lt;/tt&gt; 挂载到 &lt;tt class="docutils literal"&gt;docker&lt;/tt&gt; 的启动目录 &lt;tt class="docutils literal"&gt;/home/build&lt;/tt&gt; 。&lt;/p&gt;
+&lt;ul class="simple"&gt;
+&lt;li&gt;&lt;tt class="docutils literal"&gt;data/docker&lt;/tt&gt; 目录下 &lt;tt class="docutils literal"&gt;git clone&lt;/tt&gt; &lt;a class="reference external" href="//github.com/coolsnowwolf/lede"&gt;Lean's OpenWrt&lt;/a&gt; 。&lt;/li&gt;
+&lt;li&gt;由于我使用了 &lt;a class="reference external" href="//github.com/tty228/luci-app-serverchan"&gt;server酱&lt;/a&gt; ，顺便也 &lt;tt class="docutils literal"&gt;git&lt;/tt&gt; 一份到 &lt;tt class="docutils literal"&gt;docker&lt;/tt&gt; 下。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;p class="first"&gt;脚本:&lt;/p&gt;
+&lt;ul class="simple"&gt;
+&lt;li&gt;&lt;tt class="docutils literal"&gt;comple.sh&lt;/tt&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;blockquote&gt;
+&lt;p&gt;该脚本作用是&lt;/p&gt;
+&lt;ol class="arabic simple"&gt;
+&lt;li&gt;进行 &lt;tt class="docutils literal"&gt;proxychans&lt;/tt&gt; 设置（需要提前在宿主机上开启代理）&lt;/li&gt;
+&lt;li&gt;更新 &lt;a class="reference external" href="//github.com/coolsnowwolf/lede"&gt;lede&lt;/a&gt; 和 &lt;a class="reference external" href="//github.com/tty228/luci-app-serverchan"&gt;server酱&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;更新 &lt;tt class="docutils literal"&gt;feeds&lt;/tt&gt;&lt;/li&gt;
+&lt;li&gt;由于在之前使用 &lt;tt class="docutils literal"&gt;data/docker/lede/scripts/diffconfig.sh &amp;gt; data/diffconfig&lt;/tt&gt; 所以可以用它来更新 &lt;tt class="docutils literal"&gt;.config&lt;/tt&gt; ，不必每次都 &lt;tt class="docutils literal"&gt;make menuconfig&lt;/tt&gt; 了&lt;/li&gt;
+&lt;li&gt;最后是 &lt;tt class="docutils literal"&gt;download&lt;/tt&gt; 和 &lt;tt class="docutils literal"&gt;make&lt;/tt&gt; 编译，采用 &lt;tt class="docutils literal"&gt;5&lt;/tt&gt; 个进程&lt;/li&gt;
+&lt;li&gt;如果不希望使用代理进行下载，可以将 &lt;tt class="docutils literal"&gt;PROXYCHAINS&lt;/tt&gt; 注释掉&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="code-line"&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="ch"&gt;#!/bin/bash&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;span class="nv"&gt;BUILD_PATH&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s2"&gt;"/home/build"&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;span class="nv"&gt;PROXYCHAINS&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s2"&gt;"proxychains4 -q "&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="s1"&gt;'Start build script.'&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="s1"&gt;''&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="s1"&gt;'--- Modify proxychains configs. ---'&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;sudo sed -i &lt;span class="s1"&gt;'$ d'&lt;/span&gt; /etc/proxychains4.conf&lt;/span&gt;
+&lt;span class="code-line"&gt;sudo sed -i &lt;span class="s1"&gt;'$ d'&lt;/span&gt; /etc/proxychains4.conf&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="s1"&gt;'socks5 172.17.0.1 1081'&lt;/span&gt; &lt;span class="p"&gt;|&lt;/span&gt; sudo tee -a /etc/proxychains4.conf&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="s1"&gt;''&lt;/span&gt; &lt;span class="p"&gt;|&lt;/span&gt; sudo tee -a /etc/proxychains4.conf&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="s1"&gt;'--- Pull from git server. ---'&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="s1"&gt;''&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="s1"&gt;'--- Pull from lede. ---'&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;span class="nb"&gt;cd&lt;/span&gt; &lt;span class="si"&gt;${&lt;/span&gt;&lt;span class="nv"&gt;BUILD_PATH&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt;/lede&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;span class="si"&gt;${&lt;/span&gt;&lt;span class="nv"&gt;PROXYCHAINS&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt; git pull&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="s1"&gt;'--- Pull from luci-app-serverchan. ---'&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;span class="nb"&gt;cd&lt;/span&gt; &lt;span class="si"&gt;${&lt;/span&gt;&lt;span class="nv"&gt;BUILD_PATH&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt;/luci-app-serverchan&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;span class="si"&gt;${&lt;/span&gt;&lt;span class="nv"&gt;PROXYCHAINS&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt; git pull&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="s1"&gt;''&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="s1"&gt;'--- Add luci-app-serverchan to package. ---'&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="s1"&gt;''&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;span class="nb"&gt;cd&lt;/span&gt; &lt;span class="si"&gt;${&lt;/span&gt;&lt;span class="nv"&gt;BUILD_PATH&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt;/lede&lt;/span&gt;
+&lt;span class="code-line"&gt;rm &lt;span class="si"&gt;${&lt;/span&gt;&lt;span class="nv"&gt;BUILD_PATH&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt;/lede/package/feeds/luci/luci-app-serverchan&lt;/span&gt;
+&lt;span class="code-line"&gt;ln -s &lt;span class="si"&gt;${&lt;/span&gt;&lt;span class="nv"&gt;BUILD_PATH&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt;/luci-app-serverchan &lt;span class="si"&gt;${&lt;/span&gt;&lt;span class="nv"&gt;BUILD_PATH&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt;/lede/package/feeds/luci/luci-app-serverchan&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;span class="si"&gt;${&lt;/span&gt;&lt;span class="nv"&gt;PROXYCHAINS&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt; &lt;span class="si"&gt;${&lt;/span&gt;&lt;span class="nv"&gt;BUILD_PATH&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt;/lede/scripts/feeds update -a &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class="si"&gt;${&lt;/span&gt;&lt;span class="nv"&gt;BUILD_PATH&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt;/lede/scripts/feeds install -a&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="s1"&gt;'--- Remove tmp files. ---'&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;rm -rf &lt;span class="si"&gt;${&lt;/span&gt;&lt;span class="nv"&gt;BUILD_PATH&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt;/lede/tmp&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="s1"&gt;'--- Remove tmp old config. ---'&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;rm -rf &lt;span class="si"&gt;${&lt;/span&gt;&lt;span class="nv"&gt;BUILD_PATH&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt;/lede/.config&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="s1"&gt;'--- Using diff config file. ---'&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;cp &lt;span class="si"&gt;${&lt;/span&gt;&lt;span class="nv"&gt;BUILD_PATH&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt;/diffconfig &lt;span class="si"&gt;${&lt;/span&gt;&lt;span class="nv"&gt;BUILD_PATH&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt;/lede/.config&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="s1"&gt;'--- Expand to full config file. ---'&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;make defconfig&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="s1"&gt;'--- Download needed files. ---'&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;span class="si"&gt;${&lt;/span&gt;&lt;span class="nv"&gt;PROXYCHAINS&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt; make download&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="s1"&gt;'--- Start build. ---'&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;make -j5 &lt;span class="nv"&gt;V&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;s&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;/blockquote&gt;
+&lt;ul class="simple"&gt;
+&lt;li&gt;&lt;tt class="docutils literal"&gt;flash.sh&lt;/tt&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;blockquote&gt;
+&lt;p&gt;用于自动更新编译好的固件，具体目录和 &lt;tt class="docutils literal"&gt;Openwrt&lt;/tt&gt; 的密码请自行更换，依赖 &lt;tt class="docutils literal"&gt;sshpass&lt;/tt&gt; 。&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="code-line"&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="ch"&gt;#! /bin/bash&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;sshpass -p 我的密码 ssh root@192.168.1.1 &lt;span class="s1"&gt;'rm /tmp/update.bin'&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;sshpass -p 我的密码 scp /home/u/data/docker/lede/bin/targets/ramips/mt7621/openwrt-ramips-mt7621-phicomm_k2p-squashfs-sysupgrade.bin root@192.168.1.1:/tmp/update.bin&lt;/span&gt;
+&lt;span class="code-line"&gt;sshpass -p 我的密码 ssh root@192.168.1.1 &lt;span class="s1"&gt;'sysupgrade -v /tmp/update.bin'&lt;/span&gt;&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;/blockquote&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+&lt;div class="section" id="id3"&gt;
+&lt;h2&gt;使用方法&lt;/h2&gt;
+&lt;div class="section" id="id4"&gt;
+&lt;h3&gt;启动 &lt;tt class="docutils literal"&gt;docker&lt;/tt&gt;&lt;/h3&gt;
+&lt;ol class="arabic simple"&gt;
+&lt;li&gt;先使用 &lt;tt class="docutils literal"&gt;sudo systemctl start docker&lt;/tt&gt; 启动 &lt;tt class="docutils literal"&gt;docker daemon&lt;/tt&gt; ，然后将 &lt;a class="reference external" href="//github.com/coolsnowwolf/lede"&gt;lede&lt;/a&gt; 克隆到 data/docker 目录下；&lt;/li&gt;
+&lt;li&gt;再执行 &lt;tt class="docutils literal"&gt;sudo docker pull &lt;span class="pre"&gt;lll9p/docker-lede-builder&lt;/span&gt;&lt;/tt&gt; 安装所需镜像；&lt;/li&gt;
+&lt;li&gt;执行 &lt;tt class="docutils literal"&gt;sudo docker run &lt;span class="pre"&gt;--rm&lt;/span&gt; &lt;span class="pre"&gt;-it&lt;/span&gt; &lt;span class="pre"&gt;-v&lt;/span&gt; &lt;span class="pre"&gt;/home/u/data/docker:/home/build&lt;/span&gt; &lt;span class="pre"&gt;lll9p/docker-lede-builder&lt;/span&gt;&lt;/tt&gt; 即可进入编译环境，可以进行手动编译或者使用之前提供的 &lt;tt class="docutils literal"&gt;compile.sh&lt;/tt&gt; 脚本进行自动编译；&lt;/li&gt;
+&lt;li&gt;可以使用 &lt;tt class="docutils literal"&gt;sudo docker run &lt;span class="pre"&gt;--rm=true&lt;/span&gt; &lt;span class="pre"&gt;-v&lt;/span&gt; &lt;span class="pre"&gt;/home/lao/data/docker:/home/build&lt;/span&gt; &lt;span class="pre"&gt;lll9p/docker-lede-builder&lt;/span&gt; /bin/bash /home/build/compile.sh&lt;/tt&gt; 进行自动编译。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+</content><category term="Tech"></category><category term="Docker"></category><category term="Openwrt"></category></entry><entry><title>Python实现单形重心法混料设计</title><link href="//blog.laolilin.com/posts/2016/11/implement_simplex_centroid_mix_design_by_python.html" rel="alternate"></link><published>2016-11-05T06:10:00+08:00</published><updated>2016-11-05T06:10:00+08:00</updated><author><name>lao</name></author><id>tag:blog.laolilin.com,2016-11-05:/posts/2016/11/implement_simplex_centroid_mix_design_by_python.html</id><summary type="html">&lt;p class="first last"&gt;使用Python实现单形重心设计法，进行混料设计&lt;/p&gt;
+</summary><content type="html">&lt;div class="section" id="id1"&gt;
+&lt;h2&gt;介绍及概念&lt;/h2&gt;
+&lt;p&gt;单纯形重心设计法是一种效率较高的混料试验统计模型，可用来设计试验，它能根据试验点和响应值给出响应曲面（模型）。
+该法具有较高的精度和可靠性，以及较少的试验量，很适合混料试验设计。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;概念&lt;/strong&gt;&lt;/p&gt;
+&lt;ul class="simple"&gt;
+&lt;li&gt;单形（单纯形）：为空间中顶点比维数多1的凸多边形，比如〇维的点、一维的线段，二维的三角形、三维的四面体等。&lt;/li&gt;
+&lt;li&gt;响应值：某一试验点试验后的评价。&lt;/li&gt;
+&lt;li&gt;三角坐标系：由三角形构成的坐标系，顶点代表对应成分的最大值。特点是三角形内（含边）一点 &lt;span class="math"&gt;\(P(ax,by,cz)\)&lt;/span&gt;，过P作三条对三角形边的平行线，可以确定x,y,z的比例。如图所示。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;img alt="单形重心法示意图" class="img-fluid" src="//blog.laolilin.com/images/05/computer.Math.2016.11.Python单形重心法混料设计.static.introduce_simplex_design.png"/&gt;
+&lt;ul class="simple"&gt;
+&lt;li&gt;等值线：将某一指标中数值相同的点连线。等值线实际上是将空间（Z轴）投影到平面（XY轴）的表示。如下图。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;img alt="等值线示意图" class="img-fluid" src="//blog.laolilin.com/images/05/computer.Math.2016.11.Python单形重心法混料设计.static.contour_lines.png"/&gt;
+&lt;/div&gt;
+&lt;div class="section" id="id2"&gt;
+&lt;h2&gt;单形格子设计&lt;/h2&gt;
+&lt;p&gt;设试验中考察的指标为 &lt;span class="math"&gt;\(y\)&lt;/span&gt; ，那么 &lt;span class="math"&gt;\(y\)&lt;/span&gt; 与 &lt;span class="math"&gt;\(p\)&lt;/span&gt; 个因子 &lt;span class="math"&gt;\(x_1,x_2,...,x_p\)&lt;/span&gt; 的关系可以表示为：&lt;span class="math"&gt;\(y=f(x_1,x_2,\dot,x_p )+\varepsilon\)&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;其中， &lt;span class="math"&gt;\(\varepsilon\)&lt;/span&gt; 是随机误差，且要保证 &lt;span class="math"&gt;\(0\leq x\leq 1 ,\sum_{i=1}^p x_i=1\)&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;称 &lt;span class="math"&gt;\(y=f(x_1,x_2,\dots,x_p)\)&lt;/span&gt; 为响应函数，当响应函数中的未知参数用估计值代替后便得到回归方程，也称响应曲面方程。&lt;/p&gt;
+&lt;p&gt;由于 &lt;span class="math"&gt;\(f(x_1,x_2,...,x_p)\)&lt;/span&gt; 形式往往是未知的，通常用 &lt;span class="math"&gt;\(x_1,x_2,\dots,x_p\)&lt;/span&gt; 的一个 &lt;span class="math"&gt;\(d\)&lt;/span&gt; 次多项式表示，此时一个混料试验由因子数 &lt;span class="math"&gt;\(p\)&lt;/span&gt; 与响应多项式的次数 &lt;span class="math"&gt;\(d\)&lt;/span&gt; 来确定，以后用 &lt;span class="math"&gt;\(M\{p,d\}\)&lt;/span&gt; 表示一个混料试验。
+即 ：（公式1）&lt;/p&gt;
+&lt;div class="math"&gt;
+\begin{align*}
+y&amp;amp;=f(x_1,x_2,\dots,x_p) \\
+ &amp;amp;=\sum_{i=1}^p\eta_ix_i+\sum_{i\leq j}\eta_{ij}x_ix_j+\sum_{i\leq j\leq k}\eta_{ijk}x_ix_jx_k+\cdots
+\end{align*}
+&lt;/div&gt;
+&lt;p&gt;单形格子设计是 &lt;tt class="docutils literal"&gt;Scheffé&lt;/tt&gt; 提出的一种混料设计。 &lt;span class="math"&gt;\(M\{p,d\}\)&lt;/span&gt; 的单形格子设计，为 &lt;span class="math"&gt;\(d\)&lt;/span&gt; 阶格子设计，它将单形的边划分成 &lt;span class="math"&gt;\(d\)&lt;/span&gt; 等份，在等分点做与其它边平行的直线，形成许多格子，故名单形格子设计。&lt;/p&gt;
+&lt;p&gt;&lt;span class="math"&gt;\(p=1\)&lt;/span&gt; ，为点； &lt;span class="math"&gt;\(p=2\)&lt;/span&gt; ，为线段； &lt;span class="math"&gt;\(p=3\)&lt;/span&gt; ，为三角形；  &lt;span class="math"&gt;\(p=4\)&lt;/span&gt; ，为四面体； &lt;span class="math"&gt;\(p=5\)&lt;/span&gt; ，为超四面体……&lt;/p&gt;
+&lt;p&gt;举例： &lt;span class="math"&gt;\(p=3\)&lt;/span&gt; ，一阶、二阶和三阶单形格子设计的点分布图。&lt;/p&gt;
+&lt;img alt="格子设计示意图" class="img-fluid" src="//blog.laolilin.com/images/05/computer.Math.2016.11.Python单形重心法混料设计.static.grid.png"/&gt;
+&lt;/div&gt;
+&lt;div class="section" id="id3"&gt;
+&lt;h2&gt;单形重心设计&lt;/h2&gt;
+&lt;p&gt;单形格子设计的缺陷是在 &lt;span class="math"&gt;\(M\{p,d\}\)&lt;/span&gt; 单形格子设计中，当 &lt;span class="math"&gt;\(d&amp;gt;2\)&lt;/span&gt; 时某些混料设计中格子点的非零坐标（如 &lt;span class="math"&gt;\(M\{3,3\}\)&lt;/span&gt; 中的8、9及其对称点）并不相等，这种非对称性会使某些点对回归系数的估计产生较大的影响，为改进这一点， &lt;tt class="docutils literal"&gt;Scheffé&lt;/tt&gt; 提出了一种只考虑有相等非零坐标的单形重心设计，既消除了以上缺陷，又不至于试验点数太多。&lt;/p&gt;
+&lt;p&gt;单形重心设计 &lt;a class="footnote-reference" href="#id12" id="id4"&gt;[1]&lt;/a&gt; 的试验点为 &lt;span class="math"&gt;\(1\)&lt;/span&gt; 到 &lt;span class="math"&gt;\(p\)&lt;/span&gt; 个顶点的重心，顶点本身就是重心，两个顶点的重心是它们连线的中点，三个顶点的重心是它们组成正三角形的中心，……， &lt;span class="math"&gt;\(p\)&lt;/span&gt; 个顶点的重心就是该单形的中心。&lt;/p&gt;
+&lt;p&gt;此时给出的多项式模型称为 &lt;tt class="docutils literal"&gt;Scheffé单形重心设计的多项式模型&lt;/tt&gt; 。具体如下，注意最后一项。（公式2）&lt;/p&gt;
+&lt;div class="math"&gt;
+\begin{align*}
+y&amp;amp;=f(x_1,x_2,\cdots,x_p) \\
+ &amp;amp;=\sum_{i=1}^p\eta_ix_i+\sum_{i\leq j}\eta_{ij}x_ix_j+\sum_{i\leq j\leq k}\eta_{ijk}x_ix_jx_k+\cdots+\eta_{12\cdots p}x_1x_2\cdots x_p
+\end{align*}
+&lt;/div&gt;
+&lt;p&gt;其中，若 &lt;span class="math"&gt;\(p=3\)&lt;/span&gt; ，由于只取重心试验，故有：&lt;/p&gt;
+&lt;div class="math"&gt;
+\begin{align*}
+y&amp;amp;=f(x_1,x_2,x_3) \\
+ &amp;amp;=\sum_{i=1}^3\eta_ix_i+\sum_{i\leq j}\eta_{ij}x_ix_j+\eta_{123}x_1x_2x_3
+\end{align*}
+&lt;/div&gt;
+&lt;p&gt;分别取 &lt;span class="math"&gt;\(x_i=1, x_j=x_k=0;x_i=x_j=1/2,x_k=0;x_i=x_j=x_k=1/3\)&lt;/span&gt; ,分别代入单形重心设计的多项式，可得各系数与各响应值的关系。&lt;/p&gt;
+&lt;p&gt;各系数与各响应值的关系如下：&lt;/p&gt;
+&lt;div class="math"&gt;
+\begin{equation*}
+\begin{cases}
+\eta_i&amp;amp;=y_i \\
+\eta_{ij}&amp;amp;=2\big(2^1y_{ij}-1^1(y_i+y_j)\big) \\
+\eta_{ijk}&amp;amp;=3\big(3^2y_{ijk}-2^2(y_{ij}+y_{ik}+y_{jk})+1^2(y_i+y_j+y_k)\big)
+\end{cases}
+\end{equation*}
+&lt;/div&gt;
+&lt;p&gt;其实经过推导，可以获得一般公式的，若 &lt;span class="math"&gt;\(S_r=\{i_1,i_2,\cdots,i_r\}\)&lt;/span&gt; 为关于 &lt;span class="math"&gt;\((1,2,\cdots,p)\)&lt;/span&gt; 的某个 &lt;span class="math"&gt;\(r\)&lt;/span&gt; 元素的子集，则:（公式3)&lt;/p&gt;
+&lt;div class="math"&gt;
+\begin{equation*}
+\eta_{S_r}=r\Big(\sum_{t=1}^r(-1)^{r-t}t^{r-1}L_t(S_r)\Big)
+\end{equation*}
+&lt;/div&gt;
+&lt;p&gt;其中 ，从 &lt;span class="math"&gt;\(S_r\)&lt;/span&gt; 对应的 &lt;span class="math"&gt;\(r\)&lt;/span&gt; 个分量中取 &lt;span class="math"&gt;\(t\)&lt;/span&gt; 个， &lt;span class="math"&gt;\(L_t(S_r)\)&lt;/span&gt; 表示所有 &lt;span class="math"&gt;\(C_r^t\)&lt;/span&gt; 个分量等比例混料响应的和（简单的说就是 &lt;span class="math"&gt;\(1\)&lt;/span&gt; 到 &lt;span class="math"&gt;\(r\)&lt;/span&gt; 取 &lt;span class="math"&gt;\(t\)&lt;/span&gt; 个的不重复组合）。&lt;/p&gt;
+&lt;p&gt;下面举例计算 &lt;span class="math"&gt;\(\eta_{1234}\)&lt;/span&gt; ：&lt;/p&gt;
+&lt;p&gt;在 &lt;span class="math"&gt;\(\eta_{1234}\)&lt;/span&gt; 中，&lt;/p&gt;
+&lt;div class="math"&gt;
+\begin{equation*}
+\begin{cases}
+r&amp;amp; = 4 \\
+S_4&amp;amp; = \{i_1,i_2,\cdots,i_r\}=\{1,2,3,4\} \\
+L_1(S_4)&amp;amp; = y_1+y_2+y_3+y_4 \\
+L_2(S_4)&amp;amp; = y_{12}+y_{13}+y_{14}+y_{23}+y_{24}+y_{34} \\
+L_3(S_4)&amp;amp; = y_{123}+y_{124}+y_{134}+y_{234} \\
+L_4(S_4)&amp;amp; = y_{1234}
+\end{cases}
+\end{equation*}
+&lt;/div&gt;
+&lt;p&gt;所以根据公式3有：&lt;/p&gt;
+&lt;div class="math"&gt;
+\begin{equation*}
+\begin{split}
+\eta_{1234} &amp;amp; = r\Big(\sum_{t=1}^r(-1)^{r-t}t^{r-1}L_t(S_r)\Big) \\
+&amp;amp; = 4\Big(\sum_{t=1}^4(-1)^{4-t}t^{4-1}L_t(S_4)\Big) \\
+&amp;amp; = 4\Big((-1)^{4-1}1^{4-1}L_1(S_4)+(-1)^{4-2}2^{4-1}L_2(S_4)+(-1)^{4-3}3^{4-1}L_3(S_4)+(-1)^{4-4}4^{4-1}L_4(S_4)\Big) \\
+&amp;amp; =-4(y_1+y_2+y_3+y_4)+32(y_{12}+y_{13}+y_{14}+y_{23}+y_{24}+y_{34})-108(y_{123}+y_{124}+y_{134}+y_{234})+256y_{1234}
+\end{split}
+\end{equation*}
+&lt;/div&gt;
+&lt;p&gt;再举例计算 &lt;span class="math"&gt;\(\eta_{23}\)&lt;/span&gt; ：&lt;/p&gt;
+&lt;p&gt;在 &lt;span class="math"&gt;\(\eta_{23}\)&lt;/span&gt; 中，&lt;/p&gt;
+&lt;div class="math"&gt;
+\begin{equation*}
+\begin{cases}
+r&amp;amp; = 2 \\
+S_2&amp;amp; = \{i_1,i_2,\cdots,i_r\}=\{2,3\} \\
+L_1(S_2)&amp;amp; = y_2+y_3\\
+L_2(S_2)&amp;amp; = y_{23} \\
+\end{cases}
+\end{equation*}
+&lt;/div&gt;
+&lt;p&gt;所以根据公式3有：&lt;/p&gt;
+&lt;div class="math"&gt;
+\begin{equation*}
+\begin{split}
+\eta_{23} &amp;amp; = r\Big(\sum_{t=1}^r(-1)^{r-t}t^{r-1}L_t(S_r)\Big) \\
+&amp;amp; = 2\Big(\sum_{t=1}^2(-1)^{2-t}t^{2-1}L_t(S_2)\Big) \\
+&amp;amp; = 2\Big((-1)^{2-1}1^{2-1}L_1(S_2)+(-1)^{2-2}2^{2-1}L_2(S_2)\Big) \\
+&amp;amp; =2\Big(-(y_2+y_3)+2y_{23}\Big)
+\end{split}
+\end{equation*}
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="section" id="id5"&gt;
+&lt;h2&gt;单形重心法代码实现&lt;/h2&gt;
+&lt;ol class="arabic"&gt;
+&lt;li&gt;&lt;p class="first"&gt;先导入相应的包。&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="code-line"&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="nn"&gt;numpy&lt;/span&gt; &lt;span class="k"&gt;as&lt;/span&gt; &lt;span class="nn"&gt;np&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;itertools&lt;/span&gt; &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="n"&gt;chain&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;combinations&lt;/span&gt;&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;p class="first"&gt;由公式3可知，我们需要生成 &lt;span class="math"&gt;\(S_r\)&lt;/span&gt; ，它是一个不含空集的幂集，简单地，生成一个不含空集的 &lt;a class="reference external" href="//en.wikipedia.org/wiki/Power_set"&gt;Power Set&lt;/a&gt; ，这里演示 &lt;tt class="docutils literal"&gt;n_point&lt;/tt&gt; 为对应的  &lt;span class="math"&gt;\(p\)&lt;/span&gt; 。&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="code-line"&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="n"&gt;n_point&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="o"&gt;...&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;span class="n"&gt;nums&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nb"&gt;range&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;n_point&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;span class="c1"&gt;# generate a powerset except zeroset&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;span class="n"&gt;test_points&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nb"&gt;tuple&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;chain&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;from_iterable&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;    &lt;span class="nb"&gt;map&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;lambda&lt;/span&gt; &lt;span class="n"&gt;num&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;combinations&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;nums&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;num&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="n"&gt;nums&lt;/span&gt;&lt;span class="p"&gt;)))&lt;/span&gt;&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;p class="first"&gt;有了 &lt;span class="math"&gt;\(S_r\)&lt;/span&gt; ，我们就可以逐个生成 &lt;span class="math"&gt;\(L_t(S_r)\)&lt;/span&gt; ，及 &lt;span class="math"&gt;\(\eta_{S_r}\)&lt;/span&gt; ，然后传入各点实测的 &lt;span class="math"&gt;\(y\)&lt;/span&gt; ，即可计算出响应曲面的系数： &lt;cite&gt;_response_surface_coef&lt;/cite&gt; 。&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="code-line"&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="n"&gt;y&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;np&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;array&lt;/span&gt;&lt;span class="p"&gt;([&lt;/span&gt;&lt;span class="o"&gt;...&lt;/span&gt;&lt;span class="p"&gt;])&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;span class="n"&gt;_response_surface_coef&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;[]&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="n"&gt;i&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;test_point&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="nb"&gt;enumerate&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;test_points&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;    &lt;span class="n"&gt;r&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nb"&gt;len&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;test_point&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;    &lt;span class="n"&gt;temp&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;    &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="n"&gt;j&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="nb"&gt;range&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;r&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;        &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="n"&gt;test_point_pos&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="n"&gt;combinations&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;test_point&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;j&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;            &lt;span class="n"&gt;t&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nb"&gt;len&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;test_point_pos&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;            &lt;span class="n"&gt;temp&lt;/span&gt; &lt;span class="o"&gt;+=&lt;/span&gt; &lt;span class="n"&gt;y&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;test_points&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;index&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;test_point_pos&lt;/span&gt;&lt;span class="p"&gt;)]&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt; \&lt;/span&gt;
+&lt;span class="code-line"&gt;                &lt;span class="n"&gt;r&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="o"&gt;**&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;r&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="n"&gt;t&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt; &lt;span class="n"&gt;t&lt;/span&gt;&lt;span class="o"&gt;**&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;r&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;    &lt;span class="n"&gt;_response_surface_coef&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;append&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;temp&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;p class="first"&gt;有了响应曲面的系数，即可算出每个 &lt;span class="math"&gt;\(\begin{pmatrix}x_1,\dots,x_n\end{pmatrix}\)&lt;/span&gt; 的响应值。 &lt;strong&gt;此处输入的是x'，也就是编码矩阵。&lt;/strong&gt;&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="code-line"&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="n"&gt;prediction&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;_response_surface_coef&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;dot&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;  &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;X&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;take&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;test_point_pos&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;axis&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;prod&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;axis&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;  &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="n"&gt;test_point_pos&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="n"&gt;test_points&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+&lt;div class="section" id="id6"&gt;
+&lt;h2&gt;带下界的设计&lt;/h2&gt;
+&lt;p&gt;由于单形重心要求 &lt;span class="math"&gt;\(0\leq x_i\leq 1\)&lt;/span&gt; ，但在实际试验中，很难做到。如混凝土掺合料设计试验中，取煤灰或石粉等为100%时无法获取有效数据。&lt;/p&gt;
+&lt;img alt="带下界的单形重心法示意图1" class="img-fluid" src="//blog.laolilin.com/images/05/computer.Math.2016.11.Python单形重心法混料设计.static.lower_bound1.png"/&gt;
+&lt;p&gt;如上图， &lt;span class="math"&gt;\(a_i\)&lt;/span&gt; 为各成分最小含量，我们将 &lt;span class="math"&gt;\(\{x'_i\}\)&lt;/span&gt; 称为自然空间， &lt;span class="math"&gt;\(\{x_i\}\)&lt;/span&gt; 称为编码空间（实际值），要在编码空间上进行单形重心设计，必须将其映射到自然空间上（编码值）。&lt;/p&gt;
+&lt;div class="math"&gt;
+\begin{equation*}
+\begin{cases}
+0\leq x'_i\leq 1 \\
+\sum_{i=1}^pa_i\leq 1 \\
+0\leq x'_i\leq x_i\leq 1
+\end{cases}
+\end{equation*}
+&lt;/div&gt;
+&lt;img alt="带下界的单形重心法示意图2" class="img-fluid" src="//blog.laolilin.com/images/05/computer.Math.2016.11.Python单形重心法混料设计.static.lower_bound2.png"/&gt;
+&lt;p&gt;编码值与实际值可以进行线性变换 &lt;span class="math"&gt;\(\{x'_i\}\leftrightarrow\{x_i\}\)&lt;/span&gt; ，由上图可得变换矩阵 &lt;span class="math"&gt;\(M\)&lt;/span&gt; ：&lt;/p&gt;
+&lt;div class="math"&gt;
+\begin{equation*}
+M =
+\begin{bmatrix}
+1+a_1-\sum_{i=1}^pa_i &amp;amp; a_1 &amp;amp; a_1 &amp;amp; \dots &amp;amp; a_1 \\
+a_2 &amp;amp; 1+a_2-\sum_{i=1}^pa_i &amp;amp; a_1 &amp;amp; \dots &amp;amp; a_1 \\
+\vdots &amp;amp; \vdots &amp;amp; \ddots &amp;amp; \dots &amp;amp;\vdots \\
+a_p &amp;amp; a_p &amp;amp; a_p &amp;amp; \dots &amp;amp; 1+a_p-\sum_{i=1}^pa_i \\
+\end{bmatrix}
+\end{equation*}
+&lt;/div&gt;
+&lt;p&gt;再通过坐标与自然空间相乘得 &lt;span class="math"&gt;\(x_i\)&lt;/span&gt; （公式4)&lt;/p&gt;
+&lt;div class="math"&gt;
+\begin{equation*}
+\begin{pmatrix}
+x_1 \\ x_2 \\ \vdots \\ x_p
+\end{pmatrix} =
+M\begin{pmatrix}
+x'_1 \\ x'_2 \\ \vdots \\ x'_p
+\end{pmatrix}
+\end{equation*}
+&lt;/div&gt;
+&lt;p&gt;实际值与编码值也可以按以下公式进行转换（线性变换化简的公式，虽然文献中用的多，但个人觉得不够直观，不推荐使用）：&lt;/p&gt;
+&lt;div class="math"&gt;
+\begin{equation*}
+\begin{cases}
+x'_i&amp;amp;=(1-\sum_{i=1}^pa_i)x_i+a_i \\
+x_i&amp;amp;=\frac{x'_i-a_i}{1-\sum_{i=1}^pa_i}
+\end{cases}
+\end{equation*}
+&lt;/div&gt;
+&lt;p&gt;编码空间上的点 &lt;span class="math"&gt;\(X\)&lt;/span&gt; 为配料的真实比例，而自然空间的点 &lt;span class="math"&gt;\(X'\)&lt;/span&gt; （编码值）则为变换后的符合单纯形设计的比例。&lt;/p&gt;
+&lt;p&gt;编码空间映射到的自然空间并不是成分均为100%的单纯形，仅仅是概念上的自然空间。故应直接按单纯形重点设计，得到数据之后通过等值线找到自然空间中的点，再通过编码转换得到真实的配比。&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="section" id="id7"&gt;
+&lt;h2&gt;带下界的单形重心法代码实现&lt;/h2&gt;
+&lt;p&gt;假设下界为变量 &lt;tt class="docutils literal"&gt;lower_bounds&lt;/tt&gt; ， &lt;span class="math"&gt;\(lower\_bounds = [a_1,a_2,\dots,a_p]\)&lt;/span&gt; ，当 &lt;span class="math"&gt;\(lower\_bounds = [0,\dots,0]\)&lt;/span&gt; 时，即是普通的单形重心法。&lt;/p&gt;
+&lt;ol class="arabic"&gt;
+&lt;li&gt;&lt;p class="first"&gt;由公式3生成 &lt;span class="math"&gt;\(S_r\)&lt;/span&gt;&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="code-line"&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="n"&gt;n_point&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="o"&gt;...&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;span class="n"&gt;nums&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nb"&gt;range&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;n_point&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;span class="c1"&gt;# generate a powerset except zeroset&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;span class="n"&gt;test_points&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nb"&gt;tuple&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;chain&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;from_iterable&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;    &lt;span class="nb"&gt;map&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;lambda&lt;/span&gt; &lt;span class="n"&gt;num&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;combinations&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;nums&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;num&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="n"&gt;nums&lt;/span&gt;&lt;span class="p"&gt;)))&lt;/span&gt;&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;p class="first"&gt;生成变换矩阵 &lt;span class="math"&gt;\(M\)&lt;/span&gt; ，&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="code-line"&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="n"&gt;_M&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;lower_bounds&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;repeat&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;n_point&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;reshape&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;    &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;n_point&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;n_point&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt; \&lt;/span&gt;
+&lt;span class="code-line"&gt;    &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="n"&gt;np&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;eye&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;n_point&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; \&lt;/span&gt;
+&lt;span class="code-line"&gt;    &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="n"&gt;lower_bounds&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;sum&lt;/span&gt;&lt;span class="p"&gt;())&lt;/span&gt;&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;p class="first"&gt;如前所述，有了 &lt;span class="math"&gt;\(S_r\)&lt;/span&gt; ，然后传入各点实测的 &lt;span class="math"&gt;\(y\)&lt;/span&gt; ，即可计算出响应曲面的系数： &lt;tt class="docutils literal"&gt;_response_surface_coef&lt;/tt&gt; ，注意，此处不需要转换矩阵 &lt;tt class="docutils literal"&gt;M&lt;/tt&gt; 。&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="code-line"&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="n"&gt;y&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;np&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;array&lt;/span&gt;&lt;span class="p"&gt;([&lt;/span&gt;&lt;span class="o"&gt;...&lt;/span&gt;&lt;span class="p"&gt;])&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;span class="n"&gt;_response_surface_coef&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;[]&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="n"&gt;i&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;test_point&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="nb"&gt;enumerate&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;test_points&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;    &lt;span class="n"&gt;r&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nb"&gt;len&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;test_point&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;    &lt;span class="n"&gt;temp&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;    &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="n"&gt;j&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="nb"&gt;range&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;r&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;        &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="n"&gt;test_point_pos&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="n"&gt;combinations&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;test_point&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;j&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;            &lt;span class="n"&gt;t&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nb"&gt;len&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;test_point_pos&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;            &lt;span class="n"&gt;temp&lt;/span&gt; &lt;span class="o"&gt;+=&lt;/span&gt; &lt;span class="n"&gt;y&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;test_points&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;index&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;test_point_pos&lt;/span&gt;&lt;span class="p"&gt;)]&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt; \&lt;/span&gt;
+&lt;span class="code-line"&gt;                &lt;span class="n"&gt;r&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="o"&gt;**&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;r&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="n"&gt;t&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt; &lt;span class="n"&gt;t&lt;/span&gt;&lt;span class="o"&gt;**&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;r&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;    &lt;span class="n"&gt;_response_surface_coef&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;append&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;temp&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;p class="first"&gt;有了响应曲面的系数，即可通过转换矩阵 &lt;tt class="docutils literal"&gt;_M&lt;/tt&gt; 和真实比例 &lt;tt class="docutils literal"&gt;X&lt;/tt&gt; 算出每个 &lt;span class="math"&gt;\(\begin{pmatrix}x'_1,\dots,x'_n\end{pmatrix}\)&lt;/span&gt; 的响应值。 &lt;strong&gt;此处输入的是X，也就是编码矩阵。&lt;/strong&gt;&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="code-line"&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="n"&gt;XX&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;X&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;dot&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;np&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;linalg&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;inv&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;_M&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;T&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;span class="n"&gt;prediction&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;_response_surface_coef&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;dot&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;  &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;XX&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;take&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;test_point_pos&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;axis&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;prod&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;axis&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;  &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="n"&gt;test_point_pos&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="n"&gt;test_points&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+&lt;div class="section" id="id8"&gt;
+&lt;h2&gt;应用举例说明&lt;/h2&gt;
+&lt;p&gt;这里对一种调料和一种混凝土的带下界约束单形重心试验设计进行了应用的举例。&lt;/p&gt;
+&lt;p&gt;两个例子均为3成分混料试验，由于公式2、公式3、公式4均是一般情形的公式，可以推广到任意数量成分的混料试验，不赘述。&lt;/p&gt;
+&lt;div class="section" id="id9"&gt;
+&lt;h3&gt;例1，调料配制&lt;/h3&gt;
+&lt;p&gt;一种调料由三种成分 &lt;span class="math"&gt;\(A、B、C\)&lt;/span&gt; 混合制成 &lt;span class="math"&gt;\(A、B、C\)&lt;/span&gt; 各为味精、盐、五香粉。 &lt;span class="math"&gt;\(a\geq 0.2,b\geq 0.4,c\geq0.2\)&lt;/span&gt; 。求设计方案。&lt;/p&gt;
+&lt;p&gt;此处可以按公式1采用 &lt;span class="math"&gt;\(M\{3,2\}\)&lt;/span&gt; 单形格子设计，本文主要讲单形重心设计，就不按格子设计来了。采用单形重心设计，取点如下图：&lt;/p&gt;
+&lt;img alt="示例1设计图" class="img-fluid" src="//blog.laolilin.com/images/05/computer.Math.2016.11.Python单形重心法混料设计.static.ex1design.png"/&gt;
+&lt;p&gt;根据 &lt;span class="math"&gt;\(a\geq 0.2,b\geq 0.4,c\geq0.2\)&lt;/span&gt; 画出小单形，即黑色小三角，然后根据单形重心设计标出7个重心（红色数字表示）&lt;/p&gt;
+&lt;p&gt;由公式4列出编码矩阵：&lt;/p&gt;
+&lt;div class="math"&gt;
+\begin{align*}
+M &amp;amp;=
+\begin{bmatrix}
+1+a-(a+b+c) &amp;amp; a &amp;amp; a \\
+b &amp;amp; 1+b-(a+b+c) &amp;amp; b \\
+c &amp;amp; c &amp;amp; 1+c-(a+b+c) \\
+\end{bmatrix} \\
+&amp;amp;=
+\begin{bmatrix}
+0.4 &amp;amp; 0.2 &amp;amp; 0.2 \\
+0.4 &amp;amp; 0.6 &amp;amp; 0.4 \\
+0.2 &amp;amp; 0.2 &amp;amp; 0.4 \\
+\end{bmatrix}
+\end{align*}
+&lt;/div&gt;
+&lt;p&gt;根据公式2、公式3和 &lt;span class="math"&gt;\(X'*(Z.T)\)&lt;/span&gt; 可轻松列出试验表和试验结果以及口感得分（A*、B*、C*为编码值，&lt;cite&gt;味精_&lt;/cite&gt; 、&lt;cite&gt;盐_&lt;/cite&gt; 、&lt;cite&gt;五香粉_&lt;/cite&gt; 则为实际成分）&lt;/p&gt;
+&lt;table border="1" class="docutils table table-striped"&gt;
+&lt;colgroup&gt;
+&lt;col width="16%"/&gt;
+&lt;col width="13%"/&gt;
+&lt;col width="13%"/&gt;
+&lt;col width="13%"/&gt;
+&lt;col width="13%"/&gt;
+&lt;col width="13%"/&gt;
+&lt;col width="13%"/&gt;
+&lt;col width="6%"/&gt;
+&lt;/colgroup&gt;
+&lt;thead valign="bottom"&gt;
+&lt;tr&gt;&lt;th class="head"&gt;试验号&lt;/th&gt;
+&lt;th class="head"&gt;&lt;cite&gt;A*&lt;/cite&gt;&lt;/th&gt;
+&lt;th class="head"&gt;&lt;cite&gt;B*&lt;/cite&gt;&lt;/th&gt;
+&lt;th class="head"&gt;&lt;cite&gt;C*&lt;/cite&gt;&lt;/th&gt;
+&lt;th class="head"&gt;&lt;cite&gt;味精_&lt;/cite&gt;&lt;/th&gt;
+&lt;th class="head"&gt;&lt;cite&gt;盐_&lt;/cite&gt;&lt;/th&gt;
+&lt;th class="head"&gt;&lt;cite&gt;五香粉_&lt;/cite&gt;&lt;/th&gt;
+&lt;th class="head"&gt;口感&lt;/th&gt;
+&lt;/tr&gt;
+&lt;tr&gt;&lt;th class="head"&gt; &lt;/th&gt;
+&lt;th class="head"&gt;&lt;span class="math"&gt;\(x'_1\)&lt;/span&gt;&lt;/th&gt;
+&lt;th class="head"&gt;&lt;span class="math"&gt;\(x'_2\)&lt;/span&gt;&lt;/th&gt;
+&lt;th class="head"&gt;&lt;span class="math"&gt;\(x'_3\)&lt;/span&gt;&lt;/th&gt;
+&lt;th class="head"&gt;&lt;span class="math"&gt;\(x_1\)&lt;/span&gt;&lt;/th&gt;
+&lt;th class="head"&gt;&lt;span class="math"&gt;\(x_2\)&lt;/span&gt;&lt;/th&gt;
+&lt;th class="head"&gt;&lt;span class="math"&gt;\(x_3\)&lt;/span&gt;&lt;/th&gt;
+&lt;th class="head"&gt; &lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody valign="top"&gt;
+&lt;tr&gt;&lt;td&gt;&lt;span class="math"&gt;\(y_1\)&lt;/span&gt;&lt;/td&gt;
+&lt;td&gt;1&lt;/td&gt;
+&lt;td&gt;0&lt;/td&gt;
+&lt;td&gt;0&lt;/td&gt;
+&lt;td&gt;0.4&lt;/td&gt;
+&lt;td&gt;0.4&lt;/td&gt;
+&lt;td&gt;0.2&lt;/td&gt;
+&lt;td&gt;5&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;&lt;span class="math"&gt;\(y_2\)&lt;/span&gt;&lt;/td&gt;
+&lt;td&gt;0&lt;/td&gt;
+&lt;td&gt;1&lt;/td&gt;
+&lt;td&gt;0&lt;/td&gt;
+&lt;td&gt;0.2&lt;/td&gt;
+&lt;td&gt;0.6&lt;/td&gt;
+&lt;td&gt;0.2&lt;/td&gt;
+&lt;td&gt;11&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;&lt;span class="math"&gt;\(y_3\)&lt;/span&gt;&lt;/td&gt;
+&lt;td&gt;0&lt;/td&gt;
+&lt;td&gt;0&lt;/td&gt;
+&lt;td&gt;1&lt;/td&gt;
+&lt;td&gt;0.2&lt;/td&gt;
+&lt;td&gt;0.4&lt;/td&gt;
+&lt;td&gt;0.4&lt;/td&gt;
+&lt;td&gt;8&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;&lt;span class="math"&gt;\(y_{12}\)&lt;/span&gt;&lt;/td&gt;
+&lt;td&gt;1/2&lt;/td&gt;
+&lt;td&gt;1/2&lt;/td&gt;
+&lt;td&gt;0&lt;/td&gt;
+&lt;td&gt;0.3&lt;/td&gt;
+&lt;td&gt;0.5&lt;/td&gt;
+&lt;td&gt;0.2&lt;/td&gt;
+&lt;td&gt;10&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;&lt;span class="math"&gt;\(y_{13}\)&lt;/span&gt;&lt;/td&gt;
+&lt;td&gt;1/2&lt;/td&gt;
+&lt;td&gt;0&lt;/td&gt;
+&lt;td&gt;1/2&lt;/td&gt;
+&lt;td&gt;0.3&lt;/td&gt;
+&lt;td&gt;0.4&lt;/td&gt;
+&lt;td&gt;0.3&lt;/td&gt;
+&lt;td&gt;2&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;&lt;span class="math"&gt;\(y_{23}\)&lt;/span&gt;&lt;/td&gt;
+&lt;td&gt;0&lt;/td&gt;
+&lt;td&gt;1/2&lt;/td&gt;
+&lt;td&gt;1/2&lt;/td&gt;
+&lt;td&gt;0.2&lt;/td&gt;
+&lt;td&gt;0.5&lt;/td&gt;
+&lt;td&gt;0.3&lt;/td&gt;
+&lt;td&gt;10&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;&lt;span class="math"&gt;\(y_{123}\)&lt;/span&gt;&lt;/td&gt;
+&lt;td&gt;1/3&lt;/td&gt;
+&lt;td&gt;1/3&lt;/td&gt;
+&lt;td&gt;1/3&lt;/td&gt;
+&lt;td&gt;4/15&lt;/td&gt;
+&lt;td&gt;7/15&lt;/td&gt;
+&lt;td&gt;4/15&lt;/td&gt;
+&lt;td&gt;13&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;将结果和编码值代入公式2得：&lt;/p&gt;
+&lt;div class="math"&gt;
+\begin{equation*}
+y=159x'_1x'_2x'_3+8x'_1x'_2-18x'_1x'_3+5x'_1+2x'_2x'_3+11x'_2+8x'_3
+\end{equation*}
+&lt;/div&gt;
+&lt;img alt="示例1结果图" class="img-fluid" src="//blog.laolilin.com/images/05/computer.Math.2016.11.Python单形重心法混料设计.static.ex1result.png"/&gt;
+&lt;p&gt;作三角坐标图，根据三角坐标系在最大值作图，可得自然空间中
+最大值坐标 &lt;span class="math"&gt;\({x'_i}\)&lt;/span&gt; 为：&lt;/p&gt;
+&lt;div class="math"&gt;
+\begin{equation*}
+\begin{pmatrix}
+x'_1 \\ x'_2 \\ x'_3\end{pmatrix}=\begin{pmatrix}0.26 \\ 0.48 \\ 0.26
+\end{pmatrix}
+\end{equation*}
+&lt;/div&gt;
+&lt;p&gt;用编码矩阵转换得真实比例为：&lt;/p&gt;
+&lt;div class="math"&gt;
+\begin{equation*}
+\begin{pmatrix}0.252,0.496,0.252\end{pmatrix}
+\end{equation*}
+&lt;/div&gt;
+&lt;p&gt;即，按这个比例配制的调料味道最好。&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="section" id="id10"&gt;
+&lt;h3&gt;例2，混凝土强度预测&lt;/h3&gt;
+&lt;img alt="示例2设计图" class="img-fluid" src="//blog.laolilin.com/images/05/computer.Math.2016.11.Python单形重心法混料设计.static.ex2design.png"/&gt;
+&lt;p&gt;如上图，混凝土用胶凝材料为水泥，矿粉，煤灰，其中水泥用量在25%以上，求单形重心试验方案。&lt;/p&gt;
+&lt;p&gt;这是一个约束设计问题，水泥用量25%以上，即 &lt;span class="math"&gt;\(a_1\geq 0.25, a_2=a_3=0\)&lt;/span&gt; 。
+编码矩阵 &lt;span class="math"&gt;\(M\)&lt;/span&gt; 为：&lt;/p&gt;
+&lt;div class="math"&gt;
+\begin{equation*}
+\begin{bmatrix}
+1 &amp;amp; 0.25 &amp;amp; 0.25 \\
+0 &amp;amp; 0.75 &amp;amp; 0 \\
+0 &amp;amp; 0 &amp;amp; 0.75
+\end{bmatrix}
+\end{equation*}
+&lt;/div&gt;
+&lt;p&gt;标上7个实验点，列出试验表并根据表来做实验得到结果 &lt;a class="footnote-reference" href="#id13" id="id11"&gt;[2]&lt;/a&gt; ：&lt;/p&gt;
+&lt;table border="1" class="docutils table table-striped"&gt;
+&lt;colgroup&gt;
+&lt;col width="14%"/&gt;
+&lt;col width="12%"/&gt;
+&lt;col width="12%"/&gt;
+&lt;col width="12%"/&gt;
+&lt;col width="11%"/&gt;
+&lt;col width="11%"/&gt;
+&lt;col width="11%"/&gt;
+&lt;col width="5%"/&gt;
+&lt;col width="9%"/&gt;
+&lt;col width="5%"/&gt;
+&lt;/colgroup&gt;
+&lt;thead valign="bottom"&gt;
+&lt;tr&gt;&lt;th class="head"&gt;试验号&lt;/th&gt;
+&lt;th class="head"&gt;A*&lt;/th&gt;
+&lt;th class="head"&gt;B*&lt;/th&gt;
+&lt;th class="head"&gt;C*&lt;/th&gt;
+&lt;th class="head"&gt;&lt;cite&gt;水泥_&lt;/cite&gt;&lt;/th&gt;
+&lt;th class="head"&gt;&lt;cite&gt;矿粉_&lt;/cite&gt;&lt;/th&gt;
+&lt;th class="head"&gt;&lt;cite&gt;煤灰_&lt;/cite&gt;&lt;/th&gt;
+&lt;th class="head"&gt; &lt;/th&gt;
+&lt;th class="head"&gt;强度(MPa)&lt;/th&gt;
+&lt;th class="head"&gt; &lt;/th&gt;
+&lt;/tr&gt;
+&lt;tr&gt;&lt;th class="head"&gt; &lt;/th&gt;
+&lt;th class="head"&gt;&lt;span class="math"&gt;\(x'_1\)&lt;/span&gt;&lt;/th&gt;
+&lt;th class="head"&gt;&lt;span class="math"&gt;\(x'_2\)&lt;/span&gt;&lt;/th&gt;
+&lt;th class="head"&gt;&lt;span class="math"&gt;\(x'_3\)&lt;/span&gt;&lt;/th&gt;
+&lt;th class="head"&gt;&lt;span class="math"&gt;\(x_1\)&lt;/span&gt;&lt;/th&gt;
+&lt;th class="head"&gt;&lt;span class="math"&gt;\(x_2\)&lt;/span&gt;&lt;/th&gt;
+&lt;th class="head"&gt;&lt;span class="math"&gt;\(x_3\)&lt;/span&gt;&lt;/th&gt;
+&lt;th class="head"&gt;3d&lt;/th&gt;
+&lt;th class="head"&gt;28d&lt;/th&gt;
+&lt;th class="head"&gt;180d&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody valign="top"&gt;
+&lt;tr&gt;&lt;td&gt;&lt;span class="math"&gt;\(y_1\)&lt;/span&gt;&lt;/td&gt;
+&lt;td&gt;1&lt;/td&gt;
+&lt;td&gt;0&lt;/td&gt;
+&lt;td&gt;0&lt;/td&gt;
+&lt;td&gt;1&lt;/td&gt;
+&lt;td&gt;0&lt;/td&gt;
+&lt;td&gt;0&lt;/td&gt;
+&lt;td&gt;63.1&lt;/td&gt;
+&lt;td&gt;88.3&lt;/td&gt;
+&lt;td&gt;96&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;&lt;span class="math"&gt;\(y_2\)&lt;/span&gt;&lt;/td&gt;
+&lt;td&gt;0&lt;/td&gt;
+&lt;td&gt;1&lt;/td&gt;
+&lt;td&gt;0&lt;/td&gt;
+&lt;td&gt;0.25&lt;/td&gt;
+&lt;td&gt;0.75&lt;/td&gt;
+&lt;td&gt;0&lt;/td&gt;
+&lt;td&gt;29.0&lt;/td&gt;
+&lt;td&gt;56.2&lt;/td&gt;
+&lt;td&gt;77&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;&lt;span class="math"&gt;\(y_3\)&lt;/span&gt;&lt;/td&gt;
+&lt;td&gt;0&lt;/td&gt;
+&lt;td&gt;0&lt;/td&gt;
+&lt;td&gt;1&lt;/td&gt;
+&lt;td&gt;0.25&lt;/td&gt;
+&lt;td&gt;0&lt;/td&gt;
+&lt;td&gt;0.75&lt;/td&gt;
+&lt;td&gt;22.2&lt;/td&gt;
+&lt;td&gt;53.5&lt;/td&gt;
+&lt;td&gt;75.4&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;&lt;span class="math"&gt;\(y_{12}\)&lt;/span&gt;&lt;/td&gt;
+&lt;td&gt;1/2&lt;/td&gt;
+&lt;td&gt;1/2&lt;/td&gt;
+&lt;td&gt;0&lt;/td&gt;
+&lt;td&gt;0.625&lt;/td&gt;
+&lt;td&gt;0.375&lt;/td&gt;
+&lt;td&gt;0&lt;/td&gt;
+&lt;td&gt;50.6&lt;/td&gt;
+&lt;td&gt;84.5&lt;/td&gt;
+&lt;td&gt;90.1&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;&lt;span class="math"&gt;\(y_{13}\)&lt;/span&gt;&lt;/td&gt;
+&lt;td&gt;1/2&lt;/td&gt;
+&lt;td&gt;0&lt;/td&gt;
+&lt;td&gt;1/2&lt;/td&gt;
+&lt;td&gt;0.625&lt;/td&gt;
+&lt;td&gt;0&lt;/td&gt;
+&lt;td&gt;0.375&lt;/td&gt;
+&lt;td&gt;44.5&lt;/td&gt;
+&lt;td&gt;92.3&lt;/td&gt;
+&lt;td&gt;102&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;&lt;span class="math"&gt;\(y_{23}\)&lt;/span&gt;&lt;/td&gt;
+&lt;td&gt;0&lt;/td&gt;
+&lt;td&gt;1/2&lt;/td&gt;
+&lt;td&gt;1/2&lt;/td&gt;
+&lt;td&gt;0.25&lt;/td&gt;
+&lt;td&gt;0.375&lt;/td&gt;
+&lt;td&gt;0.375&lt;/td&gt;
+&lt;td&gt;26.5&lt;/td&gt;
+&lt;td&gt;62.8&lt;/td&gt;
+&lt;td&gt;86&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;&lt;span class="math"&gt;\(y_{123}\)&lt;/span&gt;&lt;/td&gt;
+&lt;td&gt;1/3&lt;/td&gt;
+&lt;td&gt;1/3&lt;/td&gt;
+&lt;td&gt;1/3&lt;/td&gt;
+&lt;td&gt;0.5&lt;/td&gt;
+&lt;td&gt;0.25&lt;/td&gt;
+&lt;td&gt;0.25&lt;/td&gt;
+&lt;td&gt;40.3&lt;/td&gt;
+&lt;td&gt;80.5&lt;/td&gt;
+&lt;td&gt;96.5&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;将结果和编码值代入公式2得：&lt;/p&gt;
+&lt;div class="math"&gt;
+\begin{align*}
+y_{3d}&amp;amp;=63.1x'_1+29.0x'_2+22.2x'_3+18.2x'_1 x'_2+7.4x'_1 x'_3+3.6x'_2 x'_3-28.2x'_1 x'_2 x'_3 \\
+y_{28d}&amp;amp;=88.3x'_1+56.2x'_2+53.5x'_3+49x'_1 x'_2+85.6x'_1 x'_3+31.8x'_2 x'_3-107.7x'_1 x'_2 x'_3 \\
+y_{180d}&amp;amp;=96x'_1+77x'_2+75.4x'_3+14.9x'_1 x'_2+65.2x'_1 x'_3+39.2x'_2 x'_3+13.5x'_1 x'_2 x'_3
+\end{align*}
+&lt;/div&gt;
+&lt;p&gt;对上面三式作三角坐标图，可以清晰地看出各组分对强度的贡献。从图中求出 &lt;span class="math"&gt;\(x'_1\)&lt;/span&gt; , &lt;span class="math"&gt;\(x'_2\)&lt;/span&gt; , &lt;span class="math"&gt;\(x'_3\)&lt;/span&gt; 坐标，再利用编码矩阵即可换算出实际各组分比例。另外，从3d与28d、180d对比，说明前期是水泥、矿粉对强度贡献大，后期煤灰贡献逐渐超过矿粉。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;作图&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;对组分的单形重心设计可以作图。&lt;/p&gt;
+&lt;img alt="示例2结果图" class="img-fluid" src="//blog.laolilin.com/images/05/computer.Math.2016.11.Python单形重心法混料设计.static.ex2result.png"/&gt;
+&lt;table class="footnote docutils table table-striped" frame="void" id="id12" rules="none"&gt;
+&lt;colgroup&gt;&lt;col class="label"/&gt;&lt;col/&gt;&lt;/colgroup&gt;
+&lt;tbody valign="top"&gt;
+&lt;tr&gt;&lt;td class="label"&gt;&lt;a class="fn-backref" href="#id4"&gt;[1]&lt;/a&gt;&lt;/td&gt;&lt;td&gt;关颖男. 混料试验设计. 上海科学技术出版社, 1990.&lt;/td&gt;&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;table class="footnote docutils table table-striped" frame="void" id="id13" rules="none"&gt;
+&lt;colgroup&gt;&lt;col class="label"/&gt;&lt;col/&gt;&lt;/colgroup&gt;
+&lt;tbody valign="top"&gt;
+&lt;tr&gt;&lt;td class="label"&gt;&lt;a class="fn-backref" href="#id11"&gt;[2]&lt;/a&gt;&lt;/td&gt;&lt;td&gt;孙伟, 严捍东. 复合胶凝材料组成与混凝土抗压强度定量关系研究[J]. 東南大學學報 (自然科學版), 2003, 33(4): 450-453.&lt;/td&gt;&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;script type='text/javascript'&gt;if (!document.getElementById('mathjaxscript_pelican_#%@#$@#')) {
+    var align = "center",
+        indent = "0em",
+        linebreak = "false";
+
+    if (false) {
+        align = (screen.width &lt; 768) ? "left" : align;
+        indent = (screen.width &lt; 768) ? "0em" : indent;
+        linebreak = (screen.width &lt; 768) ? 'true' : linebreak;
+    }
+
+    var mathjaxscript = document.createElement('script');
+    mathjaxscript.id = 'mathjaxscript_pelican_#%@#$@#';
+    mathjaxscript.type = 'text/javascript';
+    mathjaxscript.src = 'https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+
+    var configscript = document.createElement('script');
+    configscript.type = 'text/x-mathjax-config';
+    configscript[(window.opera ? "innerHTML" : "text")] =
+        "MathJax.Hub.Config({" +
+        "    config: ['MMLorHTML.js']," +
+        "    TeX: { extensions: ['AMSmath.js','AMSsymbols.js','noErrors.js','noUndefined.js','color.js','mhchem.js'], equationNumbers: { autoNumber: 'none' } }," +
+        "    jax: ['input/TeX','input/MathML','output/HTML-CSS']," +
+        "    extensions: ['tex2jax.js','mml2jax.js','MathMenu.js','MathZoom.js']," +
+        "    displayAlign: '"+ align +"'," +
+        "    displayIndent: '"+ indent +"'," +
+        "    showMathMenu: true," +
+        "    messageStyle: 'normal'," +
+        "    tex2jax: { " +
+        "        inlineMath: [ ['\\\\(','\\\\)'] ], " +
+        "        displayMath: [ ['$$','$$'] ]," +
+        "        processEscapes: true," +
+        "        preview: 'TeX'," +
+        "    }, " +
+        "    'HTML-CSS': { " +
+        "        availableFonts: ['STIX', 'TeX']," +
+        "        preferredFont: 'STIX'," +
+        "        styles: { '.MathJax_Display, .MathJax .mo, .MathJax .mi, .MathJax .mn': {color: 'inherit ! important'} }," +
+        "        linebreaks: { automatic: "+ linebreak +", width: '90% container' }," +
+        "    }, " +
+        "}); " +
+        "if ('default' !== 'default') {" +
+            "MathJax.Hub.Register.StartupHook('HTML-CSS Jax Ready',function () {" +
+                "var VARIANT = MathJax.OutputJax['HTML-CSS'].FONTDATA.VARIANT;" +
+                "VARIANT['normal'].fonts.unshift('MathJax_default');" +
+                "VARIANT['bold'].fonts.unshift('MathJax_default-bold');" +
+                "VARIANT['italic'].fonts.unshift('MathJax_default-italic');" +
+                "VARIANT['-tex-mathit'].fonts.unshift('MathJax_default-italic');" +
+            "});" +
+            "MathJax.Hub.Register.StartupHook('SVG Jax Ready',function () {" +
+                "var VARIANT = MathJax.OutputJax.SVG.FONTDATA.VARIANT;" +
+                "VARIANT['normal'].fonts.unshift('MathJax_default');" +
+                "VARIANT['bold'].fonts.unshift('MathJax_default-bold');" +
+                "VARIANT['italic'].fonts.unshift('MathJax_default-italic');" +
+                "VARIANT['-tex-mathit'].fonts.unshift('MathJax_default-italic');" +
+            "});" +
+        "}";
+
+    (document.body || document.getElementsByTagName('head')[0]).appendChild(configscript);
+    (document.body || document.getElementsByTagName('head')[0]).appendChild(mathjaxscript);
+}
+&lt;/script&gt;</content><category term="Tech"></category><category term="Python"></category><category term="单形重心法"></category><category term="混料设计"></category></entry><entry><title>dnspod DDNS 自动更新</title><link href="//blog.laolilin.com/posts/2016/10/dnspod_ddns_auto_update.html" rel="alternate"></link><published>2016-10-15T12:05:00+08:00</published><updated>2016-10-28T17:01:00+08:00</updated><author><name>lao</name></author><id>tag:blog.laolilin.com,2016-10-15:/posts/2016/10/dnspod_ddns_auto_update.html</id><summary type="html">&lt;p class="first last"&gt;使用Python对dnspod进行DDNS更新&lt;/p&gt;
+</summary><content type="html">&lt;div class="section" id="id1"&gt;
+&lt;h2&gt;前言&lt;/h2&gt;
+&lt;p&gt;由于把 &lt;tt class="docutils literal"&gt;blog&lt;/tt&gt; 托管在 &lt;tt class="docutils literal"&gt;github pages&lt;/tt&gt; 和 &lt;tt class="docutils literal"&gt;coding pages&lt;/tt&gt; ，再加上 &lt;a class="reference external" href="//blog.laolilin.com/posts/2016/10/config_raspberry_pi.html"&gt;我的Raspberry pi&lt;/a&gt; 也需要暴露于网络中，所以最好能及时更新域名的IP。&lt;/p&gt;
+&lt;p&gt;利用 &lt;a class="reference external" href="//www.dnspod.cn"&gt;DNSPOD&lt;/a&gt; 的 &lt;tt class="docutils literal"&gt;DDNS API&lt;/tt&gt; ，我们可以轻松在 &lt;tt class="docutils literal"&gt;Raspberry Pi&lt;/tt&gt; 上实现这个需求。&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="section" id="id2"&gt;
+&lt;h2&gt;代码实现&lt;/h2&gt;
+&lt;p&gt;利用 &lt;a class="reference external" href="//www.dnspod.cn"&gt;DNSPOD&lt;/a&gt; 的 &lt;tt class="docutils literal"&gt;API&lt;/tt&gt; ，很容易写出自动更新的代码，需要注意的一点是， &lt;tt class="docutils literal"&gt;API&lt;/tt&gt; 不允许一小时五次都更新同一 &lt;tt class="docutils literal"&gt;IP&lt;/tt&gt; ，所以代码里考虑到这点，对比二者，如果相同则不进行操作。&lt;/p&gt;
+&lt;p&gt;&lt;tt class="docutils literal"&gt;login_token&lt;/tt&gt; 可以从 &lt;a class="reference external" href="//www.dnspod.cn"&gt;DNSPOD&lt;/a&gt; 获取，按格式把域名和ip填入 &lt;tt class="docutils literal"&gt;data&lt;/tt&gt; 。&lt;/p&gt;
+&lt;p&gt;保存如下代码为 &lt;tt class="docutils literal"&gt;/usr/local/sbin/ddns_update.py&lt;/tt&gt; 。&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="code-line"&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="ch"&gt;#!/usr/bin/python&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;span class="c1"&gt;# Author: lao&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;span class="c1"&gt;# url: http://laolilin.com&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="nn"&gt;socket&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="nn"&gt;urllib.parse&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="nn"&gt;urllib.request&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="nn"&gt;json&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;initReq&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;url&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;values&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;    &lt;span class="sd"&gt;'''&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;span class="sd"&gt;    simple request data from url with values&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;span class="sd"&gt;    '''&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;    &lt;span class="n"&gt;data&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;urllib&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;parse&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;urlencode&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;values&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;encode&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;    &lt;span class="n"&gt;req&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;urllib&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;request&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;Request&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;url&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;data&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;    &lt;span class="k"&gt;try&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;        &lt;span class="n"&gt;res&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;urllib&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;request&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;urlopen&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;req&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;    &lt;span class="k"&gt;except&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;        &lt;span class="k"&gt;raise&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;    &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;res&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;getIp&lt;/span&gt;&lt;span class="p"&gt;():&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;    &lt;span class="sd"&gt;'''&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;span class="sd"&gt;    grab the ip of the machine&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;span class="sd"&gt;    '''&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;    &lt;span class="n"&gt;data&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;initReq&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;'http://ip.taobao.com/service/getIpInfo2.php'&lt;/span&gt;&lt;span class="p"&gt;,{&lt;/span&gt;&lt;span class="s1"&gt;'ip'&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="s1"&gt;'myip'&lt;/span&gt;&lt;span class="p"&gt;})&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;    &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;json&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;loads&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;data&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;read&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;decode&lt;/span&gt;&lt;span class="p"&gt;())[&lt;/span&gt;&lt;span class="s1"&gt;'data'&lt;/span&gt;&lt;span class="p"&gt;][&lt;/span&gt;&lt;span class="s1"&gt;'ip'&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;updateData&lt;/span&gt;&lt;span class="p"&gt;():&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;    &lt;span class="sd"&gt;'''&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;span class="sd"&gt;    update ip records of data, prepared for update it&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;span class="sd"&gt;    '''&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;    &lt;span class="n"&gt;res&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;initReq&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;url&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="n"&gt;DomainListUrl&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;values&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="n"&gt;loginInfo&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;    &lt;span class="n"&gt;domainIDs&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="n"&gt;i&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="s1"&gt;'name'&lt;/span&gt;&lt;span class="p"&gt;]:&lt;/span&gt; &lt;span class="n"&gt;i&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="s1"&gt;'id'&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;                 &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="n"&gt;i&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="n"&gt;json&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;loads&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;res&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;read&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;decode&lt;/span&gt;&lt;span class="p"&gt;())[&lt;/span&gt;&lt;span class="s1"&gt;'domains'&lt;/span&gt;&lt;span class="p"&gt;]}&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;    &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="n"&gt;domain&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="n"&gt;data&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;        &lt;span class="n"&gt;domain&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="s1"&gt;'domainID'&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;domainIDs&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;get&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;domain&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="s1"&gt;'domain'&lt;/span&gt;&lt;span class="p"&gt;])&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;        &lt;span class="n"&gt;res&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;initReq&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;url&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="n"&gt;RecordListUrl&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;values&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="p"&gt;{&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;            &lt;span class="o"&gt;**&lt;/span&gt;&lt;span class="n"&gt;loginInfo&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="o"&gt;**&lt;/span&gt;&lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="s1"&gt;'domain_id'&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;domain&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="s1"&gt;'domainID'&lt;/span&gt;&lt;span class="p"&gt;]}})&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;        &lt;span class="n"&gt;subdomainInfo&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;{((&lt;/span&gt;&lt;span class="n"&gt;i&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="s1"&gt;'name'&lt;/span&gt;&lt;span class="p"&gt;],&lt;/span&gt; &lt;span class="n"&gt;i&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="s1"&gt;'line'&lt;/span&gt;&lt;span class="p"&gt;])&lt;/span&gt; &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="n"&gt;i&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="s1"&gt;'type'&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt; &lt;span class="o"&gt;==&lt;/span&gt; &lt;span class="s1"&gt;'A'&lt;/span&gt; &lt;span class="k"&gt;else&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;'invalid'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;'invalid'&lt;/span&gt;&lt;span class="p"&gt;)):&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;                         &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="s1"&gt;'IP'&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;i&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="s1"&gt;'value'&lt;/span&gt;&lt;span class="p"&gt;],&lt;/span&gt; &lt;span class="s1"&gt;'ID'&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;i&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="s1"&gt;'id'&lt;/span&gt;&lt;span class="p"&gt;]}&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;                         &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="n"&gt;i&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="n"&gt;json&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;loads&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;res&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;read&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;decode&lt;/span&gt;&lt;span class="p"&gt;())[&lt;/span&gt;&lt;span class="s1"&gt;'records'&lt;/span&gt;&lt;span class="p"&gt;]}&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;        &lt;span class="n"&gt;subdomains&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;domain&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="s1"&gt;'subdomains'&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;        &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="n"&gt;name&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="n"&gt;subdomains&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;            &lt;span class="n"&gt;subdomains&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;name&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;update&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;subdomainInfo&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;get&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;name&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;            &lt;span class="n"&gt;ipList&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;socket&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;gethostbyname_ex&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;subdomains&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;name&lt;/span&gt;&lt;span class="p"&gt;][&lt;/span&gt;&lt;span class="s1"&gt;'hostname'&lt;/span&gt;&lt;span class="p"&gt;])&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;            &lt;span class="n"&gt;subdomains&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;name&lt;/span&gt;&lt;span class="p"&gt;][&lt;/span&gt;&lt;span class="s1"&gt;'hostIP'&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;ipList&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;][&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;main&lt;/span&gt;&lt;span class="p"&gt;():&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;    &lt;span class="n"&gt;updateData&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;    &lt;span class="n"&gt;httpData&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;[]&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;    &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="n"&gt;domain&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="n"&gt;data&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;        &lt;span class="n"&gt;subdomains&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;domain&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="s1"&gt;'subdomains'&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;        &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="n"&gt;subdomain&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;_&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="n"&gt;subdomains&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;items&lt;/span&gt;&lt;span class="p"&gt;():&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;            &lt;span class="c1"&gt;# avoid update too frequenly&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;            &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="n"&gt;_&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="s1"&gt;'IP'&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt; &lt;span class="o"&gt;!=&lt;/span&gt; &lt;span class="n"&gt;_&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="s1"&gt;'hostIP'&lt;/span&gt;&lt;span class="p"&gt;]:&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;                &lt;span class="n"&gt;httpData&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;append&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;                    &lt;span class="p"&gt;{&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;                        &lt;span class="o"&gt;**&lt;/span&gt;&lt;span class="n"&gt;loginInfo&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;                        &lt;span class="o"&gt;**&lt;/span&gt;&lt;span class="p"&gt;{&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;                            &lt;span class="s1"&gt;'domain_id'&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;domain&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="s1"&gt;'domainID'&lt;/span&gt;&lt;span class="p"&gt;],&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;                            &lt;span class="s1"&gt;'record_id'&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;_&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="s1"&gt;'ID'&lt;/span&gt;&lt;span class="p"&gt;],&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;                            &lt;span class="s1"&gt;'record_line'&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;subdomain&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;],&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;                            &lt;span class="s1"&gt;'sub_domain'&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;subdomain&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;],&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;                            &lt;span class="s1"&gt;'value'&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;_&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="s1"&gt;'hostIP'&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;                        &lt;span class="p"&gt;}&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;                    &lt;span class="p"&gt;}&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;                &lt;span class="p"&gt;)&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;            &lt;span class="k"&gt;else&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;                &lt;span class="k"&gt;continue&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;    &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="n"&gt;item&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="n"&gt;httpData&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;        &lt;span class="k"&gt;try&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;            &lt;span class="n"&gt;initReq&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;url&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="n"&gt;RecordDdnsUrl&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;values&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="n"&gt;item&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;        &lt;span class="k"&gt;except&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;            &lt;span class="k"&gt;pass&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;span class="n"&gt;DomainListUrl&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s1"&gt;'https://dnsapi.cn/Domain.List'&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;span class="n"&gt;RecordListUrl&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s1"&gt;'https://dnsapi.cn/Record.List'&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;span class="n"&gt;RecordDdnsUrl&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s1"&gt;'https://dnsapi.cn/Record.Ddns'&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;span class="n"&gt;loginInfo&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;    &lt;span class="s1"&gt;'login_token'&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s1"&gt;'**your login token**'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;    &lt;span class="s1"&gt;'format'&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s1"&gt;'json'&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;span class="p"&gt;}&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;span class="n"&gt;data&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;        &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="s1"&gt;'domain'&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s1"&gt;'laolilin.com'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;         &lt;span class="s1"&gt;'domainID'&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s1"&gt;''&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;         &lt;span class="s1"&gt;'subdomains'&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{(&lt;/span&gt;&lt;span class="s1"&gt;'blog'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;'默认'&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="s1"&gt;'ID'&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s1"&gt;''&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;                                      &lt;span class="s1"&gt;'IP'&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s1"&gt;''&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;                                      &lt;span class="s1"&gt;'hostIP'&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s1"&gt;''&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;                                      &lt;span class="s1"&gt;'hostname'&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s1"&gt;'pages.coding.me'&lt;/span&gt;&lt;span class="p"&gt;},&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;                        &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;'blog'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;'国外'&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="s1"&gt;'ID'&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s1"&gt;''&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;                                      &lt;span class="s1"&gt;'IP'&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s1"&gt;''&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;                                      &lt;span class="s1"&gt;'hostIP'&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s1"&gt;''&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;                                      &lt;span class="s1"&gt;'hostname'&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s1"&gt;'192.30.252.153'&lt;/span&gt;&lt;span class="p"&gt;},&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;                        &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;'pi'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;'默认'&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="s1"&gt;'ID'&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s1"&gt;''&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;                                      &lt;span class="s1"&gt;'IP'&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s1"&gt;''&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;                                      &lt;span class="s1"&gt;'hostIP'&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s1"&gt;''&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;                                      &lt;span class="s1"&gt;'hostname'&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;getIp&lt;/span&gt;&lt;span class="p"&gt;()},&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;                        &lt;span class="p"&gt;}&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;         &lt;span class="p"&gt;},&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;        &lt;span class="p"&gt;]&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="vm"&gt;__name__&lt;/span&gt; &lt;span class="o"&gt;==&lt;/span&gt; &lt;span class="s2"&gt;"__main__"&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;    &lt;span class="n"&gt;main&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="section" id="id3"&gt;
+&lt;h2&gt;自动更新&lt;/h2&gt;
+&lt;p&gt;由于 &lt;tt class="docutils literal"&gt;systemd&lt;/tt&gt; 可以轻松实现自动运行脚本，故只需要一个 &lt;tt class="docutils literal"&gt;timer&lt;/tt&gt; 和一个 &lt;tt class="docutils literal"&gt;service&lt;/tt&gt; 。&lt;/p&gt;
+&lt;ol class="arabic"&gt;
+&lt;li&gt;&lt;p class="first"&gt;创建 &lt;tt class="docutils literal"&gt;service&lt;/tt&gt;
+&lt;tt class="docutils literal"&gt;sudo touch &lt;span class="pre"&gt;/usr/lib/systemd/system/ddns-update.service&lt;/span&gt;&lt;/tt&gt; 先建立个空文件。
+再填入以下内容，意思是用 &lt;tt class="docutils literal"&gt;root&lt;/tt&gt; 运行 &lt;tt class="docutils literal"&gt;ddns_update.py&lt;/tt&gt; 。&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="code-line"&gt;&lt;span&gt;&lt;/span&gt;[Unit]&lt;/span&gt;
+&lt;span class="code-line"&gt;Description=Update ip records&lt;/span&gt;
+&lt;span class="code-line"&gt;After=network.target&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;[Service]&lt;/span&gt;
+&lt;span class="code-line"&gt;Type=simple&lt;/span&gt;
+&lt;span class="code-line"&gt;ExecStart=python /usr/local/sbin/ddns_update.py&lt;/span&gt;
+&lt;span class="code-line"&gt;User=root&lt;/span&gt;
+&lt;span class="code-line"&gt;Group=systemd-journal&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;p class="first"&gt;创建 &lt;tt class="docutils literal"&gt;timer&lt;/tt&gt;
+&lt;tt class="docutils literal"&gt;timer&lt;/tt&gt; 就是个定时器，和 &lt;tt class="docutils literal"&gt;ddns_update.service&lt;/tt&gt; 同名, &lt;tt class="docutils literal"&gt;sudo touch &lt;span class="pre"&gt;/usr/lib/systemd/system/ddns-update.timer&lt;/span&gt;&lt;/tt&gt; 。
+再填入以下内容，启动后10秒开始执行，每30分钟运行一次。&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="code-line"&gt;&lt;span&gt;&lt;/span&gt;[Unit]&lt;/span&gt;
+&lt;span class="code-line"&gt;Description=Update ip records.&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;[Timer]&lt;/span&gt;
+&lt;span class="code-line"&gt;OnBootSec=0.1min&lt;/span&gt;
+&lt;span class="code-line"&gt;OnUnitActiveSec=30min&lt;/span&gt;
+&lt;span class="code-line"&gt;Unit=ddns-update.service&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;[Install]&lt;/span&gt;
+&lt;span class="code-line"&gt;WantedBy=timers.target&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;p class="first"&gt;启用
+很简单，用 &lt;tt class="docutils literal"&gt;sudo systemctl enable &lt;span class="pre"&gt;ddns-update.timer&lt;/span&gt;&lt;/tt&gt; 即可。&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+</content><category term="Tech"></category><category term="dnspod"></category><category term="DDNS"></category></entry><entry><title>Raspberry pi 配置</title><link href="//blog.laolilin.com/posts/2016/10/config_raspberry_pi.html" rel="alternate"></link><published>2016-10-03T09:43:00+08:00</published><updated>2021-03-25T21:41:00+08:00</updated><author><name>lao</name></author><id>tag:blog.laolilin.com,2016-10-03:/posts/2016/10/config_raspberry_pi.html</id><summary type="html">&lt;p class="first last"&gt;Raspberry Pi 配置&lt;/p&gt;
+</summary><content type="html">&lt;div class="section" id="id1"&gt;
+&lt;h2&gt;前言&lt;/h2&gt;
+&lt;p&gt;Raspberry pi 是一个ARM开发板，我用的是 &lt;a class="reference external" href="https://www.raspberrypi.org/products/raspberry-pi-2-model-b/"&gt;Raspberry pi 2 model B&lt;/a&gt; 俗称2B版，4核ARM Cortex-A7 CPU（900MHZ），1GB内存。&lt;/p&gt;
+&lt;p&gt;rpi2B带USB wifi时功耗仅1~5W，很适合用来搭要求不高的家庭长期服务系统，比如本文所述的 &lt;a class="reference internal" href="#dnspod-ddns"&gt;dnspod DDNS自动更新&lt;/a&gt; 、 &lt;a class="reference internal" href="#id10"&gt;内网穿透&lt;/a&gt; 、 &lt;a class="reference internal" href="#hostapdwifi"&gt;hostapd配置wifi&lt;/a&gt; 、 &lt;a class="reference internal" href="#resiliosync-btsync"&gt;ResilioSync同步(原BTSync)&lt;/a&gt; 、&lt;a class="reference internal" href="#aria2"&gt;aria2 下载服务&lt;/a&gt; 等，配置好了就不用再管了，做个小玩具挺好。&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="section" id="id2"&gt;
+&lt;h2&gt;系统安装&lt;/h2&gt;
+&lt;p&gt;系统我选 &lt;a class="reference external" href="https://www.archlinux.org"&gt;Archlinux&lt;/a&gt; ，毕竟pc和自己的服务器上长期使用 Archlinux ，再加上好用的滚动更新，有什么理由不在 rpi2B 上装个 Archlinux ？&lt;/p&gt;
+&lt;p&gt;具体安装方法 &lt;a class="reference external" href="https://archlinuxarm.org/platforms/armv7/broadcom/raspberry-pi-2"&gt;Archlinux ARM 安装指引&lt;/a&gt; 进行安装，很简单，不赘述。默认用户名 &lt;tt class="docutils literal"&gt;alarm&lt;/tt&gt; ，密码同用户名。敢死队长 &lt;tt class="docutils literal"&gt;root&lt;/tt&gt; 密码为 &lt;tt class="docutils literal"&gt;root&lt;/tt&gt; 。&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;系统安装不一定要在linux上，显然可以用VirtualBox里的Linux来安装，&lt;/em&gt; &lt;a class="reference internal" href="#id13"&gt;系统恢复&lt;/a&gt; &lt;em&gt;也可以在里面进行恢复。&lt;/em&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="section" id="id3"&gt;
+&lt;h2&gt;系统配置&lt;/h2&gt;
+&lt;p&gt;安装完，登录前运行 &lt;tt class="docutils literal"&gt;touch boot/ssh&lt;/tt&gt; 并 &lt;tt class="docutils literal"&gt;echo hdmi_force_hotplug=1 &amp;gt;&amp;gt; boot/config.txt&lt;/tt&gt;&lt;/p&gt;
+&lt;p&gt;在 &lt;cite&gt;boot/boot.txt&lt;/cite&gt; 修改 &lt;cite&gt;root&lt;/cite&gt; 为 &lt;cite&gt;ro&lt;/cite&gt; ，即只读模式，安装 &lt;cite&gt;uboot-tools&lt;/cite&gt; 并执行 &lt;tt class="docutils literal"&gt;./mkscr&lt;/tt&gt; 。&lt;/p&gt;
+&lt;p&gt;同样，在 &lt;cite&gt;etc/fstab&lt;/cite&gt; 中也需要将boot分区变为ro &lt;tt class="docutils literal"&gt;&lt;span class="pre"&gt;defaults,ro,errors=remount-ro&lt;/span&gt;&lt;/tt&gt;&lt;/p&gt;
+&lt;p&gt;安装树莓派专用内核 pacman -Syyu linux-raspberrypi4 raspberrypi-firmware&lt;/p&gt;
+&lt;p&gt;修改etc/fstab 为0p1&lt;/p&gt;
+&lt;p&gt;修改/boot/cmdline.txt 删除 kgdboc=ttyAMA0,115200
+修改/boot/config.txt 增加 hdmi_force_hotplug=1 enable_uart=1&lt;/p&gt;
+&lt;div class="section" id="id4"&gt;
+&lt;h3&gt;初次使用配置&lt;/h3&gt;
+&lt;p&gt;初始账户和密码均为alarm&lt;/p&gt;
+&lt;p&gt;ssh登录后先 &lt;tt class="docutils literal"&gt;su&lt;/tt&gt; 到 &lt;cite&gt;root&lt;/cite&gt; ，然后&lt;/p&gt;
+&lt;p&gt;&lt;tt class="docutils literal"&gt;vi /etc/ssh/sshd_config&lt;/tt&gt;&lt;/p&gt;
+&lt;p&gt;加入一行: &lt;tt class="docutils literal"&gt;PermitRootLogin yes&lt;/tt&gt; ；&lt;/p&gt;
+&lt;p&gt;重启 &lt;cite&gt;sshd&lt;/cite&gt; &lt;tt class="docutils literal"&gt;systemctl restart sshd&lt;/tt&gt; ；&lt;/p&gt;
+&lt;p&gt;从 &lt;cite&gt;sshd_config&lt;/cite&gt; 删除 &lt;tt class="docutils literal"&gt;PermitRootLogin yes&lt;/tt&gt; ；&lt;/p&gt;
+&lt;p&gt;修改 &lt;cite&gt;pacman&lt;/cite&gt; 镜像 &lt;tt class="docutils literal"&gt;vi /etc/pacman.d/mirrorlist&lt;/tt&gt; ：&lt;/p&gt;
+&lt;p&gt;&lt;tt class="docutils literal"&gt;Server = &lt;span class="pre"&gt;http://mirrors.ustc.edu.cn/archlinuxarm/$arch/$repo&lt;/span&gt;&lt;/tt&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="section" id="id5"&gt;
+&lt;h3&gt;改用户名&lt;/h3&gt;
+&lt;p&gt;按个人习惯，先改掉默认的用户名。
+如果你直接用alarm登录，是无法修改用户名的，先用 &lt;cite&gt;root&lt;/cite&gt; 登录。&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="code-line"&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="nv"&gt;new_user&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;lao&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;span class="c1"&gt;# change user name&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;usermod -l &lt;span class="nv"&gt;$new_user&lt;/span&gt; -d /home/&lt;span class="nv"&gt;$new_user&lt;/span&gt; -m alarm&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;span class="c1"&gt;# chenge user group&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;groupmod -n &lt;span class="nv"&gt;$new_user&lt;/span&gt; alarm&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;修改用户密码 &lt;tt class="docutils literal"&gt;passwd lao&lt;/tt&gt; 。&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="section" id="sudo"&gt;
+&lt;h3&gt;安装 &lt;cite&gt;sudo&lt;/cite&gt;&lt;/h3&gt;
+&lt;p&gt;先装个 &lt;cite&gt;sudo&lt;/cite&gt; ，不能裸奔。&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="code-line"&gt;&lt;span&gt;&lt;/span&gt;pacman -S sudo&lt;/span&gt;
+&lt;span class="code-line"&gt;visudo&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;span class="c1"&gt;# uncomment the line "%wheel ALL=(ALL) ALL"&lt;/span&gt;&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="code-line"&gt;&lt;span&gt;&lt;/span&gt;vi /etc/locale.gen&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;span class="c1"&gt;# uncomment en_US.UTF-8 UTF-8&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;locale-gen&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="section" id="id6"&gt;
+&lt;h3&gt;时间相关&lt;/h3&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="code-line"&gt;&lt;span&gt;&lt;/span&gt;timedatectl set-ntp &lt;span class="nb"&gt;true&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;rm /etc/localtime&lt;/span&gt;
+&lt;span class="code-line"&gt;ln -s /usr/share/zoneinfo/Asia/Shanghai /etc/localtime&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;然后就可以重启了，最后要安装 &lt;cite&gt;lrzsz&lt;/cite&gt; 和 &lt;cite&gt;tmux&lt;/cite&gt; 。&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="section" id="bash"&gt;
+&lt;h3&gt;配置bash&lt;/h3&gt;
+&lt;p&gt;从TLDP上的 &lt;a class="reference external" href="http://www.tldp.org/LDP/abs/html/sample-bashrc.html"&gt;.bashrc样例&lt;/a&gt; 拿到配置好的 &lt;tt class="docutils literal"&gt;.bashrc&lt;/tt&gt; 即可。&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="code-line"&gt;&lt;span&gt;&lt;/span&gt;wget https://gist.github.com/lll9p/a1df902cc68171bb6b3dca31891629c0/raw/4dfdd03af92335f17eec12e0b4b0cd3ce2584eaf/.bash .bashrc&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;上面的配置很全面了，只需要加上自己的一些，如：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="code-line"&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="c1"&gt;# If not running interactively, don't do anything&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;span class="o"&gt;[[&lt;/span&gt; &lt;span class="nv"&gt;$-&lt;/span&gt; !&lt;span class="o"&gt;=&lt;/span&gt; *i* &lt;span class="o"&gt;]]&lt;/span&gt; &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class="k"&gt;return&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;span class="nb"&gt;set&lt;/span&gt; editing-mode vi&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;span class="nb"&gt;set&lt;/span&gt; -o vi&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;span class="nb"&gt;export&lt;/span&gt; &lt;span class="nv"&gt;PATH&lt;/span&gt;&lt;span class="o"&gt;+=&lt;/span&gt;:/opt/vc/bin&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;span class="nb"&gt;export&lt;/span&gt; &lt;span class="nv"&gt;LANG&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;en_US.UTF-8&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="section" id="id7"&gt;
+&lt;h3&gt;启动时检查硬盘&lt;/h3&gt;
+&lt;p&gt;rpi不自带电池，系统所在的MicroSD卡又容易出现问题，所以每次开机都对硬盘自检是最好了。在 &lt;cite&gt;/boot/cmdline.txt&lt;/cite&gt; 中设置系统启动时硬盘只读，进行磁盘检查之后再 &lt;cite&gt;mount&lt;/cite&gt; 到 &lt;cite&gt;/&lt;/cite&gt; 即可。&lt;/p&gt;
+&lt;ol class="arabic"&gt;
+&lt;li&gt;&lt;p class="first"&gt;在 &lt;cite&gt;/boot/cmdline.txt&lt;/cite&gt; 中的 &lt;cite&gt;root=/dev/mmcblk0p2&lt;/cite&gt; 后的 &lt;cite&gt;rw&lt;/cite&gt; 改为 &lt;cite&gt;ro&lt;/cite&gt; 。即：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="code-line"&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="go"&gt;root=/dev/mmcblk0p2 ro rootwait console=ttyAMA0,115200 console=tty1 selinux=0 plymouth.enable=0 smsc95xx.turbo_mode=N dwc_otg.lpm_enable=0 kgdboc=ttyAMA0,115200 elevator=noop&lt;/span&gt;&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;p class="first"&gt;在 &lt;cite&gt;/etc/fstab&lt;/cite&gt; 中，加一行：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="code-line"&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="go"&gt;/dev/mmcblk0p2  /       ext4    remount,rw,defaults,noatime        0       1&lt;/span&gt;&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+&lt;div class="section" id="id8"&gt;
+&lt;h3&gt;安装其他“必备软件”&lt;/h3&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="code-line"&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="go"&gt;sudo pacman -S --needed bash-completion bzip2 coreutils dhcpcd dkms dnsmasq dosfstools e2fsprogs findutils gawk gcc gcc-libs gzip hostapd less lrzsz p7zip rp-pppoe sudo sysfsutils tmux unzip vim watchdog wireless_tools wiringpi wpa_supplicant alsa-firmware alsa-utils aria2 cblas dkms dnsmasq hdf5 hdparm lapack moc rng-tools samba wget which wqy-zenhei mldonkey&lt;/span&gt;&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="section" id="id9"&gt;
+&lt;h2&gt;网络配置&lt;/h2&gt;
+&lt;p&gt;&lt;a class="reference external" href="https://archlinuxarm.org/"&gt;ArchlinuxARM&lt;/a&gt; 默认设好了 &lt;cite&gt;DHCP&lt;/cite&gt; ，不需要额外配置，不过 &lt;cite&gt;wifi&lt;/cite&gt; 之类的还是要自己设置的，由于我用的是 &lt;cite&gt;RTL8188EUS&lt;/cite&gt; 芯片的USB网卡，自带驱动无法启动 &lt;cite&gt;hostapd&lt;/cite&gt; ，所以还是需要进行一番安装与设置。&lt;/p&gt;
+&lt;div class="section" id="hostapdwifi"&gt;
+&lt;h3&gt;hostapd配置wifi&lt;/h3&gt;
+&lt;p&gt;之前为了启用RTL8188EUS网卡（用 &lt;tt class="docutils literal"&gt;lsusb&lt;/tt&gt; 命令可以查看），需要下载 &lt;a class="reference external" href="https://github.com/jenssegers/RTL8188-hostapd"&gt;jenssegers RTL8188-hostapd 驱动&lt;/a&gt; 然后编译。&lt;/p&gt;
+&lt;p&gt;别一个好办法是下载 &lt;a class="reference external" href="https://github.com/lwfinger/rtl8188eu/tree/v4.1.8_9499"&gt;lwfinger RTL8188 驱动&lt;/a&gt; ，然后用dkms管理编译和安装，这样可以直接使用Arch库里的hostapd，不过每次内核更新的时候就要再运行一次 &lt;tt class="docutils literal"&gt;sudo dkms install 8188eu/1.0&lt;/tt&gt; 。&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="code-line"&gt;&lt;span&gt;&lt;/span&gt;wget https://github.com/lwfinger/rtl8188eu/archive/v4.1.8_9499.zip&lt;/span&gt;
+&lt;span class="code-line"&gt;unzip v4.1.8_9499.zip&lt;/span&gt;
+&lt;span class="code-line"&gt;sudo dkms add ./rtl8188eu&lt;/span&gt;
+&lt;span class="code-line"&gt;sudo dkms build 8188eu/1.0&lt;/span&gt;
+&lt;span class="code-line"&gt;sudo dkms install 8188eu/1.0&lt;/span&gt;
+&lt;span class="code-line"&gt;sudo touch &lt;span class="se"&gt;\e&lt;/span&gt;tc&lt;span class="se"&gt;\m&lt;/span&gt;odprobe.d&lt;span class="se"&gt;\8&lt;/span&gt;188eu.conf&lt;/span&gt;
+&lt;span class="code-line"&gt;sudo &lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="s2"&gt;"# r8188eu is staging, 8188eu is off-kernel \n blacklist r8188eu \n options 8188eu rtw_power_mgnt=0 rtw_enusbss=0"&lt;/span&gt; &amp;gt; &lt;span class="se"&gt;\e&lt;/span&gt;tc&lt;span class="se"&gt;\m&lt;/span&gt;odprobe.d&lt;span class="se"&gt;\8&lt;/span&gt;188eu.conf&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;重启后完成驱动安装，接下来要配置 &lt;tt class="docutils literal"&gt;hostapd&lt;/tt&gt; ，可以直接下载 &lt;a class="reference external" href="https://gist.github.com/lll9p/907acbb39c1f4a08f2e0b5aa7a80bede"&gt;我的 hostapd 配置&lt;/a&gt; ，存为 &lt;tt class="docutils literal"&gt;/etc/hostapd/hostapd.conf&lt;/tt&gt; ，修改 &lt;tt class="docutils literal"&gt;wpa_passphrase=PasswordOfLao&lt;/tt&gt; 中的密码即完成 &lt;tt class="docutils literal"&gt;hostapd&lt;/tt&gt; 的安装与配置。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;以下内容编译自&lt;/strong&gt; &lt;a class="reference external" href="https://linsir.org/post/Raspberry_Pi_Wifi_Router"&gt;Linsir的博客&lt;/a&gt; 。&lt;/p&gt;
+&lt;ol class="arabic"&gt;
+&lt;li&gt;&lt;dl class="first docutils"&gt;
+&lt;dt&gt;dnsmasq&lt;/dt&gt;
+&lt;dd&gt;&lt;p class="first"&gt;软AP( &lt;tt class="docutils literal"&gt;hostapd&lt;/tt&gt; )设置好后，我们还需要个DHCP服务器为设备分配IP地址。这里我们选用轻量级的dnsmasq,它还可以提示DNS缓存，非常给力。
+&lt;tt class="docutils literal"&gt;pacman &lt;span class="pre"&gt;-S&lt;/span&gt; dnsmasq&lt;/tt&gt; 后编辑 &lt;tt class="docutils literal"&gt;/etc/dnsmasq.conf&lt;/tt&gt; ，以下是简单的配置，具体的配置及解释请参考 &lt;a class="reference external" href="https://gist.github.com/lll9p/2cdf7e27a663fd5c615d6fc49ca511a8"&gt;我的 dnsmasq 配置&lt;/a&gt; 。&lt;/p&gt;
+&lt;div class="last"&gt;&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="code-line"&gt;&lt;span&gt;&lt;/span&gt;# 无线网卡的设备名，同 hostapd.conf 保持一致&lt;/span&gt;
+&lt;span class="code-line"&gt;interface=wlan0&lt;/span&gt;
+&lt;span class="code-line"&gt;# 监听地址，同你想设置的网关地址&lt;/span&gt;
+&lt;span class="code-line"&gt;listen-address=192.168.0.1&lt;/span&gt;
+&lt;span class="code-line"&gt;bind-interfaces&lt;/span&gt;
+&lt;span class="code-line"&gt;# DHCP 分配  IP 的起止段和租约时间&lt;/span&gt;
+&lt;span class="code-line"&gt;dhcp-range=192.168.0.100,192.168.0.200,12h&lt;/span&gt;
+&lt;span class="code-line"&gt;# 推送给客户端的 DNS 服务器&lt;/span&gt;
+&lt;span class="code-line"&gt;dhcp-option=6,114.114.114.114,223.5.5.5&lt;/span&gt;
+&lt;span class="code-line"&gt;iptables&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;/div&gt;&lt;/dd&gt;
+&lt;/dl&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;p class="first"&gt;设置流量转发&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="code-line"&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="gp"&gt;# &lt;/span&gt;设置&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;span class="go"&gt;sudo iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;span class="gp"&gt;# &lt;/span&gt;保存&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;span class="go"&gt;sudo iptables-save &amp;gt; /etc/iptables/iptables.rules&lt;/span&gt;&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;dl class="first docutils"&gt;
+&lt;dt&gt;允许转发&lt;/dt&gt;
+&lt;dd&gt;&lt;p class="first"&gt;需要启用内核的 IPv4 包转发功能，才能正常访问互联网。&lt;/p&gt;
+&lt;div class="last"&gt;&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="code-line"&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="go"&gt;sudo echo "net.ipv4.ip_forward = 1" &amp;gt;&amp;gt; /etc/sysctl.d/99-sysctl.conf&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;span class="go"&gt;sudo sysctl -p /etc/sysctl.d/99-sysctl.conf&lt;/span&gt;&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;/div&gt;&lt;/dd&gt;
+&lt;/dl&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;dl class="first docutils"&gt;
+&lt;dt&gt;测试&lt;/dt&gt;
+&lt;dd&gt;&lt;p class="first"&gt;必须先为无线网卡设置好网关和子网掩码，这样 &lt;tt class="docutils literal"&gt;hostapd&lt;/tt&gt; 启用后，无线网络才能正确获取到IP地址。&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="code-line"&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="go"&gt;sudo ifconfig wlan0 192.168.0.1 netmask 255.255.255.0&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;span class="go"&gt;sudo systemctl start iptables&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;span class="go"&gt;sudo systemctl start hostapd&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;span class="go"&gt;sudo systemctl start dnsmasq&lt;/span&gt;&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;p class="last"&gt;现在就可以用手机或者笔记本连接，就能获得地址并能上网了。&lt;/p&gt;
+&lt;/dd&gt;
+&lt;/dl&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;dl class="first docutils"&gt;
+&lt;dt&gt;开机启动&lt;/dt&gt;
+&lt;dd&gt;&lt;p class="first"&gt;每次运行 &lt;tt class="docutils literal"&gt;hostapd&lt;/tt&gt; 之前，都必须运行命令来初始化无线网卡 &lt;tt class="docutils literal"&gt;wlan0&lt;/tt&gt;，很麻烦。如果我们要开机就激活无线网络，就要先用自带的 &lt;tt class="docutils literal"&gt;netctl&lt;/tt&gt; 来管理，配置 &lt;tt class="docutils literal"&gt;&lt;span class="pre"&gt;/etc/netctl/wireless-wpa-static&lt;/span&gt;&lt;/tt&gt; ：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="code-line"&gt;&lt;span&gt;&lt;/span&gt;Interface=wlan0&lt;/span&gt;
+&lt;span class="code-line"&gt;Connection=ethernet&lt;/span&gt;
+&lt;span class="code-line"&gt;IP=static&lt;/span&gt;
+&lt;span class="code-line"&gt;Address='192.168.0.1/24'&lt;/span&gt;
+&lt;span class="code-line"&gt;#Gateway='192.168.0.1'&lt;/span&gt;
+&lt;span class="code-line"&gt;SkipNoCarrier=yes&lt;/span&gt;
+&lt;span class="code-line"&gt;ExecUpPost='iptables-restore &amp;lt; /etc/iptables/iptables.rules &amp;amp;&amp;amp;echo 1 &amp;gt;/proc/sys/net/ipv4/ip_forward'&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;设置开机启动：&lt;/p&gt;
+&lt;div class="last"&gt;&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="code-line"&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="go"&gt;sudo netctl enable wireless-wpa-static&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;span class="go"&gt;sudo systemctl enable iptables hostapd dnsmasq&lt;/span&gt;&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;/div&gt;&lt;/dd&gt;
+&lt;/dl&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;dl class="first docutils"&gt;
+&lt;dt&gt;PPPOE&lt;/dt&gt;
+&lt;dd&gt;&lt;p class="first"&gt;我的 &lt;tt class="docutils literal"&gt;rpi&lt;/tt&gt; 是连路由的，倒不用拨号，若是不用路由，就需要 &lt;tt class="docutils literal"&gt;pppoe&lt;/tt&gt; 拨号了。&lt;/p&gt;
+&lt;div class="last"&gt;&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="code-line"&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="go"&gt;sudo pacman -S rp-pppoe&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;span class="go"&gt;sudo pppoe-setup # 设置 拨号帐户、密码等&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;span class="go"&gt;sudo systemctl enable adsl&lt;/span&gt;&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;/div&gt;&lt;/dd&gt;
+&lt;/dl&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;dl class="first docutils"&gt;
+&lt;dt&gt;iptables&lt;/dt&gt;
+&lt;dd&gt;&lt;p class="first"&gt;我们需要再次配置 iptables，让网络流量得以穿透 PPPOE 隧道。&lt;/p&gt;
+&lt;div class="last"&gt;&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="code-line"&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="go"&gt;sudo iptables -t nat -A POSTROUTING -o ppp0 -j MASQUERADE&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;span class="go"&gt;sudo iptables-save &amp;gt; /etc/iptables/iptables.rules&lt;/span&gt;&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;/div&gt;&lt;/dd&gt;
+&lt;/dl&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;最后重启，一个无线路由器就成功了。Enjoy it.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="section" id="dnspod-ddns"&gt;
+&lt;h3&gt;dnspod DDNS自动更新&lt;/h3&gt;
+&lt;p&gt;请参考 &lt;a class="reference external" href="//blog.laolilin.com/posts/2016/10/dnspod_ddns_auto_update.html"&gt;ddns自动更新&lt;/a&gt; 。&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="section" id="id10"&gt;
+&lt;h3&gt;内网穿透&lt;/h3&gt;
+&lt;p&gt;有时候公司内网需要在外访问，这时最好用的就是内网穿透工具了，这里推荐 &lt;a class="reference external" href="https://github.com/fatedier/frp"&gt;frp&lt;/a&gt; ，&lt;a class="reference external" href="http://www.ngrok.com"&gt;ngrok&lt;/a&gt; 也可用 。&lt;/p&gt;
+&lt;div class="section" id="frp"&gt;
+&lt;h4&gt;frp&lt;/h4&gt;
+&lt;p&gt;&lt;a class="reference external" href="https://github.com/fatedier/frp"&gt;frp&lt;/a&gt; 是一个开源的网罗穿透工具，下载 &lt;cite&gt;linux_arm&lt;/cite&gt; 的release即可。&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="section" id="ngrok"&gt;
+&lt;h4&gt;ngrok&lt;/h4&gt;
+&lt;p&gt;&lt;a class="reference external" href="http://www.ngrok.com"&gt;ngrok&lt;/a&gt; 是一个网络穿透的服务， &lt;tt class="docutils literal"&gt;ngrok 2&lt;/tt&gt; 是收费服务，而 &lt;tt class="docutils literal"&gt;ngrok 1&lt;/tt&gt; 则是开源的，我们可以使用 &lt;tt class="docutils literal"&gt;ngrok 1&lt;/tt&gt; 。&lt;/p&gt;
+&lt;p&gt;&lt;tt class="docutils literal"&gt;ngrok&lt;/tt&gt; 需要编译，过程如下：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="code-line"&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="go"&gt;git clone https://github.com/inconshreveable/ngrok.git ngrok&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;span class="go"&gt;cd ngrok&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;span class="go"&gt;vim src/ngrok/log/logger.go&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;span class="gp"&gt;# &lt;/span&gt;第五行import中的 log 包，改为：log &lt;span class="s2"&gt;"github.com/keepeye/log4go"&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;span class="gp"&gt;# &lt;/span&gt;为根域名生成证书&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;span class="go"&gt;export NGROK_DOMAIN="laolilin.com"&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;span class="go"&gt;openssl genrsa -out rootCA.key 2048&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;span class="go"&gt;openssl req -x509 -new -nodes -key rootCA.key -subj "/CN=$NGROK_DOMAIN" -days 5000 -out rootCA.pem&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;span class="go"&gt;openssl genrsa -out device.key 2048&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;span class="go"&gt;openssl req -new -key device.key -subj "/CN=$NGROK_DOMAIN" -out device.csr&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;span class="go"&gt;openssl x509 -req -in device.csr -CA rootCA.pem -CAkey rootCA.key -CAcreateserial -out device.crt -days 5000&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;span class="go"&gt;yes | cp rootCA.pem assets/client/tls/ngrokroot.crt&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;span class="go"&gt;yes | cp device.crt assets/server/tls/snakeoil.crt&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;span class="go"&gt;yes | cp device.key assets/server/tls/snakeoil.key&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;span class="gp"&gt;# &lt;/span&gt;指定编译的环境变量: linux&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;span class="go"&gt;GOOS=linux GOARCH=amd64&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;span class="go"&gt;make release-server release-client&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;span class="gp"&gt;# &lt;/span&gt;Raspberry pi&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;span class="go"&gt;GOOS=linux GOARCH=arm&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;span class="go"&gt;make release-server release-client&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;span class="gp"&gt;# &lt;/span&gt;windows&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;span class="go"&gt;GOOS=windows GOARCH=386&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;span class="go"&gt;make release-server release-client&lt;/span&gt;&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;dl class="docutils"&gt;
+&lt;dt&gt;编译完成后在 &lt;tt class="docutils literal"&gt;./bin/&lt;/tt&gt; 下找到 &lt;tt class="docutils literal"&gt;ngrokd&lt;/tt&gt; 及 &lt;tt class="docutils literal"&gt;ngrok&lt;/tt&gt; 。&lt;/dt&gt;
+&lt;dd&gt;&lt;tt class="docutils literal"&gt;sudo cp &lt;span class="pre"&gt;./bin/arm/{ngrokd,snakeoil.crt,snakeoil.key}&lt;/span&gt; /usr/local/sbin/&lt;/tt&gt; ，然后开一个专用的ngrok用户，及专用 &lt;tt class="docutils literal"&gt;pid&lt;/tt&gt; 文件。&lt;/dd&gt;
+&lt;/dl&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="code-line"&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="c1"&gt;# add ngrok user without home dir and cannot login&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;sudo useradd --shell /bin/nologin --no-create-home --user-group ngrok&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;span class="c1"&gt;# create an empty ngrok directory on /var/run using systemd or ngrok cannot create pid file&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;sudo &lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="s1"&gt;'d /var/run/rslsync 0755 ngrok ngrok'&lt;/span&gt; &amp;gt; /usr/lib/tmpfiles.d/ngrok.conf&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;另存下面的代码为 &lt;tt class="docutils literal"&gt;&lt;span class="pre"&gt;/usr/lib/systemd/system/ngrok-server.service&lt;/span&gt;&lt;/tt&gt; ，并启用之： &lt;tt class="docutils literal"&gt;sudo systemctl enable &lt;span class="pre"&gt;ngrok-server&lt;/span&gt;&lt;/tt&gt;  。&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="code-line"&gt;&lt;span&gt;&lt;/span&gt;[Service]&lt;/span&gt;
+&lt;span class="code-line"&gt;Type=simple&lt;/span&gt;
+&lt;span class="code-line"&gt;User=ngrok&lt;/span&gt;
+&lt;span class="code-line"&gt;Group=ngrok&lt;/span&gt;
+&lt;span class="code-line"&gt;ExecStart=/usr/local/sbin/ngrokd -log-level="ERROR" -tlsKey=/usr/local/sbin/snakeoil.key -tlsCrt=/usr/local/sbin/snakeoil.crt -domain=laolilin.com -httpAddr=:8888 -httpsAddr=:8081&lt;/span&gt;
+&lt;span class="code-line"&gt;PIDFile=/var/run/ngrok/ngrokd.pid&lt;/span&gt;
+&lt;span class="code-line"&gt;Restart=always&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;[Install]&lt;/span&gt;
+&lt;span class="code-line"&gt;WantedBy=multi-user.target&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;把以下内容存为 &lt;tt class="docutils literal"&gt;ngrok.conf&lt;/tt&gt; 。&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="code-line"&gt;&lt;span&gt;&lt;/span&gt;server_addr: "rpi.laolilin.com:4443"&lt;/span&gt;
+&lt;span class="code-line"&gt;trust_host_root_certs: false&lt;/span&gt;
+&lt;span class="code-line"&gt;tunnels:&lt;/span&gt;
+&lt;span class="code-line"&gt;  jupyter:&lt;/span&gt;
+&lt;span class="code-line"&gt;    remote_port: 8889&lt;/span&gt;
+&lt;span class="code-line"&gt;    proto:&lt;/span&gt;
+&lt;span class="code-line"&gt;      tcp: "8889"&lt;/span&gt;
+&lt;span class="code-line"&gt;  rdp:&lt;/span&gt;
+&lt;span class="code-line"&gt;    remote_port: 9000&lt;/span&gt;
+&lt;span class="code-line"&gt;    proto:&lt;/span&gt;
+&lt;span class="code-line"&gt;      tcp: "3389"&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;最后，在内网电脑上执行命令： &lt;tt class="docutils literal"&gt;ngrok.exe &lt;span class="pre"&gt;-config=ngrok.conf&lt;/span&gt; start jupyter rdp&lt;/tt&gt; （或放入 &lt;tt class="docutils literal"&gt;计划任务&lt;/tt&gt; 中），即可在外网访问内网的 &lt;tt class="docutils literal"&gt;远程桌面&lt;/tt&gt; 及 &lt;tt class="docutils literal"&gt;jupyter notebook&lt;/tt&gt; 。&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="section" id="id11"&gt;
+&lt;h2&gt;系统备份与恢复&lt;/h2&gt;
+&lt;p&gt;辛辛苦苦安装并配置好的系统因各种原因（比如 &lt;a class="reference external" href="https://www.v2ex.com/t/309375"&gt;我删过/&lt;/a&gt; ）丢失或损坏，如果此时有一份备份，那是最好不过的了。&lt;/p&gt;
+&lt;div class="section" id="id12"&gt;
+&lt;h3&gt;系统与配置备份&lt;/h3&gt;
+&lt;p&gt;在这里我用 &lt;tt class="docutils literal"&gt;tar&lt;/tt&gt; 命令来按日备份系统，并排除掉一些动态的系统目录。&lt;/p&gt;
+&lt;p&gt;当然了有时候并不用备份整个系统，只要备份修改过的配置文件即可，毕竟全系统备份很耗时。&lt;/p&gt;
+&lt;table border="1" class="docutils table table-striped"&gt;
+&lt;colgroup&gt;
+&lt;col width="36%"/&gt;
+&lt;col width="29%"/&gt;
+&lt;col width="36%"/&gt;
+&lt;/colgroup&gt;
+&lt;tbody valign="top"&gt;
+&lt;tr&gt;&lt;td&gt;备份项目&lt;/td&gt;
+&lt;td&gt;全系统&lt;/td&gt;
+&lt;td&gt;仅配置&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;耗时&lt;/td&gt;
+&lt;td&gt;2.5min&lt;/td&gt;
+&lt;td&gt;20second&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;在 &lt;tt class="docutils literal"&gt;.bashrc&lt;/tt&gt; 下加两句 &lt;tt class="docutils literal"&gt;alias&lt;/tt&gt; 即可。&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="code-line"&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="nb"&gt;alias&lt;/span&gt; &lt;span class="nv"&gt;backup_system&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s2"&gt;"sudo tar --exclude=/{dev,lost+found,mnt,proc,run,sys,tmp,var/lib/pacman} --exclude=/home/python/{venv,PyNote,.cache,.viminfo,.theano,.ipython,.local} --exclude=/home/user/{.cache,.vimtmp,moc,.config/cmus} --exclude=/home/git/repos --xattrs -cpzf /mnt/MHDD/system_backup/backup-`date +%Y-%m-%d`.tgz /"&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;span class="nb"&gt;alias&lt;/span&gt; &lt;span class="nv"&gt;backup_system_config&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s2"&gt;"sudo tar --xattrs -cpzf /mnt/MHDD/system_backup/backup-config-`date +%Y-%m-%d`.tgz \&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;span class="s2"&gt;    /boot/{cmdline.txt,config.txt} \&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;span class="s2"&gt;    /etc/{conf.d/,hostapd/,iptables/,modprobe.d/,modules-load.d/,netctl/{pppoe,wireless-wpa-static},pacman.d/mirrorlist,ppp/{ip-up.d/01-dynamicIP.sh,chap-secrets,pap-secrets,pppoe.conf},rslsync/,ssh/,systemd/user/aria2.service,sysctl.d/,samba/,wpa_supplicant/,dhcpcd.conf,dhcpcd.duid,dnsmasq.conf,fstab,group,group-,gshadow,gshadow-,hostname,locale.gen,pacman.conf,passwd,passwd-,resolv.conf,shadow,shadow-,sudoers,watchdog.conf} \&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;span class="s2"&gt;    /home/{user/{.config/aria2,.ssh,.vim,.bashrc,.toprc,.vimrc},git/{.ssh,.bashrc},python/{.config/matplotlib/,.jupyter/,.bashrc}} \&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;span class="s2"&gt;    /root/{.gnupg/,.bashrc} \&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;span class="s2"&gt;    /usr/{lib/{systemd/system/{hdparm.service,rslsync.service,ddns-update.service,ddns-update.timer,dnsmasq.service,hostapd.service,jupyter-notebook.service,ngrok-server.service,watchdog.service},tmpfiles.d/{rslsync.conf,jupyter.conf,ngrok.conf}},local/sbin/{ddns_dnspod.py,forward-ssh.sh,ngrokd,snakeoil.crt,snakeoil.key,start-jupyter-notebook}}"&lt;/span&gt;&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="section" id="id13"&gt;
+&lt;h3&gt;系统恢复&lt;/h3&gt;
+&lt;p&gt;解压很简单，只要一行即可，需要注意的是，若要还原整个系统，需要把 &lt;tt class="docutils literal"&gt;/boot&lt;/tt&gt; mount进“根目录里”。&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="code-line"&gt;&lt;span&gt;&lt;/span&gt;mkdir boot root&lt;/span&gt;
+&lt;span class="code-line"&gt;sudo mount /dev/sdx1 root&lt;/span&gt;
+&lt;span class="code-line"&gt;sudo mount /dev/sdx2 root/boot&lt;/span&gt;
+&lt;span class="code-line"&gt;tar xvpfz backup.tgz -C root&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="section" id="resiliosync-btsync"&gt;
+&lt;h2&gt;ResilioSync同步(原BTSync)&lt;/h2&gt;
+&lt;p&gt;&lt;a class="reference external" href="https://www.resilio.com/"&gt;ResilioSync&lt;/a&gt; （以下简称rslsync），也就是改名前的BTSync，基于BitTorrent协议的文件分享系统。可以用pi+rslsync来做同步服务器，我把PC上的Dropbox文件夹放rslsync中同步，实现双重备份，经一年多的使用，挺稳定的。&lt;/p&gt;
+&lt;div class="section" id="resiliosync"&gt;
+&lt;h3&gt;下载resiliosync并解压&lt;/h3&gt;
+&lt;p&gt;在Pi上插一个1.5T的移动硬盘，以下步骤可使用它来做Resiliosync的硬盘。&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="code-line"&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="c1"&gt;# download &amp;amp; extract Resiliosync&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;wget https://download-cdn.resilio.com/stable/linux-armhf/resilio-sync_armhf.tar.gz&lt;/span&gt;
+&lt;span class="code-line"&gt;tar xvzf resilio-sync_armhf.tar.gz&lt;/span&gt;
+&lt;span class="code-line"&gt;sudo mv rslsync /usr/local/sbin&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;span class="c1"&gt;# mount the mobile hard disk drive&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;span class="c1"&gt;# replace sdx with your real device name&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;sudo mount /dev/sdx /mnt/MHDD&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="section" id="rslsync"&gt;
+&lt;h3&gt;创建rslsync用户及相关配置&lt;/h3&gt;
+&lt;p&gt;开一个专用的rslsync用户对于系统控制很有好处，可以将rslsync与其他用户隔离开来，下面的代码将创建一个 &lt;strong&gt;无家目录&lt;/strong&gt; 且 &lt;strong&gt;不能登录&lt;/strong&gt; 的 &lt;tt class="docutils literal"&gt;rslsync&lt;/tt&gt; 用户。&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="code-line"&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="c1"&gt;# add rslsync user without home dir and cannot login&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;sudo useradd --shell /bin/nologin --no-create-home --user-group rslsync&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;span class="c1"&gt;# create an empty rslsync directory on /var/run using systemd or rslsync cannot create pid file&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="s1"&gt;'d /var/run/rslsync 0755 rslsync rslsync'&lt;/span&gt; &lt;span class="p"&gt;|&lt;/span&gt; sudo tee /usr/lib/tmpfiles.d/rslsync.conf&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;span class="c1"&gt;# make config file path and dump sample config to it&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;sudo mkdir /etc/rslsync/&lt;/span&gt;
+&lt;span class="code-line"&gt;rslsync --dump-sample-config &lt;span class="p"&gt;|&lt;/span&gt; sudo tee /etc/rslsync/config.json&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;编辑 &lt;tt class="docutils literal"&gt;config.json&lt;/tt&gt; ,把 &lt;tt class="docutils literal"&gt;"storage_path"&lt;/tt&gt; 设成 &lt;tt class="docutils literal"&gt;&lt;span class="pre"&gt;"/mnt/MHDD/.sync"&lt;/span&gt;&lt;/tt&gt; ，&lt;tt class="docutils literal"&gt;"pid_file"&lt;/tt&gt; 设为 &lt;tt class="docutils literal"&gt;"/var/run/rslsync/rslsync.pid"&lt;/tt&gt; 。
+开机启动rslsync，编辑 &lt;tt class="docutils literal"&gt;/usr/lib/systemd/system/rslsync.service&lt;/tt&gt; ，为方便其他用户能读写同步的文件，需要对rslsync的umask进行设置 &lt;tt class="docutils literal"&gt;0002&lt;/tt&gt; 。&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="code-line"&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="o"&gt;[&lt;/span&gt;Unit&lt;span class="o"&gt;]&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;span class="nv"&gt;Description&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;Resilio Sync&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;span class="nv"&gt;After&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;mnt-MHDD.mount&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;span class="nv"&gt;After&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;systemd-fsck@.service&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;span class="o"&gt;[&lt;/span&gt;Service&lt;span class="o"&gt;]&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;span class="nv"&gt;Type&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;forking&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;span class="nv"&gt;User&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;rslsync&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;span class="nv"&gt;Group&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;rslsync&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;span class="nv"&gt;UMask&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;0002&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;span class="nv"&gt;PIDFile&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;/var/run/rslsync/rslsync.pid&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;span class="nv"&gt;ExecStart&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;/usr/local/sbin/rslsync --config /etc/rslsync/config.json&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;span class="nv"&gt;Restart&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;on-abort&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;span class="o"&gt;[&lt;/span&gt;Install&lt;span class="o"&gt;]&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;span class="nv"&gt;WantedBy&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;multi-user.target&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;然后 &lt;tt class="docutils literal"&gt;sudo systemctl enable rslsync&lt;/tt&gt; 即可。&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="section" id="aria2"&gt;
+&lt;h2&gt;aria2 下载服务&lt;/h2&gt;
+&lt;ol class="arabic"&gt;
+&lt;li&gt;&lt;p class="first"&gt;安装 &lt;tt class="docutils literal"&gt;aria2&lt;/tt&gt; ：
+直接从 &lt;tt class="docutils literal"&gt;pacman&lt;/tt&gt; 安装即可，顺手创建配置文件。&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="code-line"&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="go"&gt;sudo pacman -S aria2&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;span class="go"&gt;mkdir -p .config/aria2 &amp;amp;&amp;amp; cd $_&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;span class="go"&gt;touch session.lock aria2.conf&lt;/span&gt;&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;编辑 &lt;tt class="docutils literal"&gt;aria2.conf&lt;/tt&gt; ，输入以下配置，注意把 &lt;cite&gt;MYSECRET&lt;/cite&gt; 改成自己的token，以后在 &lt;a class="reference external" href="https://github.com/acgotaku/BaiduExporter"&gt;百度网盘导出&lt;/a&gt; 及 &lt;a class="reference external" href="https://github.com/binux/ThunderLixianExporter"&gt;迅雷离线导出&lt;/a&gt; 里，设置jsonrpc为 &lt;cite&gt;http://token:MYSECRET@aria2server.com:6800/jsonrpc`&lt;/cite&gt; 即可顺利使用。&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="code-line"&gt;&lt;span&gt;&lt;/span&gt;# 基本配置&lt;/span&gt;
+&lt;span class="code-line"&gt;# 下载目录&lt;/span&gt;
+&lt;span class="code-line"&gt;dir=/mnt/DISKOFLAO/Downloads&lt;/span&gt;
+&lt;span class="code-line"&gt;# 下载从这个文件中找到的urls, 需自己建立这个文件&lt;/span&gt;
+&lt;span class="code-line"&gt;# touch /home/pi/.aria2/aria2.session&lt;/span&gt;
+&lt;span class="code-line"&gt;input-file=/home/lao/.config/aria2/session.lock&lt;/span&gt;
+&lt;span class="code-line"&gt;# 最大同时下载任务数，默认 5&lt;/span&gt;
+&lt;span class="code-line"&gt;#max-concurrent-downloads=5&lt;/span&gt;
+&lt;span class="code-line"&gt;# 断点续传，只适用于 HTTP(S)/FTP&lt;/span&gt;
+&lt;span class="code-line"&gt;continue=true&lt;/span&gt;
+&lt;span class="code-line"&gt;log-level=error&lt;/span&gt;
+&lt;span class="code-line"&gt;# HTTP/FTP 配置&lt;/span&gt;
+&lt;span class="code-line"&gt;# 关闭连接如果下载速度等于或低于这个值，默认 0&lt;/span&gt;
+&lt;span class="code-line"&gt;#lowest-speed-limit=0&lt;/span&gt;
+&lt;span class="code-line"&gt;# 对于每个下载在同一个服务器上的连接数，默认 1&lt;/span&gt;
+&lt;span class="code-line"&gt;max-connection-per-server=5&lt;/span&gt;
+&lt;span class="code-line"&gt;# 每个文件最小分片大小，例如文件 20M，设置 size 为 10M, 则用2个连接下载，默认 20M&lt;/span&gt;
+&lt;span class="code-line"&gt;#min-split-size=10M&lt;/span&gt;
+&lt;span class="code-line"&gt;# 下载一个文件的连接数，默认 5&lt;/span&gt;
+&lt;span class="code-line"&gt;#split=5&lt;/span&gt;
+&lt;span class="code-line"&gt;# BT 特殊配置&lt;/span&gt;
+&lt;span class="code-line"&gt;# 启用本地节点查找，默认 false&lt;/span&gt;
+&lt;span class="code-line"&gt;bt-enable-lpd=true&lt;/span&gt;
+&lt;span class="code-line"&gt;# 指定最大文件数对于每个 bt 下载，默认 100&lt;/span&gt;
+&lt;span class="code-line"&gt;#bt-max-open-files=100&lt;/span&gt;
+&lt;span class="code-line"&gt;# 单种子最大连接数，默认 55&lt;/span&gt;
+&lt;span class="code-line"&gt;#bt-max-peers=55&lt;/span&gt;
+&lt;span class="code-line"&gt;# 设置最低的加密级别，可选全连接加密 arc4，默认是头加密 plain&lt;/span&gt;
+&lt;span class="code-line"&gt;#bt-min-crypto-level=plain&lt;/span&gt;
+&lt;span class="code-line"&gt;# 总是使用 obfuscation handshake，防迅雷必备，默认 false&lt;/span&gt;
+&lt;span class="code-line"&gt;bt-require-crypto=true&lt;/span&gt;
+&lt;span class="code-line"&gt;# 如果下载的是种子文件则自动解析并下载，默认 true&lt;/span&gt;
+&lt;span class="code-line"&gt;#follow-torrent=true&lt;/span&gt;
+&lt;span class="code-line"&gt;# 为 BT 下载设置 TCP 端口号，确保开放这些端口，默认 6881-6999&lt;/span&gt;
+&lt;span class="code-line"&gt;listen-port=65298&lt;/span&gt;
+&lt;span class="code-line"&gt;#Set UDP listening port used by DHT(IPv4, IPv6) and UDP tracker&lt;/span&gt;
+&lt;span class="code-line"&gt;dht-listen-port=65298&lt;/span&gt;
+&lt;span class="code-line"&gt;# 整体上传速度限制，0 表示不限制，默认 0&lt;/span&gt;
+&lt;span class="code-line"&gt;#max-overall-upload-limit=0&lt;/span&gt;
+&lt;span class="code-line"&gt;# 每个下载上传速度限制，默认 0&lt;/span&gt;
+&lt;span class="code-line"&gt;#max-upload-limit=0&lt;/span&gt;
+&lt;span class="code-line"&gt;# 种子分享率大于1, 则停止做种，默认 1.0&lt;/span&gt;
+&lt;span class="code-line"&gt;#seed-ratio=1&lt;/span&gt;
+&lt;span class="code-line"&gt;# 做种时间大于2小时，则停止做种&lt;/span&gt;
+&lt;span class="code-line"&gt;seed-time=120&lt;/span&gt;
+&lt;span class="code-line"&gt;# RPC 配置&lt;/span&gt;
+&lt;span class="code-line"&gt;# 开启 JSON-RPC/XML-RPC 服务，默认 false&lt;/span&gt;
+&lt;span class="code-line"&gt;enable-rpc=true&lt;/span&gt;
+&lt;span class="code-line"&gt;# 允许所有来源，web 界面跨域权限需要，默认 false&lt;/span&gt;
+&lt;span class="code-line"&gt;rpc-allow-origin-all=true&lt;/span&gt;
+&lt;span class="code-line"&gt;# 允许外部访问，默认 false&lt;/span&gt;
+&lt;span class="code-line"&gt;rpc-listen-all=true&lt;/span&gt;
+&lt;span class="code-line"&gt;# rpc 端口，默认 6800&lt;/span&gt;
+&lt;span class="code-line"&gt;rpc-listen-port=6800&lt;/span&gt;
+&lt;span class="code-line"&gt;# 设置最大的 JSON-RPC/XML-RPC 请求大小，默认 2M&lt;/span&gt;
+&lt;span class="code-line"&gt;#rpc-max-request-size=2M&lt;/span&gt;
+&lt;span class="code-line"&gt;# rpc 密码，可不设置&lt;/span&gt;
+&lt;span class="code-line"&gt;#rpc-passwd=raspberry&lt;/span&gt;
+&lt;span class="code-line"&gt;# 做种时间大于2小时，则停止做种&lt;/span&gt;
+&lt;span class="code-line"&gt;seed-time=120&lt;/span&gt;
+&lt;span class="code-line"&gt;# RPC 配置&lt;/span&gt;
+&lt;span class="code-line"&gt;# 开启 JSON-RPC/XML-RPC 服务，默认 false&lt;/span&gt;
+&lt;span class="code-line"&gt;enable-rpc=true&lt;/span&gt;
+&lt;span class="code-line"&gt;# 允许所有来源，web 界面跨域权限需要，默认 false&lt;/span&gt;
+&lt;span class="code-line"&gt;rpc-allow-origin-all=true&lt;/span&gt;
+&lt;span class="code-line"&gt;# 允许外部访问，默认 false&lt;/span&gt;
+&lt;span class="code-line"&gt;rpc-listen-all=true&lt;/span&gt;
+&lt;span class="code-line"&gt;# rpc 端口，默认 6800rpc-listen-port=6800&lt;/span&gt;
+&lt;span class="code-line"&gt;# 设置最大的 JSON-RPC/XML-RPC 请求大小，默认 2M&lt;/span&gt;
+&lt;span class="code-line"&gt;#rpc-max-request-size=2M&lt;/span&gt;
+&lt;span class="code-line"&gt;# rpc 密码，可不设置&lt;/span&gt;
+&lt;span class="code-line"&gt;#rpc-passwd=raspberry&lt;/span&gt;
+&lt;span class="code-line"&gt;# rpc 用户名，可不设置&lt;/span&gt;
+&lt;span class="code-line"&gt;#rpc-user=aria2pi&lt;/span&gt;
+&lt;span class="code-line"&gt;rpc-secret=MYSECRET&lt;/span&gt;
+&lt;span class="code-line"&gt;# 高级配置&lt;/span&gt;
+&lt;span class="code-line"&gt;# This is useful if you have to use broken DNS and&lt;/span&gt;
+&lt;span class="code-line"&gt;# want to avoid terribly slow AAAA record lookup.&lt;/span&gt;
+&lt;span class="code-line"&gt;# 默认 false&lt;/span&gt;
+&lt;span class="code-line"&gt;disable-ipv6=true&lt;/span&gt;
+&lt;span class="code-line"&gt;# 指定文件分配方法，预分配能有效降低文件碎片，提高磁盘性能，缺点是预分配时间稍长&lt;/span&gt;
+&lt;span class="code-line"&gt;# 如果使用新的文件系统，例如 ext4 (with extents support), btrfs, xfs or NTFS(MinGW build only), falloc 是最好的选择&lt;/span&gt;
+&lt;span class="code-line"&gt;# 如果设置为 none，那么不预先分配文件空间，默认 prealloc&lt;/span&gt;
+&lt;span class="code-line"&gt;file-allocation=prealloc&lt;/span&gt;
+&lt;span class="code-line"&gt;# 整体下载速度限制，默认 0&lt;/span&gt;
+&lt;span class="code-line"&gt;#max-overall-download-limit=0&lt;/span&gt;
+&lt;span class="code-line"&gt;# 每个下载下载速度限制，默认 0&lt;/span&gt;
+&lt;span class="code-line"&gt;#max-download-limit=0&lt;/span&gt;
+&lt;span class="code-line"&gt;# 保存错误或者未完成的下载到这个文件&lt;/span&gt;
+&lt;span class="code-line"&gt;# 和基本配置中的 input-file 一起使用，那么重启后仍可继续下载&lt;/span&gt;
+&lt;span class="code-line"&gt;save-session=/home/lao/.config/aria2/session.lock&lt;/span&gt;
+&lt;span class="code-line"&gt;# 每5分钟自动保存错误或未完成的下载，如果为 0, 只有 aria2 正常退出才回保存，默认 0&lt;/span&gt;
+&lt;span class="code-line"&gt;save-session-interval=300&lt;/span&gt;
+&lt;span class="code-line"&gt;# 若要用于 PT 下载，需另外的配置，这里没写&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;dl class="first docutils"&gt;
+&lt;dt&gt;开机启动&lt;/dt&gt;
+&lt;dd&gt;&lt;p class="first last"&gt;&lt;tt class="docutils literal"&gt;aria2&lt;/tt&gt; 开机启动很简单，把以下代码存为 &lt;tt class="docutils literal"&gt;/etc/systemd/user/aria2.service&lt;/tt&gt; ，然后 &lt;tt class="docutils literal"&gt;systemctl enable aria2.service &lt;span class="pre"&gt;--user&lt;/span&gt;&lt;/tt&gt; ，即可。&lt;/p&gt;
+&lt;/dd&gt;
+&lt;/dl&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="code-line"&gt;&lt;span&gt;&lt;/span&gt;[Unit]&lt;/span&gt;
+&lt;span class="code-line"&gt;Description=Aria2 Service&lt;/span&gt;
+&lt;span class="code-line"&gt;After=mnt-MHDD.mount&lt;/span&gt;
+&lt;span class="code-line"&gt;After=systemd-fsck@.service&lt;/span&gt;
+&lt;span class="code-line"&gt;After=network.target&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;[Service]&lt;/span&gt;
+&lt;span class="code-line"&gt;Type=simple&lt;/span&gt;
+&lt;span class="code-line"&gt;User=lao&lt;/span&gt;
+&lt;span class="code-line"&gt;Group=lao&lt;/span&gt;
+&lt;span class="code-line"&gt;UMask=0002&lt;/span&gt;
+&lt;span class="code-line"&gt;PIDFile=/home/lao/.config/aria2/aria2.pid&lt;/span&gt;
+&lt;span class="code-line"&gt;ExecStart=/usr/bin/aria2c --check-certificate=false --enable-rpc=true --rpc-listen-all=true --rpc-allow-origin-all=true --rpc-secret=passwd --save-session /home/lao/.config/aria2/session.lock --input-file /home/lao/.config/aria2/session.lock --conf-path=/home/lao/.config/aria2/aria2.conf&lt;/span&gt;
+&lt;span class="code-line"&gt;Restart=on-abort&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;[Install]&lt;/span&gt;
+&lt;span class="code-line"&gt;WantedBy=multi-user.target&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;mldonkey 安装&lt;/p&gt;
+&lt;p&gt;samba 安装
+smbpasswd -a lao&lt;/p&gt;
+&lt;/div&gt;
+</content><category term="Tech"></category><category term="raspberry pi"></category><category term="resiliosync"></category><category term="备份"></category><category term="配置"></category></entry><entry><title>Python数据分析-安装与配置</title><link href="//blog.laolilin.com/posts/2016/09/python-install-config-for-data-analysis.html" rel="alternate"></link><published>2016-09-22T08:45:00+08:00</published><updated>2016-10-29T17:34:00+08:00</updated><author><name>lao</name></author><id>tag:blog.laolilin.com,2016-09-22:/posts/2016/09/python-install-config-for-data-analysis.html</id><summary type="html">&lt;p class="first last"&gt;Python机器学习安装配置教程&lt;/p&gt;
+</summary><content type="html">&lt;div class="section" id="id1"&gt;
+&lt;h2&gt;前言&lt;/h2&gt;
+&lt;p&gt;本文针对 &lt;tt class="docutils literal"&gt;python3.5&lt;/tt&gt; 的数据分析需求进行配置，尽量满足分析及学习的需求（本人的）。&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="section" id="venv"&gt;
+&lt;h2&gt;创建 &lt;tt class="docutils literal"&gt;venv&lt;/tt&gt; 环境&lt;/h2&gt;
+&lt;p&gt;&lt;tt class="docutils literal"&gt;venv&lt;/tt&gt; 是 &lt;tt class="docutils literal"&gt;python3.4&lt;/tt&gt; 以上的版本自带的功能，之前的版本需要安装 &lt;tt class="docutils literal"&gt;virtualenv&lt;/tt&gt; 。它可以将工作环境及系统的python环境隔离开来，在这个环境下工作很方便，安装包也不需要 &lt;tt class="docutils literal"&gt;root权限&lt;/tt&gt; 。&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="code-line"&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="c1"&gt;# 一条命令完成venv的创建&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;python -m venv venvoflao&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;span class="c1"&gt;# 进入venv&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;span class="nb"&gt;source&lt;/span&gt; ./venvoflao/bin/activate&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;span class="c1"&gt;# 退出venv&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;deactivate&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;添加以下代码到 &lt;tt class="docutils literal"&gt;&lt;span class="pre"&gt;~/.bashrc&lt;/span&gt;&lt;/tt&gt; ，1.主要是自动更新全部包的命令，这样就可以通过 &lt;tt class="docutils literal"&gt;pip_update&lt;/tt&gt; 来一键更新所有库；2.后面三行是编译 &lt;tt class="docutils literal"&gt;numpy&lt;/tt&gt; 和 &lt;tt class="docutils literal"&gt;scipy&lt;/tt&gt; 的必须品： &lt;tt class="docutils literal"&gt;LAPACK&lt;/tt&gt; 、 &lt;tt class="docutils literal"&gt;BLAS&lt;/tt&gt; ：先安装好 &lt;tt class="docutils literal"&gt;LAPACK&lt;/tt&gt; 和 &lt;tt class="docutils literal"&gt;BLAS&lt;/tt&gt; 然后添加后三行到 &lt;tt class="docutils literal"&gt;~.bashrc&lt;/tt&gt; ，然后 &lt;tt class="docutils literal"&gt;source .bashrc&lt;/tt&gt; 生效。&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="code-line"&gt;&lt;span&gt;&lt;/span&gt;alias pip_update="pip list --outdated | grep --invert-match '^\-e' | cut --delimiter ' ' --fields 1 | xargs --max-args 1 pip install --upgrade --trusted-host pypi.douban.com"&lt;/span&gt;
+&lt;span class="code-line"&gt;export LAPACK=/usr/lib/liblapack.so&lt;/span&gt;
+&lt;span class="code-line"&gt;#export ATLAS=/usr/lib/libatlas.so&lt;/span&gt;
+&lt;span class="code-line"&gt;export BLAS=/usr/lib/libblas.so&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="section" id="id2"&gt;
+&lt;h2&gt;基本Python库安装&lt;/h2&gt;
+&lt;p&gt;以下的操作都是在 &lt;tt class="docutils literal"&gt;venv&lt;/tt&gt; 下进行的。&lt;/p&gt;
+&lt;p&gt;以下代码安装常用的机器学习的库， &lt;tt class="docutils literal"&gt;numpy&lt;/tt&gt; 和 &lt;tt class="docutils literal"&gt;scipy&lt;/tt&gt; 编译需要较长时间，耐心等待即可。&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="code-line"&gt;&lt;span&gt;&lt;/span&gt;pip install numpy, pandas, scipy, sympy,&lt;span class="se"&gt;\&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;            matplotlib, seaborn, plotly, networkx, Pillow,&lt;span class="se"&gt;\&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;            scikit-learn, scikit-image, Theano, Keras, treeinterpreter,&lt;span class="se"&gt;\&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;            notebook, qtconsole,&lt;span class="se"&gt;\&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;            jupyter-contrib-nbextensions, jupyter-nbextensions-configurator,&lt;span class="se"&gt;\&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;            requests, beautifulsoup4,&lt;span class="se"&gt;\&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;            openpyxl, xlrd, xlwt, XlsxWriter&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="section" id="matplotlib"&gt;
+&lt;h2&gt;&lt;tt class="docutils literal"&gt;matplotlib&lt;/tt&gt; 中文配置&lt;/h2&gt;
+&lt;p&gt;&lt;tt class="docutils literal"&gt;matplotlib&lt;/tt&gt; 是一个很常用的画图库，可惜对中文支持不好，其实只要添加中文字体并稍微设置一下即可解决。&lt;/p&gt;
+&lt;p&gt;安装 &lt;tt class="docutils literal"&gt;文泉驿微米黑&lt;/tt&gt; 字体，
+再 &lt;tt class="docutils literal"&gt;touch .config/matplotlib/matplotlibrc&lt;/tt&gt; 再添加以下几行到里面即可。&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="code-line"&gt;&lt;span&gt;&lt;/span&gt;backend      : TkAgg&lt;/span&gt;
+&lt;span class="code-line"&gt;font.family         : sans-serif&lt;/span&gt;
+&lt;span class="code-line"&gt;font.sans-serif     : WenQuanYi Micro Hei, Bitstream Vera Sans, Lucida Grande, Verdana, Geneva, Lucid, Arial, Helvetica, Avant Garde, sans-serif&lt;/span&gt;
+&lt;span class="code-line"&gt;axes.unicode_minus  : True&lt;/span&gt;
+&lt;span class="code-line"&gt;figure.dpi       : 96&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="section" id="jupyter-notebook"&gt;
+&lt;h2&gt;&lt;tt class="docutils literal"&gt;jupyter notebook&lt;/tt&gt; 配置&lt;/h2&gt;
+&lt;p&gt;&lt;tt class="docutils literal"&gt;jupyter notebook&lt;/tt&gt; 是一个很方便的工具，可以在上面直接运行、调试代码，基本上写好之后稍微改下就成了一篇挺好的笔记了，可以导出为 &lt;tt class="docutils literal"&gt;pdf&lt;/tt&gt; 、 &lt;tt class="docutils literal"&gt;html&lt;/tt&gt; 等格式（需要安装 &lt;tt class="docutils literal"&gt;pandoc&lt;/tt&gt; ）。&lt;/p&gt;
+&lt;p&gt;生成配置文件： &lt;tt class="docutils literal"&gt;jupyter notebook &lt;span class="pre"&gt;--generate-config&lt;/span&gt;&lt;/tt&gt; 并修改 &lt;tt class="docutils literal"&gt;&lt;span class="pre"&gt;~/.jupyter/jupyter_notebook_config.py&lt;/span&gt;&lt;/tt&gt; 下面相应的几行。&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="code-line"&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="n"&gt;c&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;get_config&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;span class="n"&gt;c&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;NotebookApp&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;notebook_dir&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s1"&gt;'/home/lao/Notebook'&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;span class="n"&gt;c&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;NotebookApp&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;enable_mathjax&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="kc"&gt;True&lt;/span&gt;&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;完成 &lt;tt class="docutils literal"&gt;nbextensions&lt;/tt&gt; 的安装：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="code-line"&gt;&lt;span&gt;&lt;/span&gt;jupyter nbextensions_configurator &lt;span class="nb"&gt;enable&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;jupyter contrib nbextension install --user&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;/div&gt;
+</content><category term="Tech"></category><category term="Python"></category><category term="Machine learning"></category><category term="Data Mining"></category></entry><entry><title>reStructuredText 笔记</title><link href="//blog.laolilin.com/posts/2016/08/reStructuredText-notes.html" rel="alternate"></link><published>2016-08-09T21:10:32+08:00</published><updated>2016-08-14T10:21:00+08:00</updated><author><name>lao</name></author><id>tag:blog.laolilin.com,2016-08-09:/posts/2016/08/reStructuredText-notes.html</id><summary type="html">&lt;p class="first last"&gt;reStructuredText 笔记+备忘录&lt;/p&gt;
+</summary><content type="html">&lt;p&gt;Via &lt;a class="reference external" href="http://docutils.sourceforge.net/docs/user/rst/quickref.html"&gt;reStructuredText 笔记&lt;/a&gt;&lt;/p&gt;
+&lt;div class="section" id="id2"&gt;
+&lt;h2&gt;行内标记&lt;/h2&gt;
+&lt;table border="1" class="docutils table table-striped"&gt;
+&lt;colgroup&gt;
+&lt;col width="34%"/&gt;
+&lt;col width="20%"/&gt;
+&lt;col width="45%"/&gt;
+&lt;/colgroup&gt;
+&lt;thead valign="bottom"&gt;
+&lt;tr&gt;&lt;th class="head"&gt;例子&lt;/th&gt;
+&lt;th class="head"&gt;效果&lt;/th&gt;
+&lt;th class="head"&gt;备注&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody valign="top"&gt;
+&lt;tr&gt;&lt;td&gt;&lt;tt class="docutils literal"&gt;*重点*&lt;/tt&gt;&lt;/td&gt;
+&lt;td&gt;&lt;em&gt;重点&lt;/em&gt;&lt;/td&gt;
+&lt;td&gt;显示为斜体&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;&lt;tt class="docutils literal"&gt;**强调**&lt;/tt&gt;&lt;/td&gt;
+&lt;td&gt;&lt;strong&gt;强调&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;显示为粗体&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;&lt;tt class="docutils literal"&gt;`解释文本`&lt;/tt&gt;&lt;/td&gt;
+&lt;td&gt;解释 &lt;cite&gt;文本&lt;/cite&gt;&lt;/td&gt;
+&lt;td&gt;&lt;tt class="docutils literal"&gt;&lt;span class="pre"&gt;&amp;lt;cite&amp;gt;文本&amp;lt;/cite&amp;gt;&lt;/span&gt;&lt;/tt&gt; 因设备而异&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;&lt;tt class="docutils literal"&gt;``行 内 字 面``&lt;/tt&gt;&lt;/td&gt;
+&lt;td&gt;&lt;tt class="docutils literal"&gt;行 内 字 面&lt;/tt&gt;&lt;/td&gt;
+&lt;td&gt;显示为等宽文本，保留空格，不保留断行&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;&lt;p class="first"&gt;&lt;tt class="docutils literal"&gt;引用_&lt;/tt&gt;&lt;/p&gt;
+&lt;p class="last"&gt;&lt;tt class="docutils literal"&gt;.. _引用: imtho.com&lt;/tt&gt;&lt;/p&gt;
+&lt;/td&gt;
+&lt;td&gt;&lt;a class="reference external" href="imtho.com"&gt;引用&lt;/a&gt;&lt;/td&gt;
+&lt;td&gt;简单的、一个词的、不带空格的超链接&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;&lt;p class="first"&gt;&lt;tt class="docutils literal"&gt;`短语 引用`_&lt;/tt&gt;&lt;/p&gt;
+&lt;p class="last"&gt;&lt;tt class="docutils literal"&gt;.. _`短语 引用`: imtho.com&lt;/tt&gt;&lt;/p&gt;
+&lt;/td&gt;
+&lt;td&gt;&lt;a class="reference external" href="imtho.com"&gt;短语 引用&lt;/a&gt;&lt;/td&gt;
+&lt;td&gt;带空格或标点的超链接&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;&lt;p class="first"&gt;&lt;tt class="docutils literal"&gt;匿名__&lt;/tt&gt;&lt;/p&gt;
+&lt;p class="last"&gt;&lt;tt class="docutils literal"&gt;__ 引用_&lt;/tt&gt;&lt;/p&gt;
+&lt;/td&gt;
+&lt;td&gt;&lt;a class="reference external" href="imtho.com"&gt;匿名&lt;/a&gt;&lt;/td&gt;
+&lt;td&gt;重用链接&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;&lt;tt class="docutils literal"&gt;_`行内交叉引用`&lt;/tt&gt;&lt;/td&gt;
+&lt;td&gt;&lt;span class="target" id="id3"&gt;行内交叉引用&lt;/span&gt;&lt;/td&gt;
+&lt;td&gt;行内交叉引用,给指定文本一个id&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;替换参考&lt;/td&gt;
+&lt;td&gt;见 &lt;a class="reference internal" href="#id6"&gt;替换参考&lt;/a&gt;&lt;/td&gt;
+&lt;td&gt;可以是文字，图像，链接或上述及其他的组合&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;脚注 &lt;tt class="docutils literal"&gt;[1]_&lt;/tt&gt;&lt;/td&gt;
+&lt;td&gt;脚注 &lt;a class="footnote-reference" href="#id10" id="id4"&gt;[1]&lt;/a&gt;&lt;/td&gt;
+&lt;td&gt; &lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;引注 &lt;tt class="docutils literal"&gt;[CIT2002]_&lt;/tt&gt;&lt;/td&gt;
+&lt;td&gt;引注 &lt;a class="citation-reference" href="#cit2002" id="id5"&gt;[CIT2002]&lt;/a&gt;&lt;/td&gt;
+&lt;td&gt; &lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;&lt;tt class="docutils literal"&gt;&lt;span class="pre"&gt;http://python.org&lt;/span&gt;&lt;/tt&gt;&lt;/td&gt;
+&lt;td&gt;&lt;a class="reference external" href="http://python.org"&gt;http://python.org&lt;/a&gt;&lt;/td&gt;
+&lt;td&gt;单独的链接&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;&lt;span class="target" id="id6"&gt;替换参考&lt;/span&gt; &lt;tt class="docutils literal"&gt;|替换参考|&lt;/tt&gt; ，可用的替换 directive 有 image 和 replace，
+如：&lt;/p&gt;
+&lt;pre class="code reST literal-block"&gt;
+|替换参考|
+&lt;span class="p"&gt;..&lt;/span&gt; &lt;span class="nt"&gt;|替换参考|&lt;/span&gt; &lt;span class="ow"&gt;image&lt;/span&gt;&lt;span class="p"&gt;::&lt;/span&gt; https://cdn.v2ex.co/site/logo@2x.png?m=1346064962
+&lt;/pre&gt;
+&lt;table class="footnote docutils table table-striped" frame="void" id="id10" rules="none"&gt;
+&lt;colgroup&gt;&lt;col class="label"/&gt;&lt;col/&gt;&lt;/colgroup&gt;
+&lt;tbody valign="top"&gt;
+&lt;tr&gt;&lt;td class="label"&gt;&lt;a class="fn-backref" href="#id4"&gt;[1]&lt;/a&gt;&lt;/td&gt;&lt;td&gt;这是一个脚注&lt;/td&gt;&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;table class="citation docutils table table-striped" frame="void" id="cit2002" rules="none"&gt;
+&lt;colgroup&gt;&lt;col class="label"/&gt;&lt;col/&gt;&lt;/colgroup&gt;
+&lt;tbody valign="top"&gt;
+&lt;tr&gt;&lt;td class="label"&gt;&lt;a class="fn-backref" href="#id5"&gt;[CIT2002]&lt;/a&gt;&lt;/td&gt;&lt;td&gt;这是一个引注&lt;/td&gt;&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;div class="section" id="id11"&gt;
+&lt;h3&gt;行内标记分隔符&lt;/h3&gt;
+&lt;p&gt;星号*、反引号`、水平线、下划线_、为行内分隔符，要显示它们，可用转义或双反引号（ &lt;tt class="docutils literal"&gt;\*&lt;/tt&gt; 及 &lt;tt class="docutils literal"&gt;&lt;span class="pre"&gt;``*``&lt;/span&gt;&lt;/tt&gt; ）&lt;/p&gt;
+&lt;ol class="arabic simple"&gt;
+&lt;li&gt;行内标记必须为 text block 、其之前为空格或以下字符之一 &lt;tt class="docutils literal"&gt;&lt;span class="pre"&gt;'"([{&amp;lt;&lt;/span&gt;&lt;/tt&gt; 。&lt;/li&gt;
+&lt;li&gt;开始字符之后必须紧跟非空格，如 &lt;tt class="docutils literal"&gt;**强调**&lt;/tt&gt; 是对的，而 &lt;tt class="docutils literal"&gt;** 强调**&lt;/tt&gt; 是错的。&lt;/li&gt;
+&lt;li&gt;结束字符之前必须为非空格。&lt;/li&gt;
+&lt;li&gt;结束字符必须结束一个块（之后为文档尾或空行），或以空格或以下字符之一结尾 &lt;tt class="docutils literal"&gt;&lt;span class="pre"&gt;'".,:;!?-)]}/\&amp;gt;&lt;/span&gt;&lt;/tt&gt; 。&lt;/li&gt;
+&lt;li&gt;开始字符之前若为 &lt;tt class="docutils literal"&gt;&lt;span class="pre"&gt;'"([{&amp;lt;&lt;/span&gt;&lt;/tt&gt; 之一,则不能以 &lt;tt class="docutils literal"&gt;&lt;span class="pre"&gt;'")]}&amp;gt;&lt;/span&gt;&lt;/tt&gt; 结尾。&lt;/li&gt;
+&lt;li&gt;开始字符与结束字符之间必须有一个字符。&lt;/li&gt;
+&lt;li&gt;开始字符与结束字符之前若为转义反斜杠，则整个行内标志不会被识别，除了 &lt;cite&gt;行内字面量&lt;/cite&gt; 。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="section" id="id12"&gt;
+&lt;h2&gt;反斜杠转义&lt;/h2&gt;
+&lt;table border="1" class="docutils table table-striped"&gt;
+&lt;colgroup&gt;
+&lt;col width="57%"/&gt;
+&lt;col width="43%"/&gt;
+&lt;/colgroup&gt;
+&lt;thead valign="bottom"&gt;
+&lt;tr&gt;&lt;th class="head"&gt;原始 rST&lt;/th&gt;
+&lt;th class="head"&gt;效果&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody valign="top"&gt;
+&lt;tr&gt;&lt;td&gt;\``用`` &lt;tt class="docutils literal"&gt;&lt;span class="pre"&gt;"\\"&lt;/span&gt;&lt;/tt&gt; &lt;tt class="docutils literal"&gt;\*转义*&lt;/tt&gt;&lt;/td&gt;
+&lt;td&gt;``用`` "\" *转义*&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;/div&gt;
+&lt;div class="section" id="section"&gt;
+&lt;h2&gt;Section结构&lt;/h2&gt;
+&lt;table border="1" class="docutils table table-striped"&gt;
+&lt;colgroup&gt;
+&lt;col width="73%"/&gt;
+&lt;col width="27%"/&gt;
+&lt;/colgroup&gt;
+&lt;thead valign="bottom"&gt;
+&lt;tr&gt;&lt;th class="head"&gt;原始 rST&lt;/th&gt;
+&lt;th class="head"&gt;效果&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody valign="top"&gt;
+&lt;tr&gt;&lt;td&gt;标题可以用以下字符之一来表示：
+&lt;tt class="docutils literal"&gt;&lt;span class="pre"&gt;=-`:'"~^_*+#&amp;lt;&amp;gt;&lt;/span&gt;&lt;/tt&gt;&lt;/td&gt;
+&lt;td&gt;如本文所示&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;/div&gt;
+&lt;div class="section" id="id13"&gt;
+&lt;h2&gt;段落&lt;/h2&gt;
+&lt;p&gt;以空行分隔的字符串。&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="section" id="id14"&gt;
+&lt;h2&gt;无序列表&lt;/h2&gt;
+&lt;p&gt;以-、*、+开头，如：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="code-line"&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="m"&gt;-&lt;/span&gt; 这是&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;span class="m"&gt;-&lt;/span&gt; 一个&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;span class="m"&gt;-&lt;/span&gt; 无序列表&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;ul class="simple"&gt;
+&lt;li&gt;这是&lt;/li&gt;
+&lt;li&gt;一个&lt;/li&gt;
+&lt;li&gt;无序列表&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;div class="section" id="id15"&gt;
+&lt;h2&gt;有序列表&lt;/h2&gt;
+&lt;p&gt;以#、数字、字母、i,I开头，开始字符可带.及)，如：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="code-line"&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="m"&gt;i.&lt;/span&gt; 这是&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;   &lt;span class="m"&gt;#)&lt;/span&gt; 嵌套&lt;/span&gt;
+&lt;span class="code-line"&gt;   &lt;span class="m"&gt;#)&lt;/span&gt; 列表&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;span class="m"&gt;#.&lt;/span&gt; 一个&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;   &lt;span class="m"&gt;i.&lt;/span&gt; 也是&lt;/span&gt;
+&lt;span class="code-line"&gt;   &lt;span class="m"&gt;#.&lt;/span&gt; 嵌套&lt;/span&gt;
+&lt;span class="code-line"&gt;   &lt;span class="m"&gt;#.&lt;/span&gt; 列表&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;span class="m"&gt;#.&lt;/span&gt; 有序列表&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;ol class="lowerroman simple"&gt;
+&lt;li&gt;这是&lt;ol class="arabic"&gt;
+&lt;li&gt;嵌套&lt;/li&gt;
+&lt;li&gt;列表&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/li&gt;
+&lt;li&gt;一个&lt;ol class="lowerroman"&gt;
+&lt;li&gt;也是&lt;/li&gt;
+&lt;li&gt;嵌套&lt;/li&gt;
+&lt;li&gt;列表&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/li&gt;
+&lt;li&gt;有序列表&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+&lt;div class="section" id="id16"&gt;
+&lt;h2&gt;定义列表&lt;/h2&gt;
+&lt;p&gt;以词为开头的列表，如：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="code-line"&gt;&lt;span&gt;&lt;/span&gt;定义列表&lt;/span&gt;
+&lt;span class="code-line"&gt;    以词开头的列表&lt;/span&gt;
+&lt;span class="code-line"&gt;ReST&lt;/span&gt;
+&lt;span class="code-line"&gt;    reStructuredText&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;dl class="docutils"&gt;
+&lt;dt&gt;定义列表&lt;/dt&gt;
+&lt;dd&gt;以词开头的列表&lt;/dd&gt;
+&lt;dt&gt;ReST&lt;/dt&gt;
+&lt;dd&gt;reStructuredText&lt;/dd&gt;
+&lt;/dl&gt;
+&lt;/div&gt;
+&lt;div class="section" id="id17"&gt;
+&lt;h2&gt;区域列表&lt;/h2&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="code-line"&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="nc"&gt;:作者:&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;        某某&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;        毕业于某某大学&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;span class="nc"&gt;:版本:&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;        1.0&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;table class="docutils table-striped table field-list" frame="void" rules="none"&gt;
+&lt;col class="field-name"/&gt;
+&lt;col class="field-body"/&gt;
+&lt;tbody valign="top"&gt;
+&lt;tr class="field"&gt;&lt;th class="field-name"&gt;作者:&lt;/th&gt;&lt;td class="field-body"&gt;&lt;p class="first"&gt;某某&lt;/p&gt;
+&lt;p&gt;毕业于某某大学&lt;/p&gt;
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class="field"&gt;&lt;th class="field-name"&gt;版本:&lt;/th&gt;&lt;td class="field-body"&gt;&lt;p class="first last"&gt;1.0&lt;/p&gt;
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;/div&gt;
+&lt;div class="section" id="id18"&gt;
+&lt;h2&gt;选项列表&lt;/h2&gt;
+&lt;p&gt;选项和描述之间必须间隔两个空格以上，如：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="code-line"&gt;&lt;span&gt;&lt;/span&gt;-a  all&lt;/span&gt;
+&lt;span class="code-line"&gt;-f file  读入文件&lt;/span&gt;
+&lt;span class="code-line"&gt;--file=file  读入一个文件&lt;/span&gt;
+&lt;span class="code-line"&gt;/f  MS命令行&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;table class="table docutils option-list table-striped" frame="void" rules="none"&gt;
+&lt;col class="option"/&gt;
+&lt;col class="description"/&gt;
+&lt;tbody valign="top"&gt;
+&lt;tr&gt;&lt;td class="option-group"&gt;
+&lt;kbd&gt;&lt;span class="option"&gt;-a&lt;/span&gt;&lt;/kbd&gt;&lt;/td&gt;
+&lt;td&gt;all&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td class="option-group"&gt;
+&lt;kbd&gt;&lt;span class="option"&gt;-f &lt;var&gt;file&lt;/var&gt;&lt;/span&gt;&lt;/kbd&gt;&lt;/td&gt;
+&lt;td&gt;读入文件&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td class="option-group"&gt;
+&lt;kbd&gt;&lt;span class="option"&gt;--file=&lt;var&gt;file&lt;/var&gt;&lt;/span&gt;&lt;/kbd&gt;&lt;/td&gt;
+&lt;td&gt;读入一个文件&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td class="option-group"&gt;
+&lt;kbd&gt;&lt;span class="option"&gt;/f&lt;/span&gt;&lt;/kbd&gt;&lt;/td&gt;
+&lt;td&gt;MS命令行&lt;/td&gt;&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;/div&gt;
+&lt;div class="section" id="id19"&gt;
+&lt;h2&gt;字面量块&lt;/h2&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="code-line"&gt;&lt;span&gt;&lt;/span&gt;字面量块以 "::" 开始&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;span class="se"&gt;::&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;span class="s"&gt;    空格、新行、空行及::之后的所有字符都以字面量显示。&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;符号 &lt;span class="s"&gt;``::``&lt;/span&gt; 必须在空行行首，或一段的结尾&lt;span class="se"&gt;::&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;span class="s"&gt;    真的很方便啊！&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;在字面量块中使用单行引用::&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;&amp;gt; 这是一个&lt;/span&gt;
+&lt;span class="code-line"&gt;&amp;gt; 单行引用&lt;/span&gt;
+&lt;span class="code-line"&gt;&amp;gt;&amp;gt; per-line quoting&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;字面量块以 "::" 开始,前后应有空行&lt;/p&gt;
+&lt;pre class="literal-block"&gt;
+空格、新行、空行及::之后的所有字符都以字面量显示。
+&lt;/pre&gt;
+&lt;p&gt;符号 &lt;tt class="docutils literal"&gt;::&lt;/tt&gt; 必须在空行行首，或一段的结尾:&lt;/p&gt;
+&lt;pre class="literal-block"&gt;
+真的很方便啊！
+&lt;/pre&gt;
+&lt;p&gt;在字面量块中使用单行引用:&lt;/p&gt;
+&lt;pre class="literal-block"&gt;
+&amp;gt; 这是一个
+&amp;gt; 单行引用
+&amp;gt;&amp;gt; per-line quoting
+&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div class="section" id="id20"&gt;
+&lt;h2&gt;行块&lt;/h2&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="code-line"&gt;&lt;span&gt;&lt;/span&gt;行块以"| "在行首开头。&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;|这是&lt;/span&gt;
+&lt;span class="code-line"&gt;|行块&lt;/span&gt;
+&lt;span class="code-line"&gt;|很好用&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;行块以"| "在行首开头。&lt;/p&gt;
+&lt;div class="line-block"&gt;
+&lt;div class="line"&gt;这是&lt;/div&gt;
+&lt;div class="line"&gt;行块&lt;/div&gt;
+&lt;div class="line"&gt;很好用&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="section" id="id21"&gt;
+&lt;h2&gt;块引用&lt;/h2&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="code-line"&gt;&lt;span&gt;&lt;/span&gt;一个块引用&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;  只需要&lt;/span&gt;
+&lt;span class="code-line"&gt;  缩进&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;   及嵌套&lt;/span&gt;
+&lt;span class="code-line"&gt;   缩进&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;一个块引用&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;只需要
+缩进&lt;/p&gt;
+&lt;blockquote&gt;
+及嵌套
+缩进&lt;/blockquote&gt;
+&lt;/blockquote&gt;
+&lt;/div&gt;
+&lt;div class="section" id="doctest"&gt;
+&lt;h2&gt;Doctest块&lt;/h2&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="code-line"&gt;&lt;span&gt;&lt;/span&gt;&amp;gt;&amp;gt;&amp;gt; print('这是一个 Doctest 块')&lt;/span&gt;
+&lt;span class="code-line"&gt;&amp;gt;&amp;gt;&amp;gt; import time&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;pre class="doctest-block"&gt;
+&amp;gt;&amp;gt;&amp;gt; print('这是一个 Doctest 块')
+&amp;gt;&amp;gt;&amp;gt; import time
+&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div class="section" id="id22"&gt;
+&lt;h2&gt;表格&lt;/h2&gt;
+&lt;p&gt;ReST有两种表格：&lt;/p&gt;
+&lt;div class="section" id="grid"&gt;
+&lt;h3&gt;Grid表格：&lt;/h3&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="code-line"&gt;&lt;span&gt;&lt;/span&gt;+------------+------------+-----------+&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;span class="o"&gt;|&lt;/span&gt; Header 1   | Header 2   | Header 3  |&lt;/span&gt;
+&lt;span class="code-line"&gt;+============+============+===========+&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;span class="o"&gt;|&lt;/span&gt; body row 1 | column 2   | column 3  |&lt;/span&gt;
+&lt;span class="code-line"&gt;+------------+------------+-----------+&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;span class="o"&gt;|&lt;/span&gt; body row 2 | Cells may span columns.|&lt;/span&gt;
+&lt;span class="code-line"&gt;+------------+------------+-----------+&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;span class="o"&gt;|&lt;/span&gt; body row 3 | Cells may  | - Cells   |&lt;/span&gt;
+&lt;span class="code-line"&gt;+------------+------------+-----------+&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;span class="o"&gt;|&lt;/span&gt; body row 4 |            | - blocks. |&lt;/span&gt;
+&lt;span class="code-line"&gt;+------------+------------+-----------+&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;table border="1" class="docutils table table-striped"&gt;
+&lt;colgroup&gt;
+&lt;col width="34%"/&gt;
+&lt;col width="34%"/&gt;
+&lt;col width="31%"/&gt;
+&lt;/colgroup&gt;
+&lt;thead valign="bottom"&gt;
+&lt;tr&gt;&lt;th class="head"&gt;Header 1&lt;/th&gt;
+&lt;th class="head"&gt;Header 2&lt;/th&gt;
+&lt;th class="head"&gt;Header 3&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody valign="top"&gt;
+&lt;tr&gt;&lt;td&gt;body row 1&lt;/td&gt;
+&lt;td&gt;column 2&lt;/td&gt;
+&lt;td&gt;column 3&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;body row 2&lt;/td&gt;
+&lt;td colspan="2"&gt;Cells may span columns.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;body row 3&lt;/td&gt;
+&lt;td&gt;Cells may&lt;/td&gt;
+&lt;td&gt;&lt;ul class="first last simple"&gt;
+&lt;li&gt;Cells&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;body row 4&lt;/td&gt;
+&lt;td&gt; &lt;/td&gt;
+&lt;td&gt;&lt;ul class="first last simple"&gt;
+&lt;li&gt;blocks.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;/div&gt;
+&lt;div class="section" id="id23"&gt;
+&lt;h3&gt;简单表格：&lt;/h3&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="code-line"&gt;&lt;span&gt;&lt;/span&gt;=====  =====  ======&lt;/span&gt;
+&lt;span class="code-line"&gt;   Inputs     Output&lt;/span&gt;
+&lt;span class="code-line"&gt;------------  ------&lt;/span&gt;
+&lt;span class="code-line"&gt;  A      B    A or B&lt;/span&gt;
+&lt;span class="code-line"&gt;=====  =====  ======&lt;/span&gt;
+&lt;span class="code-line"&gt;False  False  False&lt;/span&gt;
+&lt;span class="code-line"&gt;True   False  True&lt;/span&gt;
+&lt;span class="code-line"&gt;False  True   True&lt;/span&gt;
+&lt;span class="code-line"&gt;True   True   True&lt;/span&gt;
+&lt;span class="code-line"&gt;=====  =====  ======&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;table border="1" class="docutils table table-striped"&gt;
+&lt;colgroup&gt;
+&lt;col width="31%"/&gt;
+&lt;col width="31%"/&gt;
+&lt;col width="38%"/&gt;
+&lt;/colgroup&gt;
+&lt;thead valign="bottom"&gt;
+&lt;tr&gt;&lt;th class="head" colspan="2"&gt;Inputs&lt;/th&gt;
+&lt;th class="head"&gt;Output&lt;/th&gt;
+&lt;/tr&gt;
+&lt;tr&gt;&lt;th class="head"&gt;A&lt;/th&gt;
+&lt;th class="head"&gt;B&lt;/th&gt;
+&lt;th class="head"&gt;A or B&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody valign="top"&gt;
+&lt;tr&gt;&lt;td&gt;False&lt;/td&gt;
+&lt;td&gt;False&lt;/td&gt;
+&lt;td&gt;False&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;True&lt;/td&gt;
+&lt;td&gt;False&lt;/td&gt;
+&lt;td&gt;True&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;False&lt;/td&gt;
+&lt;td&gt;True&lt;/td&gt;
+&lt;td&gt;True&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;True&lt;/td&gt;
+&lt;td&gt;True&lt;/td&gt;
+&lt;td&gt;True&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="section" id="id24"&gt;
+&lt;h2&gt;分隔线&lt;/h2&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="code-line"&gt;&lt;span&gt;&lt;/span&gt;----&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;分隔线，以4个及以上的“-”表示&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;一条&lt;/p&gt;
+&lt;hr class="docutils"/&gt;
+&lt;p&gt;分隔线，以4个及以上的“-”表示&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="section" id="id25"&gt;
+&lt;h2&gt;显式标记&lt;/h2&gt;
+&lt;div class="section" id="id26"&gt;
+&lt;h3&gt;脚注&lt;/h3&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="code-line"&gt;&lt;span&gt;&lt;/span&gt;这是一个脚注 &lt;span class="s"&gt;[#]_&lt;/span&gt; 。或用\* &lt;span class="s"&gt;[*]_&lt;/span&gt; ，\#后可加上字符串 &lt;span class="s"&gt;[#标识1]_&lt;/span&gt; 用来标识 &lt;span class="s"&gt;[#标识2]_&lt;/span&gt; ，亦可用直接数字 &lt;span class="s"&gt;[7]_&lt;/span&gt; 。&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;span class="p"&gt;..&lt;/span&gt; &lt;span class="nt"&gt;[#] 自动脚注，注意 ``]&lt;/span&gt;&lt;span class="s"&gt;`` 后没有``_``。&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;span class="p"&gt;..&lt;/span&gt; &lt;span class="nt"&gt;[*]&lt;/span&gt; 星号脚注。&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;span class="p"&gt;..&lt;/span&gt; &lt;span class="nt"&gt;[#标识1]&lt;/span&gt; 自动标识1。&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;span class="p"&gt;..&lt;/span&gt; &lt;span class="nt"&gt;[#标识2]&lt;/span&gt; 自动标识2。&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;span class="p"&gt;..&lt;/span&gt; &lt;span class="nt"&gt;[7]&lt;/span&gt;_ 数字标识。&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;这是一个脚注 &lt;a class="footnote-reference" href="#id32" id="id27"&gt;[2]&lt;/a&gt; 。或用* &lt;a class="footnote-reference" href="#id33" id="id28"&gt;[*]&lt;/a&gt; ，#后可加上字符串 &lt;a class="footnote-reference" href="#id34" id="id29"&gt;[3]&lt;/a&gt; 用来标识 &lt;a class="footnote-reference" href="#id35" id="id30"&gt;[4]&lt;/a&gt; ，亦可用直接数字 &lt;a class="footnote-reference" href="#id36" id="id31"&gt;[7]&lt;/a&gt; 。&lt;/p&gt;
+&lt;table class="footnote docutils table table-striped" frame="void" id="id32" rules="none"&gt;
+&lt;colgroup&gt;&lt;col class="label"/&gt;&lt;col/&gt;&lt;/colgroup&gt;
+&lt;tbody valign="top"&gt;
+&lt;tr&gt;&lt;td class="label"&gt;&lt;a class="fn-backref" href="#id27"&gt;[2]&lt;/a&gt;&lt;/td&gt;&lt;td&gt;自动脚注，注意 &lt;tt class="docutils literal"&gt;]&lt;/tt&gt; 后没有``_``。&lt;/td&gt;&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;table class="footnote docutils table table-striped" frame="void" id="id33" rules="none"&gt;
+&lt;colgroup&gt;&lt;col class="label"/&gt;&lt;col/&gt;&lt;/colgroup&gt;
+&lt;tbody valign="top"&gt;
+&lt;tr&gt;&lt;td class="label"&gt;&lt;a class="fn-backref" href="#id28"&gt;[*]&lt;/a&gt;&lt;/td&gt;&lt;td&gt;星号脚注。&lt;/td&gt;&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;table class="footnote docutils table table-striped" frame="void" id="id34" rules="none"&gt;
+&lt;colgroup&gt;&lt;col class="label"/&gt;&lt;col/&gt;&lt;/colgroup&gt;
+&lt;tbody valign="top"&gt;
+&lt;tr&gt;&lt;td class="label"&gt;&lt;a class="fn-backref" href="#id29"&gt;[3]&lt;/a&gt;&lt;/td&gt;&lt;td&gt;自动标识1。&lt;/td&gt;&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;table class="footnote docutils table table-striped" frame="void" id="id35" rules="none"&gt;
+&lt;colgroup&gt;&lt;col class="label"/&gt;&lt;col/&gt;&lt;/colgroup&gt;
+&lt;tbody valign="top"&gt;
+&lt;tr&gt;&lt;td class="label"&gt;&lt;a class="fn-backref" href="#id30"&gt;[4]&lt;/a&gt;&lt;/td&gt;&lt;td&gt;自动标识2。&lt;/td&gt;&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;table class="footnote docutils table table-striped" frame="void" id="id36" rules="none"&gt;
+&lt;colgroup&gt;&lt;col class="label"/&gt;&lt;col/&gt;&lt;/colgroup&gt;
+&lt;tbody valign="top"&gt;
+&lt;tr&gt;&lt;td class="label"&gt;&lt;a class="fn-backref" href="#id31"&gt;[7]&lt;/a&gt;&lt;/td&gt;&lt;td&gt;数字标识。&lt;/td&gt;&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;/div&gt;
+&lt;div class="section" id="id37"&gt;
+&lt;h3&gt;引用&lt;/h3&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="code-line"&gt;&lt;span&gt;&lt;/span&gt;一个引用出自 &lt;span class="s"&gt;[某文]_&lt;/span&gt; ，还可以出自 某文_ 。&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;span class="p"&gt;..&lt;/span&gt; &lt;span class="nt"&gt;[某文]&lt;/span&gt; 这里是某文&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;一个引用出自 &lt;a class="citation-reference" href="#id39" id="id38"&gt;[某文]&lt;/a&gt; ，还可以出自 &lt;a class="reference internal" href="#id39"&gt;某文&lt;/a&gt; 。&lt;/p&gt;
+&lt;table class="citation docutils table table-striped" frame="void" id="id39" rules="none"&gt;
+&lt;colgroup&gt;&lt;col class="label"/&gt;&lt;col/&gt;&lt;/colgroup&gt;
+&lt;tbody valign="top"&gt;
+&lt;tr&gt;&lt;td class="label"&gt;&lt;a class="fn-backref" href="#id38"&gt;[某文]&lt;/a&gt;&lt;/td&gt;&lt;td&gt;这里是某文&lt;/td&gt;&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;/div&gt;
+&lt;div class="section" id="id40"&gt;
+&lt;h3&gt;超链接&lt;/h3&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="code-line"&gt;&lt;span&gt;&lt;/span&gt;外部链接，如 Python官网_ ，亦可在行内写出 &lt;span class="s"&gt;`Python官网 &lt;/span&gt;&lt;span class="si"&gt;&amp;lt;https://python.org&amp;gt;&lt;/span&gt;&lt;span class="s"&gt;`_&lt;/span&gt;。&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;span class="p"&gt;..&lt;/span&gt; &lt;span class="nt"&gt;_Python官网:&lt;/span&gt; https://python.org&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;内部链接，如 此处_ 。&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;span class="p"&gt;..&lt;/span&gt; &lt;span class="nt"&gt;_此处:&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;此处是内部链接一例子。&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;间接链接，如： 我爱 Python_ , &lt;span class="s"&gt;`官网在此`__&lt;/span&gt; 。&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;span class="p"&gt;..&lt;/span&gt; &lt;span class="nt"&gt;_Python:&lt;/span&gt; https://python.org&lt;/span&gt;
+&lt;span class="code-line"&gt;__ Python_&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;隐式链接，如：我要链接到 &lt;span class="s"&gt;`显式标记`_&lt;/span&gt; 。&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;外部链接，如 &lt;a class="reference external" href="https://python.org"&gt;Python官网&lt;/a&gt; ，亦可在行内写出 &lt;a class="reference external" href="https://python.org"&gt;Python官网&lt;/a&gt;。&lt;/p&gt;
+&lt;p&gt;内部链接，如 &lt;a class="reference internal" href="#id42"&gt;此处&lt;/a&gt; 。&lt;/p&gt;
+&lt;p id="id42"&gt;此处是内部链接一例子。&lt;/p&gt;
+&lt;p&gt;间接链接，如： 我爱 &lt;a class="reference external" href="https://python.org"&gt;Python&lt;/a&gt; , &lt;a class="reference external" href="https://python.org"&gt;官网在此&lt;/a&gt; 。&lt;/p&gt;
+&lt;p&gt;隐式链接，如：我要链接到 &lt;a class="reference internal" href="#id25"&gt;显式标记&lt;/a&gt; 。&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="section" id="id45"&gt;
+&lt;h3&gt;指令&lt;/h3&gt;
+&lt;p&gt;见 &lt;a class="reference external" href="http://docutils.sourceforge.net/docs/ref/rst/directives.html"&gt;reStructuredText Directives&lt;/a&gt; 。&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="code-line"&gt;&lt;span&gt;&lt;/span&gt;图片：&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;span class="p"&gt;..&lt;/span&gt; &lt;span class="ow"&gt;image&lt;/span&gt;&lt;span class="p"&gt;::&lt;/span&gt; http://docutils.sourceforge.net/docs/user/rst/images/ball1.gif&lt;/span&gt;
+&lt;span class="code-line"&gt;   &lt;span class="nc"&gt;:alt:&lt;/span&gt; 一个图片&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;数学公式：&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;行内公式： &lt;span class="na"&gt;:math:&lt;/span&gt;&lt;span class="nv"&gt;`A_\text{c} = (\pi/4) d^2`&lt;/span&gt;.&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;整行公式&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;span class="p"&gt;..&lt;/span&gt; &lt;span class="ow"&gt;math&lt;/span&gt;&lt;span class="p"&gt;::&lt;/span&gt; \alpha{}_t(i) = P(O_1, O_2, … O_t, q_t = S_i \lambda{})&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;代码：&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;span class="p"&gt;..&lt;/span&gt; &lt;span class="ow"&gt;code-block&lt;/span&gt;&lt;span class="p"&gt;::&lt;/span&gt; &lt;span class="k"&gt;python&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt; &lt;span class="c1"&gt;# python 代码&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt; &lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;print_hello&lt;/span&gt;&lt;span class="p"&gt;():&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;     &lt;span class="nb"&gt;print&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;'Hello, World!'&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;图片：&lt;/p&gt;
+&lt;img alt="一张图片" class="img-fluid" src="http://docutils.sourceforge.net/docs/user/rst/images/ball1.gif"/&gt;
+&lt;p&gt;数学公式：&lt;/p&gt;
+&lt;p&gt;行内公式： &lt;span class="math"&gt;\(A_\text{c} = (\pi/4) d^2\)&lt;/span&gt;.&lt;/p&gt;
+&lt;p&gt;整行公式&lt;/p&gt;
+&lt;div class="math"&gt;
+\begin{equation*}
+\alpha{}_t(i) = P(O_1, O_2, \ldots  O_t, q_t = S_i \lambda{})
+\end{equation*}
+&lt;/div&gt;
+&lt;p&gt;代码:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="code-line"&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="c1"&gt;# python 代码&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;print_hello&lt;/span&gt;&lt;span class="p"&gt;():&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;    &lt;span class="nb"&gt;print&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;'Hello, World!'&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="section" id="id46"&gt;
+&lt;h3&gt;替换引用和定义&lt;/h3&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="code-line"&gt;&lt;span&gt;&lt;/span&gt;此 |生物危害| 标志用在医用废物回收箱中。&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;span class="p"&gt;..&lt;/span&gt; &lt;span class="nt"&gt;|生物危害|&lt;/span&gt; &lt;span class="ow"&gt;image&lt;/span&gt;&lt;span class="p"&gt;::&lt;/span&gt; http://docutils.sourceforge.net/docs/user/rst/images/biohazard.png&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;还可以构造任意结构，如：我想在新标签页打开 |Python官网|。&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;span class="p"&gt;..&lt;/span&gt; &lt;span class="nt"&gt;|Python官网|&lt;/span&gt; &lt;span class="ow"&gt;raw&lt;/span&gt;&lt;span class="p"&gt;::&lt;/span&gt; html&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;   &amp;lt;a href="https://python.org" target="_blank"&amp;gt;Python的官网&amp;lt;/a&amp;gt;&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;此 &lt;img alt="生物危害" class="img-fluid" src="http://docutils.sourceforge.net/docs/user/rst/images/biohazard.png"/&gt; 标志用在医用废物回收箱中。&lt;/p&gt;
+&lt;p&gt;我想在新标签页打开 &lt;a href="https://python.org" target="_blank"&gt;Python的官网&lt;/a&gt;。&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="section" id="id47"&gt;
+&lt;h3&gt;评论&lt;/h3&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="code-line"&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="cp"&gt;.. 任何以显式标记开始&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;span class="cp"&gt;   但没有用任何以上的语法&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;span class="cp"&gt;   的文本，就是评论。&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;空评论：&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;span class="cp"&gt;..&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;span class="cp"&gt;    就是“``..``”前后都是空行。&lt;/span&gt;&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;!-- 任何以显式标记开始
+但没有用任何以上的语法
+的文本，就是评论。 --&gt;
+&lt;p&gt;空评论：&lt;/p&gt;
+&lt;!-- --&gt;
+&lt;blockquote&gt;
+就是“&lt;tt class="docutils literal"&gt;..&lt;/tt&gt;”前后都是空行。&lt;/blockquote&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;script type='text/javascript'&gt;if (!document.getElementById('mathjaxscript_pelican_#%@#$@#')) {
+    var align = "center",
+        indent = "0em",
+        linebreak = "false";
+
+    if (false) {
+        align = (screen.width &lt; 768) ? "left" : align;
+        indent = (screen.width &lt; 768) ? "0em" : indent;
+        linebreak = (screen.width &lt; 768) ? 'true' : linebreak;
+    }
+
+    var mathjaxscript = document.createElement('script');
+    mathjaxscript.id = 'mathjaxscript_pelican_#%@#$@#';
+    mathjaxscript.type = 'text/javascript';
+    mathjaxscript.src = 'https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+
+    var configscript = document.createElement('script');
+    configscript.type = 'text/x-mathjax-config';
+    configscript[(window.opera ? "innerHTML" : "text")] =
+        "MathJax.Hub.Config({" +
+        "    config: ['MMLorHTML.js']," +
+        "    TeX: { extensions: ['AMSmath.js','AMSsymbols.js','noErrors.js','noUndefined.js','color.js','mhchem.js'], equationNumbers: { autoNumber: 'none' } }," +
+        "    jax: ['input/TeX','input/MathML','output/HTML-CSS']," +
+        "    extensions: ['tex2jax.js','mml2jax.js','MathMenu.js','MathZoom.js']," +
+        "    displayAlign: '"+ align +"'," +
+        "    displayIndent: '"+ indent +"'," +
+        "    showMathMenu: true," +
+        "    messageStyle: 'normal'," +
+        "    tex2jax: { " +
+        "        inlineMath: [ ['\\\\(','\\\\)'] ], " +
+        "        displayMath: [ ['$$','$$'] ]," +
+        "        processEscapes: true," +
+        "        preview: 'TeX'," +
+        "    }, " +
+        "    'HTML-CSS': { " +
+        "        availableFonts: ['STIX', 'TeX']," +
+        "        preferredFont: 'STIX'," +
+        "        styles: { '.MathJax_Display, .MathJax .mo, .MathJax .mi, .MathJax .mn': {color: 'inherit ! important'} }," +
+        "        linebreaks: { automatic: "+ linebreak +", width: '90% container' }," +
+        "    }, " +
+        "}); " +
+        "if ('default' !== 'default') {" +
+            "MathJax.Hub.Register.StartupHook('HTML-CSS Jax Ready',function () {" +
+                "var VARIANT = MathJax.OutputJax['HTML-CSS'].FONTDATA.VARIANT;" +
+                "VARIANT['normal'].fonts.unshift('MathJax_default');" +
+                "VARIANT['bold'].fonts.unshift('MathJax_default-bold');" +
+                "VARIANT['italic'].fonts.unshift('MathJax_default-italic');" +
+                "VARIANT['-tex-mathit'].fonts.unshift('MathJax_default-italic');" +
+            "});" +
+            "MathJax.Hub.Register.StartupHook('SVG Jax Ready',function () {" +
+                "var VARIANT = MathJax.OutputJax.SVG.FONTDATA.VARIANT;" +
+                "VARIANT['normal'].fonts.unshift('MathJax_default');" +
+                "VARIANT['bold'].fonts.unshift('MathJax_default-bold');" +
+                "VARIANT['italic'].fonts.unshift('MathJax_default-italic');" +
+                "VARIANT['-tex-mathit'].fonts.unshift('MathJax_default-italic');" +
+            "});" +
+        "}";
+
+    (document.body || document.getElementsByTagName('head')[0]).appendChild(configscript);
+    (document.body || document.getElementsByTagName('head')[0]).appendChild(mathjaxscript);
+}
+&lt;/script&gt;</content><category term="Tech"></category><category term="reStructuredText"></category><category term="ReST"></category><category term="note"></category></entry></feed>
